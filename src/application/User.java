@@ -8,37 +8,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    private final String userDir = "users";
-    private final String userFilePath = "users.txt";
-    private Map<String, Integer> userMap = new HashMap<>();
-
+    // Các thuộc tính của người dùng
     private String name;
     private LocalDate birthday;
     private String sex;
     private String address;
-    private String userId;
+    private String userId; // userId chưa mã hóa
     private String email;
     private String job;
-    private String code;
 
     // Constructor để khởi tạo dữ liệu người dùng
-    public User(String name, LocalDate birthday, String sex, String address, String userId, String email, String job, String code) {
+    public User(String name, LocalDate birthday, String sex, String address, String userId, String email, String job) {
         this.name = name;
         this.birthday = birthday;
         this.sex = sex;
         this.address = address;
-        this.userId = userId;
+        this.userId = userId; // Lưu userId chưa mã hóa
         this.email = email;
-        this.job = job;
-        this.code = code;
     }
 
+    // Getter cho các thuộc tính
     public String getEmail() {
         return email;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     public String getName() {
@@ -73,38 +64,8 @@ public class User {
         return userFilePath;
     }
 
-    public int age(LocalDate birth, LocalDate currentDate) {
-        Period period = Period.between(birth, currentDate);
-        return period.getYears();
+    // Phương thức tính tuổi dựa vào ngày sinh
+    public int age() {
+        return Period.between(birthday, LocalDate.now()).getYears();
     }
-
-    // Mã hóa userId sử dụng SHA-256
-    private String hashUserId(String userId) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] encodedHash = digest.digest(String.valueOf(userId).getBytes());
-        StringBuilder hexString = new StringBuilder(2 * encodedHash.length);
-        for (byte b : encodedHash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
-    }
-
-    // Kiểm tra thông tin đăng nhập (dựa vào userId)
-    public boolean checkUserLogin(String username, String userId) {
-        if (userMap.containsKey(username)) {
-            try {
-                String hashedUserId = hashUserId(userId);
-                String storedHashedUserId = String.valueOf(userMap.get(username));
-                return storedHashedUserId.equals(hashedUserId);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
-
 }
