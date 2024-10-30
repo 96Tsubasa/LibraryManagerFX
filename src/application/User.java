@@ -1,11 +1,7 @@
 package org.example.library;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.HashMap;
-import java.util.Map;
 
 public class User {
     // Các thuộc tính của người dùng
@@ -17,7 +13,7 @@ public class User {
     private String email;
     private String job;
 
-    // Constructor để khởi tạo dữ liệu người dùng
+    /** Constructor để khởi tạo dữ liệu người dùng. */
     public User(String name, LocalDate birthday, String sex, String address, String userId, String email, String job) {
         this.name = name;
         this.birthday = birthday;
@@ -27,44 +23,77 @@ public class User {
         this.email = email;
     }
 
-    // Getter cho các thuộc tính
+    /** Getter cho các thuộc tính. */
     public String getEmail() {
         return email;
     }
 
+    /** Getter cho các thuộc tính. */
     public String getName() {
         return name;
     }
 
+    /** Getter cho các thuộc tính. */
     public String getUserId() {
         return userId;
     }
 
+    /** Getter cho các thuộc tính. */
     public String getAddress() {
         return address;
     }
 
+    /** Getter cho các thuộc tính. */
     public String getJob() {
         return job;
     }
 
+    /** Getter cho các thuộc tính. */
     public String getSex() {
         return sex;
     }
 
+    /** Getter cho các thuộc tính. */
     public LocalDate getBirthday() {
         return birthday;
     }
 
-    public String getUserDir() {
-        return userDir;
+    /** Getter cho các thuộc tính. */
+    public void setEmail() {
+        this.email = email;
     }
 
-    public String getUserFilePath() {
-        return userFilePath;
+    /** Getter cho các thuộc tính. */
+    public void setName() {
+        this.name = name;
     }
 
-    // Phương thức tính tuổi dựa vào ngày sinh
+    /** Getter cho các thuộc tính. */
+    public void setUserId() {
+        this.userId = userId;
+    }
+
+    /** Getter cho các thuộc tính. */
+    public void setAddress() {
+        this.address = address;
+    }
+
+    /** Getter cho các thuộc tính. */
+    public void setJob() {
+        this.job = job;
+    }
+
+    /** Getter cho các thuộc tính. */
+    public void setSex() {
+        this.sex = sex;
+    }
+
+    /** Getter cho các thuộc tính. */
+    public void setBirthday() {
+        this.birthday = birthday;
+    }
+
+    /** Phương thức tính tuổi dựa vào ngày sinh. */
     public int age() {
         return Period.between(birthday, LocalDate.now()).getYears();
     }

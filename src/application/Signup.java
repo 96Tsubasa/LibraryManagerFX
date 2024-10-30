@@ -16,13 +16,13 @@ public class Signup {
     private final String userFilePath = "users.txt"; // Đường dẫn tới file lưu thông tin người dùng
     private final Map<String, String> userMap = new HashMap<>();
 
-    // Constructor: Tải dữ liệu người dùng từ file khi khởi tạo đối tượng
+    /** Constructor: Tải dữ liệu người dùng từ file khi khởi tạo đối tượng. */
     public Signup() {
         createUserFileIfNotExists();
         loadUserData();
     }
 
-    // Phương thức đăng ký tài khoản mới
+    /** Phương thức đăng ký tài khoản mới. */
     public void registerNewUser(String name, LocalDate birthday, String sex, String address, String userId,
                                 String email, String job, String password, String confirmPassword) {
 
@@ -72,7 +72,7 @@ public class Signup {
         infoAreaManager.appendText("User registered: " + email + "\n");
     }
 
-    // Phương thức lưu dữ liệu người dùng vào file
+    /** Phương thức lưu dữ liệu người dùng vào file. */
     private void saveUserData(User user, String password) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFilePath, true))) {
             // Ghi thông tin người dùng và mật khẩu băm vào file
@@ -84,7 +84,7 @@ public class Signup {
         }
     }
 
-    // Tạo file nếu chưa tồn tại
+    /** Tạo file nếu chưa tồn tại. */
     private void createUserFileIfNotExists() {
         try {
             // Tạo thư mục nếu chưa tồn tại
@@ -103,7 +103,7 @@ public class Signup {
         }
     }
 
-    // Tải dữ liệu người dùng từ file
+    /** Tải dữ liệu người dùng từ file. */
     private void loadUserData() {
         if (!Files.exists(Paths.get(userFilePath))) {
             return; // Nếu file không tồn tại, không cần tải dữ liệu
@@ -124,19 +124,19 @@ public class Signup {
         }
     }
 
-    // Kiểm tra định dạng email hợp lệ
+    /** Kiểm tra định dạng email hợp lệ. */
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email.matches(emailRegex);
     }
 
-    // Kiểm tra tính phức tạp của mật khẩu
+    /** Kiểm tra tính phức tạp của mật khẩu. */
     private boolean isValidPassword(String password) {
         return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*") &&
                 password.matches(".*\\d.*") && password.matches(".*[!@#$%^&*()].*");
     }
 
-    // Băm mật khẩu bằng SHA-256
+    /** Băm mật khẩu bằng SHA-256. */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
