@@ -1,127 +1,131 @@
-package org.example.library;
+package application;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import javafx.scene.control.Alert;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import javafx.scene.control.Alert;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javafx.scene.control.Alert.AlertType;
 
+class InfoAreaManager {
+    private static InfoAreaManager instance;
 
-public class Signup {
-    private final String userDir = "users"; // Thư mục chứa thông tin người dùng
-    private final String userFilePath = "users.txt"; // Đường dẫn tới file lưu thông tin người dùng
-    private final Map<String, String> userMap = new HashMap<>();
-
-    /** Constructor: Tải dữ liệu người dùng từ file khi khởi tạo đối tượng. */
-    public Signup() {
-        createUserFileIfNotExists();
-        loadUserData();
+    private InfoAreaManager() {
+        // Constructor riêng tư để thực hiện mẫu Singleton
     }
 
+    public static InfoAreaManager getInstance() {
+        if (instance == null) {
+            instance = new InfoAreaManager();
+        }
+        return instance;
+    }
+
+    /** Phương thức hiển thị thông báo */
+    public void showAlert(AlertType alertType, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+}
+
+public class Signup extends User {
+    private final String url = "jdbc:mysql://localhost:3306/user_management"; // Đường dẫn đến cơ sở dữ liệu
+    private final String user = "your_username"; // Tên người dùng MySQL
+    private final String password = "your_password"; // Mật khẩu MySQL
+
+    /** Constructor: Tải dữ liệu người dùng từ cơ sở dữ liệu khi khởi tạo đối tượng. */
+    Signup() {}
+
     /** Phương thức đăng ký tài khoản mới. */
-    public void registerNewUser(String name, LocalDate birthday, String sex, String address, String userId,
-                                String email, String job, String password, String confirmPassword) {
+    public void registerNewUser(String name, LocalDate birthday, GenderSex sex, String address, String userId,
+                                String email, jobTitle job, String password, String confirmPassword) {
 
         InfoAreaManager infoAreaManager = InfoAreaManager.getInstance(); // Sử dụng InfoAreaManager để hiển thị thông báo
 
         // Kiểm tra tính hợp lệ của email
         if (email == null || email.isEmpty()) {
-            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Email cannot be empty.");
+            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Email không được để trống.");
             return;
         }
         if (!isValidEmail(email)) {
-            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Invalid email format.");
+            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Định dạng email không hợp lệ.");
             return;
         }
 
         // Kiểm tra tính hợp lệ của mật khẩu
         if (password == null || password.length() < 6) {
-            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Password must be at least 6 characters long.");
+            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Mật khẩu phải có ít nhất 6 ký tự.");
             return;
         }
         if (!isValidPassword(password)) {
-            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Password must be at least 8 characters long, include uppercase, lowercase, a digit, and a special character.");
+            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, một chữ số và một ký tự đặc biệt.");
             return;
         }
 
         // Kiểm tra xem mật khẩu nhập lại có trùng khớp không
         if (!password.equals(confirmPassword)) {
-            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Passwords do not match.");
+            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Mật khẩu không trùng khớp.");
             return;
         }
 
         // Kiểm tra xem email đã được đăng ký hay chưa
-        if (userMap.containsKey(email)) {
-            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Email is already registered.");
+        if (isEmailRegistered(email)) {
+            infoAreaManager.showAlert(Alert.AlertType.ERROR, "Email đã được đăng ký.");
             return;
         }
 
-        User newUser = new User(name, birthday, sex, address, userId, email, job);
-
-        // Băm mật khẩu và lưu vào bản đồ người dùng
+        // Băm mật khẩu
         String hashedPassword = hashPassword(password);
-        userMap.put(email, hashedPassword);
-
-        saveUserData(newUser, hashedPassword);
-
-        infoAreaManager.showAlert(Alert.AlertType.INFORMATION, "Registration successful!");
-        infoAreaManager.appendText("User registered: " + email + "\n");
-    }
-
-    /** Phương thức lưu dữ liệu người dùng vào file. */
-    private void saveUserData(User user, String password) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFilePath, true))) {
-            // Ghi thông tin người dùng và mật khẩu băm vào file
-            writer.write(user.getUserId() + ":" + user.getName() + ":" + user.getBirthday() + ":" + user.getSex() + ":"
-                    + user.getAddress() + ":" + user.getEmail() + ":" + user.getJob() + ":" + password);
-            writer.newLine();
-        } catch (IOException e) {
-            InfoAreaManager.getInstance().showAlert(Alert.AlertType.ERROR, "Error saving user data. Please try again.");
+        if (hashedPassword == null) {
+            return; // Nếu có lỗi trong việc băm mật khẩu, dừng lại
         }
+
+        // Lưu thông tin người dùng vào cơ sở dữ liệu
+        saveUserData(new User(name, birthday, sex, address, userId, email, job, hashedPassword));
+
+        infoAreaManager.showAlert(Alert.AlertType.INFORMATION, "Đăng ký thành công!");
     }
 
-    /** Tạo file nếu chưa tồn tại. */
-    private void createUserFileIfNotExists() {
-        try {
-            // Tạo thư mục nếu chưa tồn tại
-            File userDirectory = new File(userDir);
-            if (!userDirectory.exists()) {
-                userDirectory.mkdirs(); // Tạo tất cả các thư mục nếu chưa tồn tại
-            }
-    
-            // Tạo file nếu chưa tồn tại trong thư mục
-            File file = new File(userDirectory, userFilePath);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            InfoAreaManager.getInstance().showAlert(Alert.AlertType.ERROR, "Error creating user file.");
+    /** Phương thức lưu dữ liệu người dùng vào cơ sở dữ liệu. */
+    private void saveUserData(User user) {
+        String query = "INSERT INTO users (userId, name, birthday, sex, address, email, job, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, user.getUserId());
+            pstmt.setString(2, user.getName());
+            pstmt.setDate(3, java.sql.Date.valueOf(user.getBirthday()));
+            pstmt.setString(4, user.getSex().name());
+            pstmt.setString(5, user.getAddress());
+            pstmt.setString(6, user.getEmail());
+            pstmt.setString(7, user.getJob().name());
+            pstmt.setString(8, user.getPassword()); // Đã băm trước đó
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            InfoAreaManager.getInstance().showAlert(Alert.AlertType.ERROR, "Lỗi khi lưu dữ liệu người dùng vào cơ sở dữ liệu: " + e.getMessage());
         }
     }
 
-    /** Tải dữ liệu người dùng từ file. */
-    private void loadUserData() {
-        if (!Files.exists(Paths.get(userFilePath))) {
-            return; // Nếu file không tồn tại, không cần tải dữ liệu
-        }
+    /** Kiểm tra xem email đã được đăng ký hay chưa. */
+    private boolean isEmailRegistered(String email) {
+        String query = "SELECT COUNT(*) FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length >= 9) {
-                    String email = parts[5];
-                    String password = parts[8];
-                    userMap.put(email, password); // Thêm email và mật khẩu vào map
-                }
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Nếu có ít nhất một bản ghi thì email đã được đăng ký
             }
-        } catch (IOException e) {
-            InfoAreaManager.getInstance().showAlert(Alert.AlertType.ERROR, "Error loading user data.");
+        } catch (SQLException e) {
+            InfoAreaManager.getInstance().showAlert(Alert.AlertType.ERROR, "Lỗi khi kiểm tra email: " + e.getMessage());
         }
+        return false;
     }
 
     /** Kiểm tra định dạng email hợp lệ. */
@@ -147,7 +151,8 @@ public class Signup {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            InfoAreaManager.getInstance().showAlert(Alert.AlertType.ERROR, "Lỗi khi băm mật khẩu: " + e.getMessage());
+            return null; // Trả về null nếu có lỗi
         }
     }
 }
