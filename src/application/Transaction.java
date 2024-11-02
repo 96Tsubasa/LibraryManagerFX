@@ -17,8 +17,7 @@ public class Transaction {
      * @param user The user involved in this transaction.
      * @param book The book involved in this transaction.
      * @param borrowDateTime The date and time this user borrowed the book.
-     * @param returnDateTime The date and time this user is supposed to return the book.
-     * @param isReturned Has the book been returned or not.
+     * @param dueDateTime The date and time this user is supposed to return the book.
      */
     public Transaction(long transactionId, User user, Book book, LocalDateTime borrowDateTime, LocalDateTime dueDateTime) {
         this.transactionId = transactionId;
