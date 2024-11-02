@@ -153,7 +153,7 @@ public class Book {
                 5,
                 "The Great Gatsby is a novel about the American Dream, wealth, and society in 1920s America. It tells the story of Jay Gatsby’s unrequited love for Daisy Buchanan, exploring themes of decadence, idealism, and the hollowness of the upper class.");
 
-        book.setIsbn("978-0743273565");
+        book.setIsbn("9780743273565");
 
         System.out.println(book.getBookInfo());
 
