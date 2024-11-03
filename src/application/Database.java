@@ -1,10 +1,13 @@
 package application;
 
+import javafx.util.converter.LocalDateStringConverter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +18,8 @@ public class Database {
 
     /** Add a new user to the database. */
     public static void addUser(User user) {
-        execute("INSERT INTO users (username, password, email, role) VALUES ('"
+        execute("INSERT INTO users (userId, username, password, email, role) VALUES ('"
+                + user.getUserId() + "', '"
                 + user.getName() + "', '"
                 + user.getPassword() + "', '"
                 + user.getEmail() + "', '"
@@ -58,6 +62,25 @@ public class Database {
             userList.add(temp);
         }
         return userList;
+    }
+
+    /** Handle login. Return User object with given username and password, null if no such user found. */
+    public static User handleLogin(String username, String password) {
+        List<Map<String, Object>> result = executeQuery("SELECT * FROM users WHERE username = '" +
+                username + "' AND password = '" +
+                password + "';");
+
+        if (result.isEmpty()) {
+            return null;
+        }
+
+        return new User((String) result.getFirst().get("username"),
+                null,
+                null,
+                null,
+                (String) result.getFirst().get("userId"),
+                (String) result.getFirst().get("email"),
+                (String) result.getFirst().get("role"));
     }
 
     /** Add a new author to the database. */
@@ -201,13 +224,20 @@ public class Database {
 
     /** Testing. */
     public static void main(String[] args) {
-        execute("INSERT INTO books (title, authorsId, publicationYear) VALUES " +
-                "('Hitorigoto', '1', 2018), " +
-                "('Bake no Hana', '2', 2024);");
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM books");
+//        LocalDate bday = LocalDate.of(2005, 7, 21);
+//        User user1 = new User("user1", bday, "male", "Dich Vong", "1", "mail1@gmail.com", "admin");
+//        User user2 = new User("user2", bday, "female", "Ton That Thuyet", "2", "mail2@gmail.com", "user");
+//        user1.setPassword("12345678");
+//        user2.setPassword("qwertyui");
+//        addUser(user1);
+//        addUser(user2);
 
-        for (Map<String, Object> it : result) {
-            System.out.println(it.get("bookId") + " " + it.get("title") + " " + it.get("publicationYear"));
+        User currentUser = handleLogin("user2", "qwertyui");
+        if (currentUser == null) {
+            System.out.println("Login failed");
+            return;
         }
+        System.out.println("Username: " + currentUser.getName());
+        System.out.println("Email: " + currentUser.getEmail());
     }
 }
