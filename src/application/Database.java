@@ -18,7 +18,7 @@ public class Database {
     public static void addUser(User user) {
         execute("INSERT INTO users (userId, username, password, email, role) VALUES ('"
                 + user.getUserId() + "', '"
-                + user.getName() + "', '"
+                + user.getUserName() + "', '"
                 + user.getPassword() + "', '"
                 + user.getEmail() + "', '"
                 + user.getJob() + "');");
@@ -27,7 +27,7 @@ public class Database {
     /** Edit a user's info by userId. */
     public static void editUserById(User user) {
         execute("UPDATE users SET "
-                + "username = " + user.getName() + ", "
+                + "username = " + user.getUserName() + ", "
                 + "password = " + user.getPassword() + ", "
                 + "email = " + user.getEmail() + ", "
                 + "role = " + user.getJob() + " "
@@ -40,19 +40,18 @@ public class Database {
                 (String) userId + "';");
 
         return new User((String) result.getFirst().get("username"),
-                null,
-                null,
-                null,
                 (String) result.getFirst().get("userId"),
                 (String) result.getFirst().get("email"),
-                (String) result.getFirst().get("role"));
+                (String) result.getFirst().get("password"),
+                null);
+//                (String) result.getFirst().get("role"));
     }
 
     /** Edit a user's info by email. */
     public static void editUserByEmail(User user) {
         execute("UPDATE users SET "
                 + "userId = " + user.getUserId() + ", "
-                + "username = " + user.getName() + ", "
+                + "username = " + user.getUserName() + ", "
                 + "password = " + user.getPassword() + ", "
                 + "role = " + user.getJob() + " "
                 + "WHERE email = " + user.getEmail() + ";");
@@ -64,12 +63,11 @@ public class Database {
         List<User> userList = new ArrayList<>();
         for (Map<String, Object> record : result) {
             User temp = new User((String) record.get("username"),
-                    null,
-                    null,
-                    null,
                     (String) record.get("userId"),
                     (String) record.get("email"),
-                    (String) record.get("role"));
+                    (String) record.get("password"),
+                    null);
+//                    (String) record.get("role"));
 
             userList.add(temp);
         }
@@ -88,12 +86,11 @@ public class Database {
         }
 
         return new User((String) result.getFirst().get("username"),
-                null,
-                null,
-                null,
                 (String) result.getFirst().get("userId"),
                 (String) result.getFirst().get("email"),
-                (String) result.getFirst().get("role"));
+                (String) result.getFirst().get("password"),
+                null);
+//                (String) result.getFirst().get("role"));
     }
 
     /** Add a new author to the database. */
@@ -291,7 +288,7 @@ public class Database {
             System.out.println("Login failed");
             return;
         }
-        System.out.println("Username: " + currentUser.getName());
+        System.out.println("Username: " + currentUser.getUserName());
         System.out.println("Email: " + currentUser.getEmail());
     }
 }
