@@ -232,8 +232,10 @@ public class Database {
             Book book = getBookById(record.get("bookId"));
             LocalDate borrowDate = LocalDate.parse((String) record.get("borrowDate"));
             LocalDate dueDate = LocalDate.parse((String) record.get("dueDate"));
+            LocalDate returnDate = LocalDate.parse((String) record.get("returnDate"));
             boolean isReturned = Boolean.parseBoolean((String) record.get("isReturned"));
-            transactionList.add(new Transaction(transactionId, user, book, borrowDate, dueDate, isReturned));
+            transactionList.add(new Transaction(transactionId, user, book,
+                    borrowDate, dueDate, returnDate, isReturned));
         }
         return transactionList;
     }
