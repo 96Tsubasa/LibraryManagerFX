@@ -1,7 +1,5 @@
 package application;
 
-import javafx.util.converter.LocalDateStringConverter;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -36,6 +34,20 @@ public class Database {
                 + "WHERE userId = " + user.getUserId() + ";");
     }
 
+    /** Get user by userId. */
+    private static User getUserById(Object userId) {
+        List<Map<String, Object>> result = executeQuery("SELECT * FROM users WHERE userId = '" +
+                (String) userId + "';");
+
+        return new User((String) result.getFirst().get("username"),
+                null,
+                null,
+                null,
+                (String) result.getFirst().get("userId"),
+                (String) result.getFirst().get("email"),
+                (String) result.getFirst().get("role"));
+    }
+
     /** Edit a user's info by email. */
     public static void editUserByEmail(User user) {
         execute("UPDATE users SET "
@@ -64,8 +76,9 @@ public class Database {
         return userList;
     }
 
-    /** Handle login. Return User object with given username and password, null if no such user found. */
-    public static User handleLogin(String username, String password) {
+    /** Handle login. Return User object with given username and password, null if no such user found.
+     * This has been changed to private method and will be removed soon. */
+    private static User handleLogin(String username, String password) {
         List<Map<String, Object>> result = executeQuery("SELECT * FROM users WHERE username = '" +
                 username + "' AND password = '" +
                 password + "';");
@@ -160,6 +173,31 @@ public class Database {
         execute(query.toString());
     }
 
+    /** Get book by bookId. */
+    private static Book getBookById(Object bookId) {
+        List<Map<String, Object>> result = executeQuery("SELECT * FROM books WHERE bookId = '" +
+                (Long) bookId + "';");
+
+        String title = (String) result.getFirst().get("title");
+        String[] authorsId = ((String) result.getFirst().get("authorsId")).split(";");
+        String[] authors = new String[authorsId.length];
+        for (int i = 0; i < authorsId.length; i++) {
+            authors[i] = getAuthorNameById(authorsId[i]);
+        }
+        String publisher = (String) result.getFirst().get("publisher");
+        int publicationYear = (int) result.getFirst().get("publicationYear");
+        String[] genresId = ((String) result.getFirst().get("genresId")).split(";");
+        String[] genres = new String[authorsId.length];
+        for (int i = 0; i < authorsId.length; i++) {
+            genres[i] = getAuthorNameById(genresId[i]);
+        }
+        int copiesAvailable = (int) result.getFirst().get("copiesAvailable");
+        String description = (String) result.getFirst().get("description");
+
+        return new Book(title, authors, publisher, publicationYear,
+                genres, copiesAvailable, description);
+    }
+
     /** Load all books from the database. */
     public static List<Book> loadBooks() {
         List<Map<String, Object>> result = executeQuery("SELECT * FROM books");
@@ -185,6 +223,22 @@ public class Database {
                     genres, copiesAvailable, description));
         }
         return bookList;
+    }
+
+    /** Load all transactions' data from database. */
+    public static List<Transaction> loadTransactions() {
+        List<Map<String, Object>> result = executeQuery("SELECT * FROM transactions");
+        List<Transaction> transactionList = new ArrayList<>();
+        for (Map<String, Object> record : result) {
+            long transactionId = (Long) record.get("transactionId");
+            User user = getUserById(record.get("userId"));
+            Book book = getBookById(record.get("bookId"));
+            LocalDate borrowDate = LocalDate.parse((String) record.get("borrowDate"));
+            LocalDate dueDate = LocalDate.parse((String) record.get("dueDate"));
+            boolean isReturned = Boolean.parseBoolean((String) record.get("isReturned"));
+            transactionList.add(new Transaction(transactionId, user, book, borrowDate, dueDate, isReturned));
+        }
+        return transactionList;
     }
 
     /** Run a query that doesn't return results on the database. */
