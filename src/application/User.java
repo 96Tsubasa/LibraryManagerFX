@@ -10,19 +10,11 @@ import java.util.Map;
 
 public class User {
     // Các thuộc tính của người dùng
-    private String name;
-    private LocalDate birthday;
-    private GenderSex sex;
-    private String address;
+    private String userName;
     private String userId; // userId chưa mã hóa
     private String email;
     private jobTitle job;
     private String password;
-    private final Map<String, String> userMap = new HashMap<>();
-
-    public enum GenderSex {
-        MALE, FEMALE, OTHER;
-    }
 
     public enum jobTitle {
         SOFTWARE_ENGINEER,        // Kỹ sư phần mềm
@@ -40,16 +32,12 @@ public class User {
     }
 
     /** Constructor để khởi tạo dữ liệu người dùng. */
-    public User(String name, LocalDate birthday, GenderSex sex, String address, String userId, String email, jobTitle job, String password) {
-        this.name = name;
-        this.birthday = birthday;
-        this.sex = sex;
-        this.address = address;
+    public User(String name, String userId, String email, String password, jobTitle job) {
+        this.userName = name;
         this.userId = userId; // Lưu userId chưa mã hóa
         this.email = email;
         setPassword(password); // Mã hóa mật khẩu khi khởi tạo
         this.job = job;
-        userMap.put(userId, this.password);
     }
 
     public User() {
@@ -61,8 +49,8 @@ public class User {
     }
 
     /** Getter cho các thuộc tính. */
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
     /** Getter cho các thuộc tính. */
@@ -71,23 +59,8 @@ public class User {
     }
 
     /** Getter cho các thuộc tính. */
-    public String getAddress() {
-        return address;
-    }
-
-    /** Getter cho các thuộc tính. */
     public jobTitle getJob() {
         return job;
-    }
-
-    /** Getter cho các thuộc tính. */
-    public GenderSex getSex() {
-        return sex;
-    }
-
-    /** Getter cho các thuộc tính. */
-    public LocalDate getBirthday() {
-        return birthday;
     }
 
     /** Getter cho các thuộc tính. */
@@ -105,26 +78,21 @@ public class User {
     }
 
     /** Setter cho các thuộc tính. */
-    public void setName(String name) {
+    public void setUserName(String name) {
         if (name == null || name.isEmpty()) {
             showAlert("Tên không được để trống.");
             return;
         }
-        this.name = name;
+        this.userName = name;
     }
 
     /** Setter cho các thuộc tính. */
     public void setUserId(String userId) {
-        if (userId == null || userId.isEmpty() || userId.length() != 6) {
+        if (userId == null || userId.isEmpty() || !isValidUserId(userId)) {
             showAlert("Mã định danh sai.");
             return;
         }
         this.userId = userId;
-    }
-
-    /** Setter cho các thuộc tính. */
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     /** Setter cho các thuộc tính. */
@@ -137,34 +105,23 @@ public class User {
     }
 
     /** Setter cho các thuộc tính. */
-    public void setSex(GenderSex sex) {
-        this.sex = sex;
-    }
-
-    /** Setter cho các thuộc tính. */
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-    }
-
-    /** Setter cho các thuộc tính. */
     public void setPassword(String password) {
-        if (password == null || password.length() < 6) {
-            showAlert("Mật khẩu phải có ít nhất 6 ký tự.");
+        if (!isValidPassword(password)) {
+            showAlert("Sai định dạng mật khẩu.");
             return;
         }
         this.password = hashPassword(password);
     }
 
-    /** Phương thức tính tuổi dựa vào ngày sinh. */
-    public int age() {
-        return Period.between(birthday, LocalDate.now()).getYears();
+    /** Kiểm tra tính phức tạp của mật khẩu. */
+    private boolean isValidPassword(String password) {
+        return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*") &&
+                password.matches(".*\\d.*") && password.matches(".*[!@#$%^&*()].*");
     }
 
-    /** Phương thức toString để hiển thị thông tin người dùng. */
-    @Override
-    public String toString() {
-        return String.format("User ID: %s, Name: %s, Birthday: %s, Sex: %s, Address: %s, Email: %s, Job: %s",
-                userId, name, birthday, sex, address, email, job);
+    /** Kiểm tra tính phức tạp của userId. */
+    private boolean isValidUserId(String userId) {
+        return userId.length() == 6;
     }
 
     /** Kiểm tra định dạng email hợp lệ. */
