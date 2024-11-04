@@ -11,18 +11,11 @@ import java.util.Map;
 public class User {
     // Các thuộc tính của người dùng
     private String name;
-    private LocalDate birthday;
-    private GenderSex sex;
-    private String address;
     private String userId; // userId chưa mã hóa
     private String email;
     private jobTitle job;
     private String password;
     private final Map<String, String> userMap = new HashMap<>();
-
-    public enum GenderSex {
-        MALE, FEMALE, OTHER;
-    }
 
     public enum jobTitle {
         SOFTWARE_ENGINEER,        // Kỹ sư phần mềm
@@ -40,11 +33,8 @@ public class User {
     }
 
     /** Constructor để khởi tạo dữ liệu người dùng. */
-    public User(String name, LocalDate birthday, GenderSex sex, String address, String userId, String email, jobTitle job, String password) {
+    public User(String name, String userId, String email, jobTitle job, String password) {
         this.name = name;
-        this.birthday = birthday;
-        this.sex = sex;
-        this.address = address;
         this.userId = userId; // Lưu userId chưa mã hóa
         this.email = email;
         setPassword(password); // Mã hóa mật khẩu khi khởi tạo
@@ -71,23 +61,8 @@ public class User {
     }
 
     /** Getter cho các thuộc tính. */
-    public String getAddress() {
-        return address;
-    }
-
-    /** Getter cho các thuộc tính. */
     public jobTitle getJob() {
         return job;
-    }
-
-    /** Getter cho các thuộc tính. */
-    public GenderSex getSex() {
-        return sex;
-    }
-
-    /** Getter cho các thuộc tính. */
-    public LocalDate getBirthday() {
-        return birthday;
     }
 
     /** Getter cho các thuộc tính. */
@@ -123,27 +98,12 @@ public class User {
     }
 
     /** Setter cho các thuộc tính. */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    /** Setter cho các thuộc tính. */
     public void setJob(jobTitle job) {
         if (job == null) {
             showAlert("Công việc không được để trống.");
             return;
         }
         this.job = job;
-    }
-
-    /** Setter cho các thuộc tính. */
-    public void setSex(GenderSex sex) {
-        this.sex = sex;
-    }
-
-    /** Setter cho các thuộc tính. */
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
     }
 
     /** Setter cho các thuộc tính. */
@@ -155,16 +115,11 @@ public class User {
         this.password = hashPassword(password);
     }
 
-    /** Phương thức tính tuổi dựa vào ngày sinh. */
-    public int age() {
-        return Period.between(birthday, LocalDate.now()).getYears();
-    }
-
     /** Phương thức toString để hiển thị thông tin người dùng. */
     @Override
     public String toString() {
-        return String.format("User ID: %s, Name: %s, Birthday: %s, Sex: %s, Address: %s, Email: %s, Job: %s",
-                userId, name, birthday, sex, address, email, job);
+        return String.format("User ID: %s, Name: %s, Email: %s, Job: %s",
+                userId, name, email, job);
     }
 
     /** Kiểm tra định dạng email hợp lệ. */
