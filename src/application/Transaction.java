@@ -1,14 +1,14 @@
 package application;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Transaction {
     private long transactionId;
     private User user;
     private Book book;
-    private LocalDateTime borrowDateTime;
-    private LocalDateTime dueDateTime;
-    private LocalDateTime returnDateTime;
+    private LocalDate borrowDate;
+    private LocalDate dueDate;
+    private LocalDate returnDate;
     private boolean isReturned = false;
 
     /**
@@ -16,15 +16,15 @@ public class Transaction {
      * @param transactionId Unique ID for this transaction.
      * @param user The user involved in this transaction.
      * @param book The book involved in this transaction.
-     * @param borrowDateTime The date and time this user borrowed the book.
-     * @param dueDateTime The date and time this user is supposed to return the book.
+     * @param borrowDate The date and time this user borrowed the book.
+     * @param dueDate The date and time this user is supposed to return the book.
      */
-    public Transaction(long transactionId, User user, Book book, LocalDateTime borrowDateTime, LocalDateTime dueDateTime) {
+    public Transaction(long transactionId, User user, Book book, LocalDate borrowDate, LocalDate dueDate) {
         this.transactionId = transactionId;
         this.user = user;
         this.book = book;
-        this.borrowDateTime = borrowDateTime;
-        this.dueDateTime = dueDateTime;
+        this.borrowDate = borrowDate;
+        this.dueDate = dueDate;
     }
 
     public long getTransactionId() {
@@ -51,28 +51,28 @@ public class Transaction {
         this.book = book;
     }
 
-    public LocalDateTime getBorrowDateTime() {
-        return borrowDateTime;
+    public LocalDate getBorrowDate() {
+        return borrowDate;
     }
 
-    public void setBorrowDateTime(LocalDateTime borrowDateTime) {
-        this.borrowDateTime = borrowDateTime;
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
     }
 
-    public LocalDateTime getDueDateTime() {
-        return dueDateTime;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setDueDateTime(LocalDateTime dueDateTime) {
-        this.dueDateTime = dueDateTime;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public LocalDateTime getReturnDateTime() {
-        return returnDateTime;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
 
-    public void setReturnDateTime(LocalDateTime returnDateTime) {
-        this.returnDateTime = returnDateTime;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
     public boolean isReturned() {
@@ -85,7 +85,7 @@ public class Transaction {
 
     /** Update the return book status. */
     public void returnBook() {
-        returnDateTime = LocalDateTime.now();
+        returnDate = LocalDate.now();
         isReturned = true;
     }
 
@@ -95,7 +95,7 @@ public class Transaction {
             return false;
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(dueDateTime);
+        LocalDate now = LocalDate.now();
+        return now.isAfter(dueDate);
     }
 }
