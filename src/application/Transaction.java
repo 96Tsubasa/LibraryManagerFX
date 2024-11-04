@@ -9,7 +9,7 @@ public class Transaction {
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
-    private boolean isReturned = false;
+    private boolean isReturned;
 
     /**
      * Create a new transaction.
@@ -18,13 +18,17 @@ public class Transaction {
      * @param book The book involved in this transaction.
      * @param borrowDate The date and time this user borrowed the book.
      * @param dueDate The date and time this user is supposed to return the book.
+     * @param returnDate The date and time this user has returned the book, can be null.
+     * @param isReturned Has the book been returned yet.
      */
-    public Transaction(long transactionId, User user, Book book, LocalDate borrowDate, LocalDate dueDate) {
+    public Transaction(long transactionId, User user, Book book,
+                       LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
         this.transactionId = transactionId;
         this.user = user;
         this.book = book;
         this.borrowDate = borrowDate;
         this.dueDate = dueDate;
+        this.isReturned = isReturned;
     }
 
     public long getTransactionId() {
