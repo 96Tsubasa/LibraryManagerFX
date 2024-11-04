@@ -10,6 +10,9 @@ public class LibrarySystem {
     /** Constructor. */
     public LibrarySystem() {
         // Load data from database
+        books = Database.loadBooks();
+        users = Database.loadUsers();
+        transactions = Database.loadTransactions();
     }
 
     /** Create a new user, add to users List and database (Need to add/change parameters). */
