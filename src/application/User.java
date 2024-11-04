@@ -10,12 +10,11 @@ import java.util.Map;
 
 public class User {
     // Các thuộc tính của người dùng
-    private String name;
+    private String userName;
     private String userId; // userId chưa mã hóa
     private String email;
     private jobTitle job;
     private String password;
-    private final Map<String, String> userMap = new HashMap<>();
 
     public enum jobTitle {
         SOFTWARE_ENGINEER,        // Kỹ sư phần mềm
@@ -33,13 +32,12 @@ public class User {
     }
 
     /** Constructor để khởi tạo dữ liệu người dùng. */
-    public User(String name, String userId, String email, jobTitle job, String password) {
-        this.name = name;
+    public User(String name, String userId, String email, String password, jobTitle job) {
+        this.userName = name;
         this.userId = userId; // Lưu userId chưa mã hóa
         this.email = email;
         setPassword(password); // Mã hóa mật khẩu khi khởi tạo
         this.job = job;
-        userMap.put(userId, this.password);
     }
 
     public User() {
@@ -51,8 +49,8 @@ public class User {
     }
 
     /** Getter cho các thuộc tính. */
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
     /** Getter cho các thuộc tính. */
@@ -80,17 +78,17 @@ public class User {
     }
 
     /** Setter cho các thuộc tính. */
-    public void setName(String name) {
+    public void setUserName(String name) {
         if (name == null || name.isEmpty()) {
             showAlert("Tên không được để trống.");
             return;
         }
-        this.name = name;
+        this.userName = name;
     }
 
     /** Setter cho các thuộc tính. */
     public void setUserId(String userId) {
-        if (userId == null || userId.isEmpty() || userId.length() != 6) {
+        if (userId == null || userId.isEmpty() || !isValidUserId(userId)) {
             showAlert("Mã định danh sai.");
             return;
         }
@@ -108,18 +106,22 @@ public class User {
 
     /** Setter cho các thuộc tính. */
     public void setPassword(String password) {
-        if (password == null || password.length() < 6) {
-            showAlert("Mật khẩu phải có ít nhất 6 ký tự.");
+        if (!isValidPassword(password)) {
+            showAlert("Sai định dạng mật khẩu.");
             return;
         }
         this.password = hashPassword(password);
     }
 
-    /** Phương thức toString để hiển thị thông tin người dùng. */
-    @Override
-    public String toString() {
-        return String.format("User ID: %s, Name: %s, Email: %s, Job: %s",
-                userId, name, email, job);
+    /** Kiểm tra tính phức tạp của mật khẩu. */
+    private boolean isValidPassword(String password) {
+        return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*") &&
+                password.matches(".*\\d.*") && password.matches(".*[!@#$%^&*()].*");
+    }
+
+    /** Kiểm tra tính phức tạp của userId. */
+    private boolean isValidUserId(String userId) {
+        return userId.length() == 6;
     }
 
     /** Kiểm tra định dạng email hợp lệ. */

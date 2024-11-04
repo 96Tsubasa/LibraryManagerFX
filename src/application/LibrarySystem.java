@@ -13,13 +13,25 @@ public class LibrarySystem {
     }
 
     /** Create a new user, add to users List and database (Need to add/change parameters). */
-    public void addUser(String username, String password, String email) {
+    public void addUser(String name, String userId, String email, String password, User.jobTitle job) {
         // Code here
+        User user = new User(name, userId, email, password, job);
+        user.setUserId(userId);
+        user.setUserName(name);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setJob(job);
+        users.add(user);
     }
 
     /** Check username and password with database, return null if no username or false password. */
     public User handleLogin(String username, String password) {
         // Code here
+        for (User user : users) {
+            if (user.getUserName().equals(username) && user.checkPassword(password)) {
+                return user;
+            }
+        }
         return null;    // Placeholder
     }
 
