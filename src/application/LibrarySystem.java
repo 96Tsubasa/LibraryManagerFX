@@ -16,14 +16,14 @@ public class LibrarySystem {
     }
 
     /** Create a new user, add to users List and database (Need to add/change parameters). */
-    public void addUser(String name, String userId, String email, String password, User.jobTitle job) {
+    public void addUser(String name, String userId, String email, String password, String role) {
         // Code here
-        User user = new User(name, userId, email, password, job);
+        User user = new User(name, userId, email, password, role);
         user.setUserId(userId);
         user.setUserName(name);
         user.setPassword(password);
         user.setEmail(email);
-        user.setJob(job);
+        user.setRole(role);
         users.add(user);
     }
 

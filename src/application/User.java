@@ -10,34 +10,21 @@ import java.util.Map;
 
 public class User {
     // Các thuộc tính của người dùng
+    public static final String NORMAL_USER = "USER";
+    public static final String ADMIN = "ADMIN";
     private String userName;
     private String userId; // userId chưa mã hóa
     private String email;
-    private jobTitle job;
+    private String role;
     private String password;
 
-    public enum jobTitle {
-        SOFTWARE_ENGINEER,        // Kỹ sư phần mềm
-        WEB_DEVELOPER,            // Nhà phát triển web
-        PROJECT_MANAGER,          // Quản lý dự án
-        MARKETING_SPECIALIST,     // Chuyên viên marketing
-        GRAPHIC_DESIGNER,         // Nhà thiết kế đồ họa
-        DATA_ANALYST,             // Nhà phân tích dữ liệu
-        STUDENT,                  // Sinh viên
-        TEACHER,                  // Giáo viên
-        LECTURER,                 // Giảng viên
-        RESEARCHER,               // Nhà nghiên cứu
-        ADMINISTRATOR,            // Quản trị viên
-        UNIVERSITY_STAFF          // Nhân viên đại học
-    }
-
     /** Constructor để khởi tạo dữ liệu người dùng. */
-    public User(String name, String userId, String email, String password, jobTitle job) {
+    public User(String name, String userId, String email, String password, String role) {
         this.userName = name;
         this.userId = userId; // Lưu userId chưa mã hóa
         this.email = email;
         setPassword(password); // Mã hóa mật khẩu khi khởi tạo
-        this.job = job;
+        this.role = role;
     }
 
     public User() {
@@ -59,8 +46,8 @@ public class User {
     }
 
     /** Getter cho các thuộc tính. */
-    public jobTitle getJob() {
-        return job;
+    public String getRole() {
+        return role;
     }
 
     /** Getter cho các thuộc tính. */
@@ -96,12 +83,12 @@ public class User {
     }
 
     /** Setter cho các thuộc tính. */
-    public void setJob(jobTitle job) {
-        if (job == null) {
+    public void setRole(String role) {
+        if (role == null) {
             showAlert("Công việc không được để trống.");
             return;
         }
-        this.job = job;
+        this.role = role;
     }
 
     /** Setter cho các thuộc tính. */
