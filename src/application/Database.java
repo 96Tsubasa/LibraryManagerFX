@@ -21,7 +21,7 @@ public class Database {
                 + user.getUserName() + "', '"
                 + user.getPassword() + "', '"
                 + user.getEmail() + "', '"
-                + user.getJob() + "');");
+                + user.getRole() + "');");
     }
 
     /** Edit a user's info by userId. */
@@ -30,7 +30,7 @@ public class Database {
                 + "username = " + user.getUserName() + ", "
                 + "password = " + user.getPassword() + ", "
                 + "email = " + user.getEmail() + ", "
-                + "role = " + user.getJob() + " "
+                + "role = " + user.getRole() + " "
                 + "WHERE userId = " + user.getUserId() + ";");
     }
 
@@ -43,8 +43,7 @@ public class Database {
                 (String) result.getFirst().get("userId"),
                 (String) result.getFirst().get("email"),
                 (String) result.getFirst().get("password"),
-                null);
-//                (String) result.getFirst().get("role"));
+                (String) result.getFirst().get("role"));
     }
 
     /** Edit a user's info by email. */
@@ -53,7 +52,7 @@ public class Database {
                 + "userId = " + user.getUserId() + ", "
                 + "username = " + user.getUserName() + ", "
                 + "password = " + user.getPassword() + ", "
-                + "role = " + user.getJob() + " "
+                + "role = " + user.getRole() + " "
                 + "WHERE email = " + user.getEmail() + ";");
     }
 
@@ -66,8 +65,7 @@ public class Database {
                     (String) record.get("userId"),
                     (String) record.get("email"),
                     (String) record.get("password"),
-                    null);
-//                    (String) record.get("role"));
+                    (String) record.get("role"));
 
             userList.add(temp);
         }
@@ -89,8 +87,7 @@ public class Database {
                 (String) result.getFirst().get("userId"),
                 (String) result.getFirst().get("email"),
                 (String) result.getFirst().get("password"),
-                null);
-//                (String) result.getFirst().get("role"));
+                (String) result.getFirst().get("role"));
     }
 
     /** Add a new author to the database. */
