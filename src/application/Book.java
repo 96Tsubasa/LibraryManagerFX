@@ -3,6 +3,7 @@ package application;
 import java.util.Arrays;
 
 public class Book {
+    private long bookId;
     private String isbn;
     private String title;
     private String[] authors;
@@ -27,6 +28,7 @@ public class Book {
 
     /**
      * Create a new Book with the given parameters:
+     * @param bookId: The ID of the book in this system.
      * @param title: The title of the book.
      * @param authors: The author(s) of the book.
      * @param publisher: The publisher of the book.
@@ -35,7 +37,8 @@ public class Book {
      * @param copiesAvailable: The amount of copies available in the Library.
      * @param description: The description for the book.
      */
-    public Book(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
+    public Book(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
+        this.bookId = bookId;
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -43,6 +46,14 @@ public class Book {
         this.genres = genres;
         this.copiesAvailable = copiesAvailable;
         this.description = description;
+    }
+
+    public long getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(long bookId) {
+        this.bookId = bookId;
     }
 
     public String getIsbn() {
@@ -145,7 +156,7 @@ public class Book {
     }
 
     public static void main(String[] args) {
-        Book book = new Book("The Great Gatsby",
+        Book book = new Book(1, "The Great Gatsby",
                 new String[] {"F. Scott Fitzgerald"},
                 "Scribner",
                 1925,
