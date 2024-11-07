@@ -35,15 +35,23 @@ public class Database {
     }
 
     /** Get user by userId. */
-    private static User getUserById(Object userId) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM users WHERE userId = '" +
-                (String) userId + "';");
+    private static User getUserById(long userId) {
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE userId = '" +
+                     userId + "';")) {
 
-        return new User((String) result.getFirst().get("username"),
-                (String) result.getFirst().get("userId"),
-                (String) result.getFirst().get("email"),
-                (String) result.getFirst().get("password"),
-                (String) result.getFirst().get("role"));
+            rs.next();
+            return new User(rs.getString("username"),
+                    rs.getLong("userId"),
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getString("role"));
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     /** Edit a user's info by email. */
@@ -58,16 +66,21 @@ public class Database {
 
     /** Load all users' data from database. */
     public static List<User> loadUsers() {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM users");
         List<User> userList = new ArrayList<>();
-        for (Map<String, Object> record : result) {
-            User temp = new User((String) record.get("username"),
-                    (String) record.get("userId"),
-                    (String) record.get("email"),
-                    (String) record.get("password"),
-                    (String) record.get("role"));
 
-            userList.add(temp);
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM users")) {
+
+            while (rs.next()) {
+                userList.add(new User(rs.getString("username"),
+                        rs.getLong("userId"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("role")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
         return userList;
     }
@@ -84,7 +97,7 @@ public class Database {
         }
 
         return new User((String) result.getFirst().get("username"),
-                (String) result.getFirst().get("userId"),
+                (Long) result.getFirst().get("userId"),
                 (String) result.getFirst().get("email"),
                 (String) result.getFirst().get("password"),
                 (String) result.getFirst().get("role"));
@@ -96,27 +109,35 @@ public class Database {
     }
 
     /** Get authorId by authorName. Returns -1 if not found in database. */
-    private static int getAuthorIdByName(String authorName) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM authors WHERE " +
-                "authorName = '" + authorName + "'");
+    private static long getAuthorIdByName(String authorName) {
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM authors WHERE " +
+                     "authorName = '" + authorName + "'")) {
 
-        if (result.isEmpty()) {
-            return -1;
+            rs.next();
+            return rs.getLong("authorId");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return (int) result.getFirst().get("authorId");
+        return -1;
     }
 
     /** Get authorName by authorId. Returns null if not found in database. */
     private static String getAuthorNameById(String authorId) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM authors WHERE " +
-                "authorId = " + authorId);
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM authors WHERE " +
+                     "authorId = " + authorId)) {
 
-        if (result.isEmpty()) {
-            return null;
+            rs.next();
+            return rs.getString("authorName");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return (String) result.getFirst().get("authorName");
+        return null;
     }
 
     /** Add a new genre to the database. */
@@ -125,27 +146,35 @@ public class Database {
     }
 
     /** Get genreId by genreName. Returns -1 if not found in database. */
-    private static int getGenreIdByName(String genreName) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM genres WHERE " +
-                "genreName = '" + genreName + "'");
+    private static long getGenreIdByName(String genreName) {
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM genres WHERE " +
+                     "genreName = '" + genreName + "'")) {
 
-        if (result.isEmpty()) {
-            return -1;
+            rs.next();
+            return rs.getLong("genreId");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return (int) result.getFirst().get("genreId");
+        return -1;
     }
 
     /** Get genreName by genreId. Returns null if not found in database. */
     private static String getGenreNameById(String genreId) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM genres WHERE " +
-                "genreId = " + genreId);
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM genres WHERE " +
+                     "genreId = " + genreId)) {
 
-        if (result.isEmpty()) {
-            return null;
+            rs.next();
+            return rs.getString("genreName");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return (String) result.getFirst().get("genreName");
+        return null;
     }
 
     /** Add a new book to the database. */
@@ -168,54 +197,68 @@ public class Database {
     }
 
     /** Get book by bookId. */
-    private static Book getBookById(Object bookId) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM books WHERE bookId = '" +
-                (Long) bookId + "';");
-
-        String title = (String) result.getFirst().get("title");
-        String[] authorsId = ((String) result.getFirst().get("authorsId")).split(";");
-        String[] authors = new String[authorsId.length];
-        for (int i = 0; i < authorsId.length; i++) {
-            authors[i] = getAuthorNameById(authorsId[i]);
-        }
-        String publisher = (String) result.getFirst().get("publisher");
-        int publicationYear = (int) result.getFirst().get("publicationYear");
-        String[] genresId = ((String) result.getFirst().get("genresId")).split(";");
-        String[] genres = new String[authorsId.length];
-        for (int i = 0; i < authorsId.length; i++) {
-            genres[i] = getAuthorNameById(genresId[i]);
-        }
-        int copiesAvailable = (int) result.getFirst().get("copiesAvailable");
-        String description = (String) result.getFirst().get("description");
-
-        return new Book((Long) bookId, title, authors, publisher, publicationYear,
-                genres, copiesAvailable, description);
-    }
+//    private static Book getBookById(Object bookId) {
+//        List<Map<String, Object>> result = executeQuery("SELECT * FROM books WHERE bookId = '" +
+//                String.valueOf(bookId) + "';");
+//
+//        String title = (String) result.getFirst().get("title");
+//        String[] authorsId = ((String) result.getFirst().get("authorsId")).split(";");
+//        String[] authors = new String[authorsId.length];
+//        for (int i = 0; i < authorsId.length; i++) {
+//            authors[i] = getAuthorNameById(authorsId[i]);
+//        }
+//        String publisher = (String) result.getFirst().get("publisher");
+//        int publicationYear = Integer.parseInt((String) result.getFirst().get("publicationYear"));
+//        String[] genresId = ((String) result.getFirst().get("genresId")).split(";");
+//        String[] genres = new String[authorsId.length];
+//        for (int i = 0; i < authorsId.length; i++) {
+//            genres[i] = getAuthorNameById(genresId[i]);
+//        }
+//        int copiesAvailable = Integer.parseInt((String) result.getFirst().get("copiesAvailable"));
+//        String description = (String) result.getFirst().get("description");
+//
+//        return new Book(Long.parseLong((String) bookId), title, authors, publisher, publicationYear,
+//                genres, copiesAvailable, description);
+//    }
 
     /** Load all books from the database. */
     public static List<Book> loadBooks() {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM books");
         List<Book> bookList = new ArrayList<>();
-        for (Map<String, Object> record : result) {
-            Long bookId = (Long) record.get("bookId");
-            String title = (String) record.get("title");
-            String[] authorsId = ((String) record.get("authorsId")).split(";");
-            String[] authors = new String[authorsId.length];
-            for (int i = 0; i < authorsId.length; i++) {
-                authors[i] = getAuthorNameById(authorsId[i]);
-            }
-            String publisher = (String) record.get("publisher");
-            int publicationYear = (int) record.get("publicationYear");
-            String[] genresId = ((String) record.get("genresId")).split(";");
-            String[] genres = new String[authorsId.length];
-            for (int i = 0; i < authorsId.length; i++) {
-                genres[i] = getAuthorNameById(genresId[i]);
-            }
-            int copiesAvailable = (int) record.get("copiesAvailable");
-            String description = (String) record.get("description");
 
-            bookList.add(new Book(bookId, title, authors, publisher, publicationYear,
-                    genres, copiesAvailable, description));
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM books")) {
+
+            while (rs.next()) {
+                long bookId = rs.getLong("bookId");
+                String isbn = rs.getString("isbn");
+                String title = rs.getString("title");
+                String[] authorsId = rs.getString("authorsId").split(";");
+                String[] authors = new String[authorsId.length];
+                for (int i = 0; i < authorsId.length; i++) {
+                    authors[i] = getAuthorNameById(authorsId[i]);
+                }
+                String publisher = rs.getString("publisher");
+                int publicationYear = rs.getInt("publicationYear");
+                String[] genresId = rs.getString("genresId").split(";");
+                String[] genres = new String[genresId.length];
+                for (int i = 0; i < genresId.length; i++) {
+                    genres[i] = getAuthorNameById(genresId[i]);
+                }
+                int copiesAvailable = rs.getInt("copiesAvailable");
+                String description = rs.getString("description");
+
+                bookList.add(new Book(bookId,
+                        title,
+                        authors,
+                        publisher,
+                        publicationYear,
+                        genres,
+                        copiesAvailable,
+                        description));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
         return bookList;
     }
@@ -225,8 +268,8 @@ public class Database {
         execute("INSERT INTO transactions (transactionId, userId, bookId, borrowDate, " +
                 "dueDate, returnDate, isReturned) VALUES ('"
                 + transaction.getTransactionId() + "', '"
-                + transaction.getUser().getUserId() + "', '"
-                + transaction.getBook().getBookId() + "', '"
+                + transaction.getUserId() + "', '"
+                + transaction.getBookId() + "', '"
                 + transaction.getBorrowDate().toString() + "', '"
                 + transaction.getDueDate().toString() + "', '"
                 + transaction.getReturnDate().toString() + "', '"
@@ -235,18 +278,23 @@ public class Database {
 
     /** Load all transactions' data from database. */
     public static List<Transaction> loadTransactions() {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM transactions");
         List<Transaction> transactionList = new ArrayList<>();
-        for (Map<String, Object> record : result) {
-            long transactionId = (Long) record.get("transactionId");
-            User user = getUserById(record.get("userId"));
-            Book book = getBookById(record.get("bookId"));
-            LocalDate borrowDate = LocalDate.parse((String) record.get("borrowDate"));
-            LocalDate dueDate = LocalDate.parse((String) record.get("dueDate"));
-            LocalDate returnDate = LocalDate.parse((String) record.get("returnDate"));
-            boolean isReturned = Boolean.parseBoolean((String) record.get("isReturned"));
-            transactionList.add(new Transaction(transactionId, user, book,
-                    borrowDate, dueDate, returnDate, isReturned));
+
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM transactions")) {
+
+            while (rs.next()) {
+                transactionList.add(new Transaction(rs.getLong("transactionId"),
+                        rs.getLong("userId"),
+                        rs.getLong("bookId"),
+                        LocalDate.parse(rs.getString("borrowDate")),
+                        LocalDate.parse(rs.getString("dueDate")),
+                        LocalDate.parse(rs.getString("returnDate")),
+                        rs.getBoolean("isReturned")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
         return transactionList;
     }
