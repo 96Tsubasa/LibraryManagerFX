@@ -1,106 +1,90 @@
 package application;
 
-import javafx.scene.control.Alert;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.HashMap;
-import java.util.Map;
-
 public class User {
     // Các thuộc tính của người dùng
     public static final String NORMAL_USER = "USER";
     public static final String ADMIN = "ADMIN";
     private String userName;
-    private String userId; // userId chưa mã hóa
+    private long userId; // userId chưa mã hóa
     private String email;
     private String role;
     private String password;
 
     /** Constructor để khởi tạo dữ liệu người dùng. */
-    public User(String name, String userId, String email, String password, String role) {
+    public User(String name, long userId, String email, String password, String role) {
         this.userName = name;
         this.userId = userId; // Lưu userId chưa mã hóa
         this.email = email;
-        setPassword(password); // Mã hóa mật khẩu khi khởi tạo
+        this.password = password;
         this.role = role;
     }
 
     public User() {
     }
 
-    /** Getter cho các thuộc tính. */
+    /** Getter cho thuộc tính email. */
     public String getEmail() {
         return email;
     }
 
-    /** Getter cho các thuộc tính. */
+    /** Getter cho thuộc tính userName. */
     public String getUserName() {
         return userName;
     }
 
     /** Getter cho các thuộc tính. */
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    /** Getter cho các thuộc tính. */
+    /** Getter cho thuộc tính role. */
     public String getRole() {
         return role;
     }
 
-    /** Getter cho các thuộc tính. */
+    /** Getter cho thuộc tính password. */
     public String getPassword() {
         return password;
     }
 
-    /** getter cho các thuộc tính. */
+    /** Setter cho thuộc tính email. */
     public void setEmail(String email) {
         if (!isValidEmail(email) || email == null || email.isEmpty()) {
-            showAlert("Email không hợp lệ.");
-            return;
+            throw new IllegalArgumentException();
         }
         this.email = email;
     }
 
-    /** Setter cho các thuộc tính. */
+    /** Setter cho thuộc tính userName. */
     public void setUserName(String name) {
         if (name == null || name.isEmpty()) {
-            showAlert("Tên không được để trống.");
-            return;
+            throw new IllegalArgumentException();
         }
         this.userName = name;
     }
 
-    /** Setter cho các thuộc tính. */
-    public void setUserId(String userId) {
-        if (userId == null || userId.isEmpty() || !isValidUserId(userId)) {
-            showAlert("Mã định danh sai.");
-            return;
-        }
+    /** Setter cho thuộc tính userId. */
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    /** Setter cho các thuộc tính. */
+    /** Setter cho thuộc tính role. */
     public void setRole(String role) {
         if (role == null) {
-            showAlert("Công việc không được để trống.");
-            return;
+            throw new IllegalArgumentException();
         }
         this.role = role;
     }
 
-    /** Setter cho các thuộc tính. */
+    /** Setter cho thuộc tính password. */
     public void setPassword(String password) {
         if (!isValidPassword(password)) {
-            showAlert("Sai định dạng mật khẩu.");
-            return;
+            throw new IllegalArgumentException();
         }
-        this.password = hashPassword(password);
+        this.password = password;
     }
 
-    /** Kiểm tra tính phức tạp của mật khẩu. */
+    /** Kiểm tra tính hợp lệ của mật khẩu. */
     private boolean isValidPassword(String password) {
         return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*") &&
                 password.matches(".*\\d.*") && password.matches(".*[!@#$%^&*()].*");
@@ -117,37 +101,13 @@ public class User {
         return email.matches(emailRegex);
     }
 
-    // Phương thức mã hóa mật khẩu
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Lỗi mã hóa mật khẩu", e);
-        }
-    }
-
-    // Phương thức so sánh hai người dùng
+    /** Phương thức so sánh hai người dùng. */
     public boolean equals(User other) {
-        return this.userId.equals(other.userId);
-    }
-
-    /** Hiển thị thông báo lỗi bằng JavaFX. */
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Lỗi");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        return this.userId == other.userId;
     }
 
     /** Kiểm tra mật khẩu. */
     public boolean checkPassword(String password) {
-        return this.password.equals(hashPassword(password));
+        return this.password.equals(password);
     }
 }
