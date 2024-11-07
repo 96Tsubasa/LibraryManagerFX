@@ -188,7 +188,7 @@ public class Database {
         int copiesAvailable = (int) result.getFirst().get("copiesAvailable");
         String description = (String) result.getFirst().get("description");
 
-        return new Book(title, authors, publisher, publicationYear,
+        return new Book((Long) bookId, title, authors, publisher, publicationYear,
                 genres, copiesAvailable, description);
     }
 
@@ -197,6 +197,7 @@ public class Database {
         List<Map<String, Object>> result = executeQuery("SELECT * FROM books");
         List<Book> bookList = new ArrayList<>();
         for (Map<String, Object> record : result) {
+            Long bookId = (Long) record.get("bookId");
             String title = (String) record.get("title");
             String[] authorsId = ((String) record.get("authorsId")).split(";");
             String[] authors = new String[authorsId.length];
@@ -213,10 +214,23 @@ public class Database {
             int copiesAvailable = (int) record.get("copiesAvailable");
             String description = (String) record.get("description");
 
-            bookList.add(new Book(title, authors, publisher, publicationYear,
+            bookList.add(new Book(bookId, title, authors, publisher, publicationYear,
                     genres, copiesAvailable, description));
         }
         return bookList;
+    }
+
+    /** Add a new transaction to the database. */
+    public static void addTransaction(Transaction transaction) {
+        execute("INSERT INTO transactions (transactionId, userId, bookId, borrowDate, " +
+                "dueDate, returnDate, isReturned) VALUES ('"
+                + transaction.getTransactionId() + "', '"
+                + transaction.getUser().getUserId() + "', '"
+                + transaction.getBook().getBookId() + "', '"
+                + transaction.getBorrowDate().toString() + "', '"
+                + transaction.getDueDate().toString() + "', '"
+                + transaction.getReturnDate().toString() + "', '"
+                + transaction.isReturned() + "');");
     }
 
     /** Load all transactions' data from database. */
@@ -274,20 +288,18 @@ public class Database {
 
     /** Testing. */
     public static void main(String[] args) {
-//        LocalDate bday = LocalDate.of(2005, 7, 21);
-//        User user1 = new User("user1", bday, "male", "Dich Vong", "1", "mail1@gmail.com", "admin");
-//        User user2 = new User("user2", bday, "female", "Ton That Thuyet", "2", "mail2@gmail.com", "user");
-//        user1.setPassword("12345678");
-//        user2.setPassword("qwertyui");
-//        addUser(user1);
-//        addUser(user2);
+        LibrarySystem libSys = new LibrarySystem();
+//        User currentUser = new User("user1", "100000", "mail1@gmail.com", "12345678", User.NORMAL_USER);
+//        addUser(currentUser);
 
-        User currentUser = handleLogin("user2", "qwertyui");
-        if (currentUser == null) {
+//        System.out.println(libSys.users.getFirst().getPassword());
+
+        User currUser = libSys.handleLogin("user1", "12345678");
+
+        if (currUser == null) {
             System.out.println("Login failed");
-            return;
+        } else {
+            System.out.println("Username: " + currUser.getUserName() + "\nEmail: " + currUser.getEmail());
         }
-        System.out.println("Username: " + currentUser.getUserName());
-        System.out.println("Email: " + currentUser.getEmail());
     }
 }
