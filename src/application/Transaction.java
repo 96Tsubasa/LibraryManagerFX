@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public class Transaction {
     private long transactionId;
-    private User user;
-    private Book book;
+    private long userId;
+    private long bookId;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
@@ -14,18 +14,18 @@ public class Transaction {
     /**
      * Create a new transaction.
      * @param transactionId Unique ID for this transaction.
-     * @param user The user involved in this transaction.
-     * @param book The book involved in this transaction.
+     * @param userId The user involved in this transaction.
+     * @param bookId The book involved in this transaction.
      * @param borrowDate The date and time this user borrowed the book.
      * @param dueDate The date and time this user is supposed to return the book.
      * @param returnDate The date and time this user has returned the book, can be null.
      * @param isReturned Has the book been returned yet.
      */
-    public Transaction(long transactionId, User user, Book book,
+    public Transaction(long transactionId, long userId, long bookId,
                        LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
         this.transactionId = transactionId;
-        this.user = user;
-        this.book = book;
+        this.userId = userId;
+        this.bookId = bookId;
         this.borrowDate = borrowDate;
         this.dueDate = dueDate;
         this.isReturned = isReturned;
@@ -39,20 +39,20 @@ public class Transaction {
         this.transactionId = transactionId;
     }
 
-    public User getUser() {
-        return user;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public Book getBook() {
-        return book;
+    public long getBookId() {
+        return bookId;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
+    public void setBook(long bookId) {
+        this.bookId = bookId;
     }
 
     public LocalDate getBorrowDate() {
