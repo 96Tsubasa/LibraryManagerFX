@@ -1,10 +1,6 @@
 package application;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,38 +12,63 @@ public class Database {
 
     /** Add a new user to the database. */
     public static void addUser(User user) {
-        execute("INSERT INTO users (userId, username, password, email, role) VALUES ('"
-                + user.getUserId() + "', '"
-                + user.getUserName() + "', '"
-                + user.getPassword() + "', '"
-                + user.getEmail() + "', '"
-                + user.getRole() + "');");
+        String query = "INSERT INTO users (userId, username, password, email, role) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, user.getUserId());
+            pstmt.setString(2, user.getUserName());
+            pstmt.setString(3, user.getPassword());
+            pstmt.setString(4, user.getEmail());
+            pstmt.setString(5, user.getRole());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Edit a user's info by userId. */
     public static void editUserById(User user) {
-        execute("UPDATE users SET "
-                + "username = " + user.getUserName() + ", "
-                + "password = " + user.getPassword() + ", "
-                + "email = " + user.getEmail() + ", "
-                + "role = " + user.getRole() + " "
-                + "WHERE userId = " + user.getUserId() + ";");
+//        execute("UPDATE users SET "
+//                + "username = " + user.getUserName() + ", "
+//                + "password = " + user.getPassword() + ", "
+//                + "email = " + user.getEmail() + ", "
+//                + "role = " + user.getRole() + " "
+//                + "WHERE userId = " + user.getUserId() + ";");
+
+        String query = "UPDATE users SET username = ?, password = ?, email = ?, role = ? " +
+                "WHERE userId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, user.getUserName());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getEmail());
+            pstmt.setString(4, user.getRole());
+            pstmt.setLong(5, user.getUserId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Get user by userId. */
     private static User getUserById(long userId) {
+        String query = "SELECT * FROM users WHERE userId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE userId = '" +
-                     userId + "';")) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            rs.next();
-            return new User(rs.getString("username"),
-                    rs.getLong("userId"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("role"));
+            pstmt.setLong(1, userId);
 
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getString("username"),
+                            rs.getLong("userId"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            rs.getString("role")
+                    );
+                }
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -56,21 +77,36 @@ public class Database {
 
     /** Edit a user's info by email. */
     public static void editUserByEmail(User user) {
-        execute("UPDATE users SET "
-                + "userId = " + user.getUserId() + ", "
-                + "username = " + user.getUserName() + ", "
-                + "password = " + user.getPassword() + ", "
-                + "role = " + user.getRole() + " "
-                + "WHERE email = " + user.getEmail() + ";");
+//        execute("UPDATE users SET "
+//                + "userId = " + user.getUserId() + ", "
+//                + "username = " + user.getUserName() + ", "
+//                + "password = " + user.getPassword() + ", "
+//                + "role = " + user.getRole() + " "
+//                + "WHERE email = " + user.getEmail() + ";");
+
+        String query = "UPDATE users SET userId = ?, username = ?, password = ?, role = ? " +
+                "WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, user.getUserId());
+            pstmt.setString(2, user.getUserName());
+            pstmt.setString(3, user.getPassword());
+            pstmt.setString(4, user.getRole());
+            pstmt.setString(5, user.getEmail());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Load all users' data from database. */
     public static List<User> loadUsers() {
         List<User> userList = new ArrayList<>();
 
+        String query = "SELECT * FROM users";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM users")) {
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 userList.add(new User(rs.getString("username"),
@@ -85,39 +121,69 @@ public class Database {
         return userList;
     }
 
+    /** Generate a new unique userId. */
+    public static long createNewUserId() {
+        String query = "SELECT MAX(userId) AS max FROM users";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong("max") + 1;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
+    }
+
     /** Handle login. Return User object with given username and password, null if no such user found.
      * This has been changed to private method and will be removed soon. */
     private static User handleLogin(String username, String password) {
-        List<Map<String, Object>> result = executeQuery("SELECT * FROM users WHERE username = '" +
-                username + "' AND password = '" +
-                password + "';");
+        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
 
-        if (result.isEmpty()) {
-            return null;
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new User(rs.getString("username"),
+                            rs.getLong("userId"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            rs.getString("role"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return new User((String) result.getFirst().get("username"),
-                (Long) result.getFirst().get("userId"),
-                (String) result.getFirst().get("email"),
-                (String) result.getFirst().get("password"),
-                (String) result.getFirst().get("role"));
+        return null;
     }
 
     /** Add a new author to the database. */
     private static void addAuthor(String authorName) {
-        execute("INSERT INTO authors (authorName) VALUES (" + authorName + ");");
+        String query = "INSERT INTO authors (authorName) VALUES (?)";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, authorName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Get authorId by authorName. Returns -1 if not found in database. */
     private static long getAuthorIdByName(String authorName) {
+        String query = "SELECT * FROM authors WHERE authorName = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM authors WHERE " +
-                     "authorName = '" + authorName + "'")) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, authorName);
 
-            rs.next();
-            return rs.getLong("authorId");
-
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("authorId");
+                }
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -125,15 +191,17 @@ public class Database {
     }
 
     /** Get authorName by authorId. Returns null if not found in database. */
-    private static String getAuthorNameById(String authorId) {
+    private static String getAuthorNameById(long authorId) {
+        String query = "SELECT * FROM authors WHERE authorId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM authors WHERE " +
-                     "authorId = " + authorId)) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, authorId);
 
-            rs.next();
-            return rs.getString("authorName");
-
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    rs.getString("authorName");
+                }
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -142,19 +210,28 @@ public class Database {
 
     /** Add a new genre to the database. */
     private static void addGenre(String genreName) {
-        execute("INSERT INTO genres (genreName) VALUES (" + genreName + ");");
+        String query = "INSERT INTO genres (genreName) VALUES (?)";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, genreName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Get genreId by genreName. Returns -1 if not found in database. */
     private static long getGenreIdByName(String genreName) {
+        String query = "SELECT * FROM genres WHERE genreName = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM genres WHERE " +
-                     "genreName = '" + genreName + "'")) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, genreName);
 
-            rs.next();
-            return rs.getLong("genreId");
-
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("genreId");
+                }
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -162,15 +239,17 @@ public class Database {
     }
 
     /** Get genreName by genreId. Returns null if not found in database. */
-    private static String getGenreNameById(String genreId) {
+    private static String getGenreNameById(long genreId) {
+        String query = "SELECT * FROM genres WHERE genreId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM genres WHERE " +
-                     "genreId = " + genreId)) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, genreId);
 
-            rs.next();
-            return rs.getString("genreName");
-
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    rs.getString("genreName");
+                }
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -179,21 +258,32 @@ public class Database {
 
     /** Add a new book to the database. */
     public static void addBook(Book book) {
-        StringBuilder query = new StringBuilder("INSERT INTO books (isbn, authorsId, title," +
-                " genresId, publisher, publicationYear, copiesAvailable, description) VALUES (");
-        query.append("'").append(book.getIsbn()).append("', '");
-        for (String author : book.getAuthors()) {
-            query.append(getAuthorIdByName(author)).append(";");
+        String query = "INSERT INTO books (bookId, isbn, authorsId, title," +
+                " genresId, publisher, publicationYear, copiesAvailable, description) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, book.getBookId());
+            pstmt.setString(2, book.getIsbn());
+            StringBuilder authors = new StringBuilder();
+            for (String author : book.getAuthors()) {
+                authors.append(getAuthorIdByName(author)).append(";");
+            }
+            pstmt.setString(3, authors.toString());
+            pstmt.setString(4, book.getTitle());
+            StringBuilder genres = new StringBuilder();
+            for (String genre : book.getAuthors()) {
+                genres.append(getGenreIdByName(genre)).append(";");
+            }
+            pstmt.setString(5, genres.toString());
+            pstmt.setString(6, book.getPublisher());
+            pstmt.setInt(7, book.getPublicationYear());
+            pstmt.setInt(8, book.getCopiesAvailable());
+            pstmt.setString(9, book.getDescription());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-        query.append("', '").append(book.getTitle()).append("', '");
-        for (String genre : book.getGenres()) {
-            query.append(getAuthorIdByName(genre)).append(";");
-        }
-        query.append("', '").append(book.getPublisher()).append("', ");
-        query.append("'").append(book.getPublicationYear()).append("', ");
-        query.append("'").append(book.getCopiesAvailable()).append("', ");
-        query.append("'").append(book.getDescription()).append("');");
-        execute(query.toString());
     }
 
     /** Get book by bookId. */
@@ -225,9 +315,10 @@ public class Database {
     public static List<Book> loadBooks() {
         List<Book> bookList = new ArrayList<>();
 
+        String query = "SELECT * FROM books";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM books")) {
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 long bookId = rs.getLong("bookId");
@@ -236,14 +327,14 @@ public class Database {
                 String[] authorsId = rs.getString("authorsId").split(";");
                 String[] authors = new String[authorsId.length];
                 for (int i = 0; i < authorsId.length; i++) {
-                    authors[i] = getAuthorNameById(authorsId[i]);
+                    authors[i] = getAuthorNameById(Long.parseLong(authorsId[i]));
                 }
                 String publisher = rs.getString("publisher");
                 int publicationYear = rs.getInt("publicationYear");
                 String[] genresId = rs.getString("genresId").split(";");
                 String[] genres = new String[genresId.length];
                 for (int i = 0; i < genresId.length; i++) {
-                    genres[i] = getAuthorNameById(genresId[i]);
+                    genres[i] = getAuthorNameById(Long.parseLong(genresId[i]));
                 }
                 int copiesAvailable = rs.getInt("copiesAvailable");
                 String description = rs.getString("description");
@@ -265,24 +356,32 @@ public class Database {
 
     /** Add a new transaction to the database. */
     public static void addTransaction(Transaction transaction) {
-        execute("INSERT INTO transactions (transactionId, userId, bookId, borrowDate, " +
-                "dueDate, returnDate, isReturned) VALUES ('"
-                + transaction.getTransactionId() + "', '"
-                + transaction.getUserId() + "', '"
-                + transaction.getBookId() + "', '"
-                + transaction.getBorrowDate().toString() + "', '"
-                + transaction.getDueDate().toString() + "', '"
-                + transaction.getReturnDate().toString() + "', '"
-                + transaction.isReturned() + "');");
+        String query = "INSERT INTO transactions (transactionId, userId, bookId, borrowDate, " +
+                "dueDate, returnDate, isReturned) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, transaction.getTransactionId());
+            pstmt.setLong(2, transaction.getUserId());
+            pstmt.setLong(3, transaction.getBookId());
+            pstmt.setString(4, transaction.getBorrowDate().toString());
+            pstmt.setString(5, transaction.getDueDate().toString());
+            pstmt.setString(6, transaction.getReturnDate().toString());
+            pstmt.setBoolean(7, transaction.isReturned());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Load all transactions' data from database. */
     public static List<Transaction> loadTransactions() {
         List<Transaction> transactionList = new ArrayList<>();
 
+        String query = "SELECT * FROM transactions";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM transactions")) {
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 transactionList.add(new Transaction(rs.getLong("transactionId"),
@@ -304,6 +403,7 @@ public class Database {
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              Statement stmt = conn.createStatement()) {
 
+            conn.setAutoCommit(true);
             stmt.execute(query);
 
         } catch (SQLException e) {
@@ -337,17 +437,28 @@ public class Database {
     /** Testing. */
     public static void main(String[] args) {
         LibrarySystem libSys = new LibrarySystem();
-//        User currentUser = new User("user1", "100000", "mail1@gmail.com", "12345678", User.NORMAL_USER);
-//        addUser(currentUser);
+        User currentUser = new User("user4",
+                createNewUserId(),
+                "mail4@gmail.com",
+                "87654321",
+                User.ADMIN);
+        addUser(currentUser);
 
-//        System.out.println(libSys.users.getFirst().getPassword());
+        currentUser = new User("user5",
+                createNewUserId(),
+                "mail5@gmail.com",
+                "12345678",
+                User.NORMAL_USER);
+        addUser(currentUser);
 
-        User currUser = libSys.handleLogin("user1", "12345678");
+        User currUser = handleLogin("user5", "12345678");
 
         if (currUser == null) {
             System.out.println("Login failed");
         } else {
             System.out.println("Username: " + currUser.getUserName() + "\nEmail: " + currUser.getEmail());
         }
+
+
     }
 }
