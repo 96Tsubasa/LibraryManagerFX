@@ -18,12 +18,15 @@ public class LibrarySystem {
     /** Create a new user, add to users List and database (Need to add/change parameters). */
     public void addUser(String name, long userId, String email, String password, String role) {
         // Code here
+        if (isEmailRegistered(email)) {
+            throw new IllegalArgumentException("Email is already registered.");
+        }
+        if (isUserRegistered(name)) {
+            throw new IllegalArgumentException("Username is already registered.");
+        }
+
+        // Create a new user instance and add to the users list
         User user = new User(name, userId, email, password, role);
-        user.setUserId(userId);
-        user.setUserName(name);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setRole(role);
         users.add(user);
     }
 
@@ -31,7 +34,7 @@ public class LibrarySystem {
     public User handleLogin(String username, String password) {
         // Code here
         for (User user : users) {
-            if (user.getUserName().equals(username) && user.checkPassword(password)) {
+            if (user.getUsername().equals(username) && user.checkPassword(password)) {
                 return user;
             }
         }
@@ -39,9 +42,9 @@ public class LibrarySystem {
     }
 
     /** Create a new book, add to books list and database (Need to add parameters). */
-    public void addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
+    public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
         // Code here
-        Book book = new Book(title, authors, publisher, publicationYear, genres, copiesAvailable, description);
+        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description);
         books.add(book);
     }
 
@@ -65,9 +68,6 @@ public class LibrarySystem {
     /** Search books by keywords. */
     public List<Book> searchBooks(String keywords) {
         // Code here
-        for(Book book1 : books) {
-            if(book1.getIsbn().equals(keywords) || book1.getIsbn().equals(keywords) || )
-        }
         return null;    // Placeholder
     }
 
@@ -90,5 +90,27 @@ public class LibrarySystem {
                 transaction1.setReturned(true);
             }
         }
+    }
+
+    /** Checks if the email is already registered. */
+    public boolean isEmailRegistered(String email) {
+        for(User user : users) {
+            // If an email match is found, throw an exception indicating the email is already registered
+            if(user.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Checks if the username is already registered. */
+    public boolean isUserRegistered(String username) {
+        for(User user : users) {
+            // If a username match is found, throw an exception indicating the email is already registered
+            if(user.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

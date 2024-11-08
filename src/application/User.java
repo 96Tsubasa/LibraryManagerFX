@@ -1,113 +1,123 @@
 package application;
 
 public class User {
-    // Các thuộc tính của người dùng
+    // User attributes
     public static final String NORMAL_USER = "USER";
     public static final String ADMIN = "ADMIN";
-    private String userName;
-    private long userId; // userId chưa mã hóa
+    private String username;
+    private long userId;
     private String email;
     private String role;
     private String password;
+    private boolean loggedIn;
 
-    /** Constructor để khởi tạo dữ liệu người dùng. */
+    /** Constructor to initialize user data. */
     public User(String name, long userId, String email, String password, String role) {
-        this.userName = name;
-        this.userId = userId; // Lưu userId chưa mã hóa
-        this.email = email;
-        this.password = password;
-        this.role = role;
+        setUsername(name);       // Validates and sets username
+        setUserId(userId);       // Directly sets userId (additional validation can be added here if needed)
+        setEmail(email);         // Validates and sets email
+        setPassword(password);   // Validates and sets password
+        setRole(role);           // Validates and sets role
+        this.loggedIn = false;
     }
 
-    public User() {
-    }
+    public User() {}
 
-    /** Getter cho thuộc tính email. */
+    /** Getter for email attribute. */
     public String getEmail() {
         return email;
     }
 
-    /** Getter cho thuộc tính userName. */
-    public String getUserName() {
-        return userName;
+    /** Getter for username attribute. */
+    public String getUsername() {
+        return username;
     }
 
-    /** Getter cho các thuộc tính. */
+    /** Getter for userId attribute. */
     public long getUserId() {
         return userId;
     }
 
-    /** Getter cho thuộc tính role. */
+    /** Getter for role attribute. */
     public String getRole() {
         return role;
     }
 
-    /** Getter cho thuộc tính password. */
+    /** Getter for password attribute. */
     public String getPassword() {
         return password;
     }
 
-    /** Setter cho thuộc tính email. */
+    /** Setter for email attribute. */
     public void setEmail(String email) {
-        if (!isValidEmail(email) || email == null || email.isEmpty()) {
-            throw new IllegalArgumentException();
+        if (!isValidEmail(email) || email.isEmpty()) {
+            throw new IllegalArgumentException("Invalid or empty email.");
         }
         this.email = email;
     }
 
-    /** Setter cho thuộc tính userName. */
-    public void setUserName(String name) {
+    /** Setter for username attribute. */
+    public void setUsername(String name) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid or empty username.");
         }
-        this.userName = name;
+        this.username = name;
     }
 
-    /** Setter cho thuộc tính userId. */
+    /** Setter for userId attribute. */
     public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    /** Setter cho thuộc tính role. */
+    /** Setter for role attribute. */
     public void setRole(String role) {
         if (role == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Role cannot be null.");
         }
         this.role = role;
     }
 
-    /** Setter cho thuộc tính password. */
+    /** Setter for password attribute. */
     public void setPassword(String password) {
         if (!isValidPassword(password)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Password does not meet complexity requirements.");
         }
         this.password = password;
     }
 
-    /** Kiểm tra tính hợp lệ của mật khẩu. */
+    /** Validates password complexity. */
     private boolean isValidPassword(String password) {
         return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*") &&
                 password.matches(".*\\d.*") && password.matches(".*[!@#$%^&*()].*");
     }
 
-    /** Kiểm tra tính phức tạp của userId. */
-    private boolean isValidUserId(String userId) {
-        return userId.length() == 6;
-    }
-
-    /** Kiểm tra định dạng email hợp lệ. */
+    /** Validates email format. */
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email.matches(emailRegex);
     }
 
-    /** Phương thức so sánh hai người dùng. */
-    public boolean equals(User other) {
-        return this.userId == other.userId;
+    /** Checks if two users are equal based on userId. */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        User other = (User) obj;
+        return userId == other.userId;
     }
 
-    /** Kiểm tra mật khẩu. */
+    /** Verifies password. */
     public boolean checkPassword(String password) {
         return this.password.equals(password);
+    }
+
+    /** Checks if user is logged in. */
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    /** Sets login status. */
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 }
