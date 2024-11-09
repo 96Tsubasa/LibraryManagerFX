@@ -182,12 +182,14 @@ public class Database {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getLong("authorId");
+                } else {
+                    addAuthor(authorName);
                 }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return -1;
+        return getAuthorIdByName(authorName);
     }
 
     /** Get authorName by authorId. Returns null if not found in database. */
@@ -199,7 +201,7 @@ public class Database {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    rs.getString("authorName");
+                    return rs.getString("authorName");
                 }
             }
         } catch (SQLException e) {
@@ -230,12 +232,14 @@ public class Database {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getLong("genreId");
+                } else {
+                    addGenre(genreName);
                 }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return -1;
+        return getGenreIdByName(genreName);
     }
 
     /** Get genreName by genreId. Returns null if not found in database. */
@@ -247,7 +251,7 @@ public class Database {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    rs.getString("genreName");
+                    return rs.getString("genreName");
                 }
             }
         } catch (SQLException e) {
@@ -265,17 +269,17 @@ public class Database {
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, book.getBookId());
             pstmt.setString(2, book.getIsbn());
-            StringBuilder authors = new StringBuilder();
+            StringBuilder authorsId = new StringBuilder();
             for (String author : book.getAuthors()) {
-                authors.append(getAuthorIdByName(author)).append(";");
+                authorsId.append(getAuthorIdByName(author)).append(";");
             }
-            pstmt.setString(3, authors.toString());
+            pstmt.setString(3, authorsId.toString());
             pstmt.setString(4, book.getTitle());
-            StringBuilder genres = new StringBuilder();
-            for (String genre : book.getAuthors()) {
-                genres.append(getGenreIdByName(genre)).append(";");
+            StringBuilder genresId = new StringBuilder();
+            for (String genre : book.getGenres()) {
+                genresId.append(getGenreIdByName(genre)).append(";");
             }
-            pstmt.setString(5, genres.toString());
+            pstmt.setString(5, genresId.toString());
             pstmt.setString(6, book.getPublisher());
             pstmt.setInt(7, book.getPublicationYear());
             pstmt.setInt(8, book.getCopiesAvailable());
@@ -284,6 +288,51 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /** Edit a book's info by bookId. */
+    public static void editBookById(Book book) {
+        String query = "UPDATE books SET isbn = ?, authorsId = ?, title = ?, genresId = ?, " +
+                "publisher = ?, publicationYear = ?, copiesAvailable = ?, description = ? " +
+                "WHERE bookId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, book.getIsbn());
+            StringBuilder authorsId = new StringBuilder();
+            for (String author : book.getAuthors()) {
+                authorsId.append(getAuthorIdByName(author)).append(";");
+            }
+            pstmt.setString(2, authorsId.toString());
+            pstmt.setString(3, book.getTitle());
+            StringBuilder genresId = new StringBuilder();
+            for (String genre : book.getGenres()) {
+                genresId.append(getGenreIdByName(genre)).append(";");
+            }
+            pstmt.setString(4, genresId.toString());
+            pstmt.setString(5, book.getPublisher());
+            pstmt.setInt(6, book.getPublicationYear());
+            pstmt.setInt(7, book.getCopiesAvailable());
+            pstmt.setString(8, book.getDescription());
+            pstmt.setLong(9, book.getBookId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /** Generate a new unique bookId. */
+    public static long createNewBookId() {
+        String query = "SELECT MAX(bookId) AS max FROM books";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong("max") + 1;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
     }
 
     /** Get book by bookId. */
@@ -334,7 +383,7 @@ public class Database {
                 String[] genresId = rs.getString("genresId").split(";");
                 String[] genres = new String[genresId.length];
                 for (int i = 0; i < genresId.length; i++) {
-                    genres[i] = getAuthorNameById(Long.parseLong(genresId[i]));
+                    genres[i] = getGenreNameById(Long.parseLong(genresId[i]));
                 }
                 int copiesAvailable = rs.getInt("copiesAvailable");
                 String description = rs.getString("description");
@@ -437,28 +486,31 @@ public class Database {
     /** Testing. */
     public static void main(String[] args) {
         LibrarySystem libSys = new LibrarySystem();
-        User currentUser = new User("user4",
-                createNewUserId(),
-                "mail4@gmail.com",
-                "87654321",
-                User.ADMIN);
-        addUser(currentUser);
 
-        currentUser = new User("user5",
-                createNewUserId(),
-                "mail5@gmail.com",
-                "12345678",
-                User.NORMAL_USER);
-        addUser(currentUser);
+        Book book1 = new Book(1,
+                "Tail of the sheeps",
+                new String[] {"Author A", "Author B"},
+                "Publisher A",
+                2024,
+                new String[] {"Genre A", "Genre B"},
+                50,
+                "This is the story of the sheeps 2 in the deep mountain.");
 
-        User currUser = handleLogin("user5", "12345678");
+        Book book2 = new Book(2,
+                "Tail of the cows",
+                new String[] {"Author B", "Author C"},
+                "Publisher B",
+                2023,
+                new String[] {"Genre C", "Genre D", "Genre E"},
+                100,
+                "This is the story of the cows 2 in the deep mountain.");
 
-        if (currUser == null) {
-            System.out.println("Login failed");
-        } else {
-            System.out.println("Username: " + currUser.getUserName() + "\nEmail: " + currUser.getEmail());
+        editBookById(book1);
+        editBookById(book2);
+
+        for (Book book : libSys.books) {
+            System.out.println(book.getBookInfo() + "\n----------");
         }
-
 
     }
 }
