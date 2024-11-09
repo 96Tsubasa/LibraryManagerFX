@@ -9,28 +9,43 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.SceneController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="gradient" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.LoginController">
    <children>
-      <TextField layoutX="197.0" layoutY="165.0" prefHeight="26.0" prefWidth="197.0" promptText="Your username" />
-      <PasswordField layoutX="196.0" layoutY="214.0" prefHeight="26.0" prefWidth="198.0" promptText="Your password" />
-      <ImageView fitHeight="89.0" fitWidth="107.0" layoutX="256.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../resources/image/icon.png" />
-         </image>
-      </ImageView>
-      <Button layoutX="197.0" layoutY="253.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="198.0" text="Sign in" />
-      <Label alignment="TOP_LEFT" layoutX="176.0" layoutY="333.0" prefHeight="26.0" prefWidth="240.0" text="Don't have an account?">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Button layoutX="347.0" layoutY="333.0" mnemonicParsing="false" onAction="#switchToRegisterScreen" prefHeight="18.0" prefWidth="62.0" text="Sign up" textFill="#007aff" />
-      <Label layoutX="263.0" layoutY="107.0" prefHeight="40.0" prefWidth="74.0" text="Login">
-         <font>
-            <Font name="System Bold" size="28.0" />
-         </font>
-      </Label>
-      <Label layoutX="197.0" layoutY="147.0" text="Username" />
-      <Label layoutX="196.0" layoutY="196.0" text="Password" />
+      <AnchorPane prefHeight="720.0" prefWidth="565.0" styleClass="gradient" stylesheets="@loginDesign.css">
+         <children>
+            <ImageView fitHeight="171.0" fitWidth="143.0" layoutX="210.0" layoutY="217.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../resources/image/icon.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="66.0" layoutY="385.0" text="Library Management System" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="32.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="566.0" prefHeight="720.0" prefWidth="722.0" styleClass="gradient">
+         <children>
+            <TextField fx:id="usernameField" layoutX="162.0" layoutY="363.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="398.0" promptText="Your username" styleClass="textfield" stylesheets="@loginDesign.css" />
+            <PasswordField fx:id="passwordField" layoutX="162.0" layoutY="451.0" prefHeight="40.0" prefWidth="398.0" promptText="Your password" styleClass="textfield" stylesheets="@loginDesign.css" />
+            <Button layoutX="162.0" layoutY="542.0" mnemonicParsing="false" onAction="#login" prefHeight="40.0" prefWidth="398.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Sign in" />
+            <Label layoutX="160.0" layoutY="179.0" prefHeight="47.0" prefWidth="314.0" styleClass="head-label" stylesheets="@loginDesign.css" text="Login account" textFill="#39b725">
+               <font>
+                  <Font name="System Bold" size="32.0" />
+               </font>
+            </Label>
+            <Label layoutX="162.0" layoutY="334.0" text="Username">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="160.0" layoutY="425.0" text="Password">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
