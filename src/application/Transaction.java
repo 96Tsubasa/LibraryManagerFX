@@ -28,6 +28,7 @@ public class Transaction {
         this.bookId = bookId;
         this.borrowDate = borrowDate;
         this.dueDate = dueDate;
+        this.returnDate = returnDate;
         this.isReturned = isReturned;
     }
 
