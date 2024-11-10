@@ -10,6 +10,17 @@ import java.util.Map;
 public class Database {
     private static final String databaseUrl = "jdbc:sqlite:library.db";
 
+    /** Create User object from Result set. */
+    private static User createUserFromResultSet(ResultSet rs) throws SQLException {
+        return new User(
+                rs.getString("username"),
+                rs.getLong("userId"),
+                rs.getString("email"),
+                rs.getString("password"),
+                rs.getString("role")
+        );
+    }
+
     /** Add a new user to the database. */
     public static void addUser(User user) {
         String query = "INSERT INTO users (userId, username, password, email, role) VALUES (?, ?, ?, ?, ?)";
@@ -28,13 +39,6 @@ public class Database {
 
     /** Edit a user's info by userId. */
     public static void editUserById(User user) {
-//        execute("UPDATE users SET "
-//                + "username = " + user.getUserName() + ", "
-//                + "password = " + user.getPassword() + ", "
-//                + "email = " + user.getEmail() + ", "
-//                + "role = " + user.getRole() + " "
-//                + "WHERE userId = " + user.getUserId() + ";");
-
         String query = "UPDATE users SET username = ?, password = ?, email = ?, role = ? " +
                 "WHERE userId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
@@ -60,13 +64,7 @@ public class Database {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new User(
-                            rs.getString("username"),
-                            rs.getLong("userId"),
-                            rs.getString("email"),
-                            rs.getString("password"),
-                            rs.getString("role")
-                    );
+                    return createUserFromResultSet(rs);
                 }
             }
         } catch (SQLException e) {
@@ -77,13 +75,6 @@ public class Database {
 
     /** Edit a user's info by email. */
     public static void editUserByEmail(User user) {
-//        execute("UPDATE users SET "
-//                + "userId = " + user.getUserId() + ", "
-//                + "username = " + user.getUserName() + ", "
-//                + "password = " + user.getPassword() + ", "
-//                + "role = " + user.getRole() + " "
-//                + "WHERE email = " + user.getEmail() + ";");
-
         String query = "UPDATE users SET userId = ?, username = ?, password = ?, role = ? " +
                 "WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
@@ -109,11 +100,7 @@ public class Database {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                userList.add(new User(rs.getString("username"),
-                        rs.getLong("userId"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("role")));
+                userList.add(createUserFromResultSet(rs));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -260,6 +247,36 @@ public class Database {
         return null;
     }
 
+    /** Create Book object from Result set. */
+    private static Book createBookFromResultSet(ResultSet rs) throws SQLException {
+        long bookId = rs.getLong("bookId");
+        String isbn = rs.getString("isbn");
+        String title = rs.getString("title");
+        String[] authorsId = rs.getString("authorsId").split(";");
+        String[] authors = new String[authorsId.length];
+        for (int i = 0; i < authorsId.length; i++) {
+            authors[i] = getAuthorNameById(Long.parseLong(authorsId[i]));
+        }
+        String publisher = rs.getString("publisher");
+        int publicationYear = rs.getInt("publicationYear");
+        String[] genresId = rs.getString("genresId").split(";");
+        String[] genres = new String[genresId.length];
+        for (int i = 0; i < genresId.length; i++) {
+            genres[i] = getGenreNameById(Long.parseLong(genresId[i]));
+        }
+        int copiesAvailable = rs.getInt("copiesAvailable");
+        String description = rs.getString("description");
+
+        return new Book(bookId,
+                title,
+                authors,
+                publisher,
+                publicationYear,
+                genres,
+                copiesAvailable,
+                description);
+    }
+
     /** Add a new book to the database. */
     public static void addBook(Book book) {
         String query = "INSERT INTO books (bookId, isbn, authorsId, title," +
@@ -288,6 +305,25 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /** Get book by bookId. */
+    public static Book getBookById(long bookId) {
+        String query = "SELECT * FROM books WHERE bookId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setLong(1, bookId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return createBookFromResultSet(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     /** Edit a book's info by bookId. */
@@ -370,32 +406,7 @@ public class Database {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                long bookId = rs.getLong("bookId");
-                String isbn = rs.getString("isbn");
-                String title = rs.getString("title");
-                String[] authorsId = rs.getString("authorsId").split(";");
-                String[] authors = new String[authorsId.length];
-                for (int i = 0; i < authorsId.length; i++) {
-                    authors[i] = getAuthorNameById(Long.parseLong(authorsId[i]));
-                }
-                String publisher = rs.getString("publisher");
-                int publicationYear = rs.getInt("publicationYear");
-                String[] genresId = rs.getString("genresId").split(";");
-                String[] genres = new String[genresId.length];
-                for (int i = 0; i < genresId.length; i++) {
-                    genres[i] = getGenreNameById(Long.parseLong(genresId[i]));
-                }
-                int copiesAvailable = rs.getInt("copiesAvailable");
-                String description = rs.getString("description");
-
-                bookList.add(new Book(bookId,
-                        title,
-                        authors,
-                        publisher,
-                        publicationYear,
-                        genres,
-                        copiesAvailable,
-                        description));
+                bookList.add(createBookFromResultSet(rs));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -421,6 +432,21 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /** Generate a new unique transactionId. */
+    public static long createNewTransactionId() {
+        String query = "SELECT MAX(transactionId) AS max FROM transactions";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong("max") + 1;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
     }
 
     /** Load all transactions' data from database. */
@@ -487,29 +513,41 @@ public class Database {
     public static void main(String[] args) {
         LibrarySystem libSys = new LibrarySystem();
 
-        Book book1 = new Book(1,
-                "Tail of the sheeps",
-                new String[] {"Author A", "Author B"},
-                "Publisher A",
-                2024,
-                new String[] {"Genre A", "Genre B"},
-                50,
-                "This is the story of the sheeps 2 in the deep mountain.");
 
-        Book book2 = new Book(2,
-                "Tail of the cows",
-                new String[] {"Author B", "Author C"},
-                "Publisher B",
-                2023,
-                new String[] {"Genre C", "Genre D", "Genre E"},
-                100,
-                "This is the story of the cows 2 in the deep mountain.");
+        Transaction tran1 = new Transaction(createNewTransactionId(),
+                libSys.users.get(1).getUserId(),
+                libSys.books.get(0).getBookId(),
+                LocalDate.of(2024, 11, 1),
+                LocalDate.of(2024, 11, 8),
+                LocalDate.of(2024, 11, 7),
+                true);
 
-        editBookById(book1);
-        editBookById(book2);
+        Transaction tran2 = new Transaction(createNewTransactionId(),
+                libSys.users.get(3).getUserId(),
+                libSys.books.get(1).getBookId(),
+                LocalDate.of(2024, 11, 3),
+                LocalDate.now(),
+                null,
+                false);
 
-        for (Book book : libSys.books) {
-            System.out.println(book.getBookInfo() + "\n----------");
+        Transaction tran3 = new Transaction(createNewTransactionId(),
+                libSys.users.get(4).getUserId(),
+                libSys.books.get(1).getBookId(),
+                LocalDate.of(2024, 11, 8),
+                LocalDate.of(2024, 11, 15),
+                null,
+                false);
+
+
+        libSys.transactions = loadTransactions();
+        for (Transaction transaction : libSys.transactions) {
+            System.out.println("transactionID = " + transaction.getTransactionId());
+            System.out.println("userID = " + transaction.getUserId());
+            System.out.println("user = " + getUserById(transaction.getUserId()));
+            System.out.println("bookID = " + transaction.getBookId());
+            System.out.println("book = " + getBookById(transaction.getBookId()));
+            System.out.println("transactionID = " + transaction.getTransactionId());
+            System.out.println("transactionID = " + transaction.getTransactionId());
         }
 
     }
