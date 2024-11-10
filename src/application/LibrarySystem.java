@@ -6,6 +6,7 @@ public class LibrarySystem {
     private List<Book> books;
     private List<User> users;
     private List<Transaction> transactions;
+    private User currentUser;
 
     /** Constructor. */
     public LibrarySystem() {
@@ -35,6 +36,7 @@ public class LibrarySystem {
         // Code here
         for (User user : users) {
             if (user.getUsername().equals(username) && user.checkPassword(password)) {
+                currentUser = user;
                 return user;
             }
         }
