@@ -72,10 +72,10 @@ public class LibrarySystem {
     }
 
     /** User borrow a book, return true if successful. */
-    public boolean borrowBook(User user, Book book) {
+    public boolean borrowBook(long userId, long bookId) {
         // Code here
         for(Transaction transaction1 : transactions) {
-            if(transaction1.getUser().equals(user) && transaction1.getBook().equals(book) && !transaction1.isReturned()) {
+            if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId && !transaction1.isReturned()) {
                 return false;
             }
         }
@@ -83,10 +83,10 @@ public class LibrarySystem {
     }
 
     /** User return a book. */
-    public void returnBook(User user, Book book) {
+    public void returnBook(long userId, long bookId) {
         // Code here
         for(Transaction transaction1 : transactions) {
-            if(transaction1.getUser().equals(user) && transaction1.getBook().equals(book) && !transaction1.isReturned()) {
+            if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId && !transaction1.isReturned()) {
                 transaction1.setReturned(true);
             }
         }
