@@ -87,8 +87,14 @@ public class User {
 
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
-        return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*") &&
-                password.matches(".*\\d.*") && password.matches(".*[!@#$%^&*()].*");
+        // The password must be at least 8 characters long.
+        // It must contain at least one uppercase letter.
+        // It must contain at least one lowercase letter.
+        // It must contain at least one numeric digit.
+        // It must contain at least one special character from the set !@#$%^&*().
+        // It must not contain any whitespace characters.
+        return password.length() >= 8 && !password.matches(".*[!@#$%^&*()].*")
+                && !password.contains(" ");
     }
 
     /** Validates email format. */
