@@ -27,7 +27,7 @@ public class Database {
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, user.getUserId());
-            pstmt.setString(2, user.getUserName());
+            pstmt.setString(2, user.getUsername());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getEmail());
             pstmt.setString(5, user.getRole());
@@ -43,7 +43,7 @@ public class Database {
                 "WHERE userId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, user.getUserName());
+            pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getEmail());
             pstmt.setString(4, user.getRole());
@@ -80,7 +80,7 @@ public class Database {
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, user.getUserId());
-            pstmt.setString(2, user.getUserName());
+            pstmt.setString(2, user.getUsername());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getRole());
             pstmt.setString(5, user.getEmail());
@@ -426,7 +426,11 @@ public class Database {
             pstmt.setLong(3, transaction.getBookId());
             pstmt.setString(4, transaction.getBorrowDate().toString());
             pstmt.setString(5, transaction.getDueDate().toString());
-            pstmt.setString(6, transaction.getReturnDate().toString());
+            if (transaction.getReturnDate() == null) {
+                pstmt.setNull(6, Types.VARCHAR);
+            } else {
+                pstmt.setString(6, transaction.getReturnDate().toString());
+            }
             pstmt.setBoolean(7, transaction.isReturned());
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -459,12 +463,16 @@ public class Database {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
+                LocalDate returnDate = null;
+                if (rs.getString("returnDate") != null) {
+                    returnDate = LocalDate.parse(rs.getString("returnDate"));
+                }
                 transactionList.add(new Transaction(rs.getLong("transactionId"),
                         rs.getLong("userId"),
                         rs.getLong("bookId"),
                         LocalDate.parse(rs.getString("borrowDate")),
                         LocalDate.parse(rs.getString("dueDate")),
-                        LocalDate.parse(rs.getString("returnDate")),
+                        returnDate,
                         rs.getBoolean("isReturned")));
             }
         } catch (SQLException e) {
@@ -521,6 +529,7 @@ public class Database {
                 LocalDate.of(2024, 11, 8),
                 LocalDate.of(2024, 11, 7),
                 true);
+        addTransaction(tran1);
 
         Transaction tran2 = new Transaction(createNewTransactionId(),
                 libSys.users.get(3).getUserId(),
@@ -529,6 +538,7 @@ public class Database {
                 LocalDate.now(),
                 null,
                 false);
+        addTransaction(tran2);
 
         Transaction tran3 = new Transaction(createNewTransactionId(),
                 libSys.users.get(4).getUserId(),
@@ -537,17 +547,21 @@ public class Database {
                 LocalDate.of(2024, 11, 15),
                 null,
                 false);
-
+        addTransaction(tran3);
 
         libSys.transactions = loadTransactions();
         for (Transaction transaction : libSys.transactions) {
             System.out.println("transactionID = " + transaction.getTransactionId());
             System.out.println("userID = " + transaction.getUserId());
-            System.out.println("user = " + getUserById(transaction.getUserId()));
+            System.out.println("user = " + getUserById(transaction.getUserId()).getUsername());
             System.out.println("bookID = " + transaction.getBookId());
-            System.out.println("book = " + getBookById(transaction.getBookId()));
-            System.out.println("transactionID = " + transaction.getTransactionId());
-            System.out.println("transactionID = " + transaction.getTransactionId());
+            System.out.println("book = " + getBookById(transaction.getBookId()).getTitle());
+            System.out.println("borrowDate = " + transaction.getBorrowDate().toString());
+            System.out.println("dueDate = " + transaction.getDueDate().toString());
+            if (transaction.getReturnDate() != null)
+                System.out.println("returnDate = " + transaction.getReturnDate().toString());
+            System.out.println("isReturned = " + transaction.isReturned());
+            System.out.println("---------------");
         }
 
     }
