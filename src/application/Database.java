@@ -519,50 +519,8 @@ public class Database {
 
     /** Testing. */
     public static void main(String[] args) {
-        LibrarySystem libSys = new LibrarySystem();
+//        LibrarySystem libSys = new LibrarySystem();
 
-
-        Transaction tran1 = new Transaction(createNewTransactionId(),
-                libSys.users.get(1).getUserId(),
-                libSys.books.get(0).getBookId(),
-                LocalDate.of(2024, 11, 1),
-                LocalDate.of(2024, 11, 8),
-                LocalDate.of(2024, 11, 7),
-                true);
-        addTransaction(tran1);
-
-        Transaction tran2 = new Transaction(createNewTransactionId(),
-                libSys.users.get(3).getUserId(),
-                libSys.books.get(1).getBookId(),
-                LocalDate.of(2024, 11, 3),
-                LocalDate.now(),
-                null,
-                false);
-        addTransaction(tran2);
-
-        Transaction tran3 = new Transaction(createNewTransactionId(),
-                libSys.users.get(4).getUserId(),
-                libSys.books.get(1).getBookId(),
-                LocalDate.of(2024, 11, 8),
-                LocalDate.of(2024, 11, 15),
-                null,
-                false);
-        addTransaction(tran3);
-
-        libSys.transactions = loadTransactions();
-        for (Transaction transaction : libSys.transactions) {
-            System.out.println("transactionID = " + transaction.getTransactionId());
-            System.out.println("userID = " + transaction.getUserId());
-            System.out.println("user = " + getUserById(transaction.getUserId()).getUsername());
-            System.out.println("bookID = " + transaction.getBookId());
-            System.out.println("book = " + getBookById(transaction.getBookId()).getTitle());
-            System.out.println("borrowDate = " + transaction.getBorrowDate().toString());
-            System.out.println("dueDate = " + transaction.getDueDate().toString());
-            if (transaction.getReturnDate() != null)
-                System.out.println("returnDate = " + transaction.getReturnDate().toString());
-            System.out.println("isReturned = " + transaction.isReturned());
-            System.out.println("---------------");
-        }
 
     }
 }
