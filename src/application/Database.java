@@ -414,6 +414,38 @@ public class Database {
         return bookList;
     }
 
+    /** Search for books from keywords. */
+    public static List<Book> searchBooks(String keyword) {
+        List<Book> bookList = new ArrayList<>();
+
+        String query = "SELECT DISTINCT books.*\n" +
+                "FROM books\n" +
+                "JOIN authors ON books.authorsId LIKE '%' || authors.authorId || ';%'\n" +
+                "JOIN genres ON books.genresId LIKE '%' || genres.genreId || ';%'\n" +
+                "WHERE authors.authorName = ?\n" +
+                "OR genres.genreName = ?\n" +
+                "OR title LIKE '%' || ? || '%'\n" +
+                "OR publisher LIKE '%' || ? || '%'\n" +
+                "OR description LIKE '%' || ? || '%'";
+
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            for (int i = 1; i <= 5; i++) {
+                pstmt.setString(i, keyword);
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    bookList.add(createBookFromResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return bookList;
+    }
+
     /** Add a new transaction to the database. */
     public static void addTransaction(Transaction transaction) {
         String query = "INSERT INTO transactions (transactionId, userId, bookId, borrowDate, " +
@@ -520,7 +552,19 @@ public class Database {
     /** Testing. */
     public static void main(String[] args) {
 //        LibrarySystem libSys = new LibrarySystem();
+//        addBook(new Book(createNewBookId(),
+//                "Piggies Fly!",
+//                new String[] {"Author H"},
+//                "Publisher C",
+//                2020,
+//                new String[] {"Action", "Adventure", "Fantasy"},
+//                100,
+//                "When piggies fly! The story of the legendary pigs who fly across the world and fight the evils!"));
 
+        List<Book> result = searchBooks("tail");
+        for (Book book : result) {
+            System.out.println(book.getBookInfo());
+        }
 
     }
 }
