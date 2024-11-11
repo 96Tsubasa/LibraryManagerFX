@@ -415,10 +415,10 @@ public class Database {
     }
 
     /** Search for books from keywords. */
-    public static List<Book> searchBooks(String keyword) {
-        List<Book> bookList = new ArrayList<>();
+    public static List<Long> searchBookIdWithKeyword(String keyword) {
+        List<Long> bookIdList = new ArrayList<>();
 
-        String query = "SELECT DISTINCT books.*\n" +
+        String query = "SELECT DISTINCT books.bookId\n" +
                 "FROM books\n" +
                 "JOIN authors ON books.authorsId LIKE '%' || authors.authorId || ';%'\n" +
                 "JOIN genres ON books.genresId LIKE '%' || genres.genreId || ';%'\n" +
@@ -437,13 +437,13 @@ public class Database {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    bookList.add(createBookFromResultSet(rs));
+                    bookIdList.add(rs.getLong("bookId"));
                 }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return bookList;
+        return bookIdList;
     }
 
     /** Add a new transaction to the database. */
@@ -561,10 +561,9 @@ public class Database {
 //                100,
 //                "When piggies fly! The story of the legendary pigs who fly across the world and fight the evils!"));
 
-        List<Book> result = searchBooks("tail");
-        for (Book book : result) {
-            System.out.println(book.getBookInfo());
+        List<Long> result = searchBookIdWithKeyword("tail");
+        for (Long bookId : result) {
+            System.out.println(getBookById(bookId).getBookInfo() + "\n");
         }
-
     }
 }
