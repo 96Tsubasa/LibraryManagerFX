@@ -266,6 +266,7 @@ public class Database {
         }
         int copiesAvailable = rs.getInt("copiesAvailable");
         String description = rs.getString("description");
+        byte[] coverImage = rs.getBytes("coverImage");
 
         return new Book(bookId,
                 title,
@@ -274,7 +275,9 @@ public class Database {
                 publicationYear,
                 genres,
                 copiesAvailable,
-                description);
+                description,
+                coverImage,
+                isbn);
     }
 
     /** Add a new book to the database. */
