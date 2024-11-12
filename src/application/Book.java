@@ -12,6 +12,7 @@ public class Book {
     private String[] genres;
     private int copiesAvailable = 0;
     private String description;
+    private byte[] coverImage;
 
     public Book() {
 
@@ -36,8 +37,12 @@ public class Book {
      * @param genres: The genre(s) this book belongs to.
      * @param copiesAvailable: The amount of copies available in the Library.
      * @param description: The description for the book.
+     * @param coverImage: The cover image of the book.
+     * @param isbn: The ISBN for the book.
      */
-    public Book(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
+    public Book(long bookId, String title, String[] authors, String publisher, int publicationYear,
+                String[] genres, int copiesAvailable, String description,
+                byte[] coverImage, String isbn) {
         this.bookId = bookId;
         this.title = title;
         this.authors = authors;
@@ -46,6 +51,8 @@ public class Book {
         this.genres = genres;
         this.copiesAvailable = copiesAvailable;
         this.description = description;
+        this.coverImage = coverImage;
+        this.isbn = isbn;
     }
 
     public long getBookId() {
@@ -120,6 +127,14 @@ public class Book {
         this.description = description;
     }
 
+    public byte[] getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(byte[] coverImage) {
+        this.coverImage = coverImage;
+    }
+
     /** Check if there are any copies available in the Library. */
     public boolean isAvailable() {
         return (copiesAvailable > 0);
@@ -127,7 +142,7 @@ public class Book {
 
     /** Update copiesAvailable after borrowing or print error message if no copies available. */
     public boolean borrow() {
-        if (copiesAvailable > 0) {
+        if (isAvailable()) {
             copiesAvailable--;
             System.out.println("Borrowed book successfully.");
             return true;
@@ -162,9 +177,9 @@ public class Book {
                 1925,
                 new String[] {"Fiction", "Classic Literature", "Historical"},
                 5,
-                "The Great Gatsby is a novel about the American Dream, wealth, and society in 1920s America. It tells the story of Jay Gatsby’s unrequited love for Daisy Buchanan, exploring themes of decadence, idealism, and the hollowness of the upper class.");
-
-        book.setIsbn("9780743273565");
+                "The Great Gatsby is a novel about the American Dream, wealth, and society in 1920s America. It tells the story of Jay Gatsby’s unrequited love for Daisy Buchanan, exploring themes of decadence, idealism, and the hollowness of the upper class.",
+                null,
+                "9780743273565");
 
         System.out.println(book.getBookInfo());
 
