@@ -3,17 +3,25 @@ package application;
 import java.util.List;
 
 public class LibrarySystem {
+    private static LibrarySystem instance;
     private List<Book> books;
     private List<User> users;
     private List<Transaction> transactions;
     private User currentUser;
 
     /** Constructor. */
-    public LibrarySystem() {
+    private LibrarySystem() {
         // Load data from database
         books = Database.loadBooks();
         users = Database.loadUsers();
         transactions = Database.loadTransactions();
+    }
+
+    public static LibrarySystem getInstance() {
+        if (instance == null) {
+            instance = new LibrarySystem();
+        }
+        return instance;
     }
 
     /** Create a new user, add to users List and database (Need to add/change parameters). */
