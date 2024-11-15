@@ -283,8 +283,8 @@ public class Database {
     /** Add a new book to the database. */
     public static void addBook(Book book) {
         String query = "INSERT INTO books (bookId, isbn, authorsId, title," +
-                " genresId, publisher, publicationYear, copiesAvailable, description) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " genresId, publisher, publicationYear, copiesAvailable, description, coverImage) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, book.getBookId());
@@ -304,6 +304,7 @@ public class Database {
             pstmt.setInt(7, book.getPublicationYear());
             pstmt.setInt(8, book.getCopiesAvailable());
             pstmt.setString(9, book.getDescription());
+            pstmt.setBytes(10, book.getCoverImage());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -332,8 +333,8 @@ public class Database {
     /** Edit a book's info by bookId. */
     public static void editBookById(Book book) {
         String query = "UPDATE books SET isbn = ?, authorsId = ?, title = ?, genresId = ?, " +
-                "publisher = ?, publicationYear = ?, copiesAvailable = ?, description = ? " +
-                "WHERE bookId = ?";
+                "publisher = ?, publicationYear = ?, copiesAvailable = ?, description = ?, " +
+                "coverImage = ? WHERE bookId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, book.getIsbn());
@@ -352,7 +353,8 @@ public class Database {
             pstmt.setInt(6, book.getPublicationYear());
             pstmt.setInt(7, book.getCopiesAvailable());
             pstmt.setString(8, book.getDescription());
-            pstmt.setLong(9, book.getBookId());
+            pstmt.setBytes(9, book.getCoverImage());
+            pstmt.setLong(10, book.getBookId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
