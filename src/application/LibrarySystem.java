@@ -17,6 +17,7 @@ public class LibrarySystem {
         transactions = Database.loadTransactions();
     }
 
+    /** Get the static instance of this class. */
     public static LibrarySystem getInstance() {
         if (instance == null) {
             instance = new LibrarySystem();
@@ -24,7 +25,7 @@ public class LibrarySystem {
         return instance;
     }
 
-    /** Create a new user, add to users List and database (Need to add/change parameters). */
+    /** Create a new user, add to users List and database. */
     public void addUser(String name, long userId, String email, String password, String role) {
         // Code here
         if (isEmailRegistered(email)) {
@@ -51,10 +52,10 @@ public class LibrarySystem {
         return null;    // Placeholder
     }
 
-    /** Create a new book, add to books list and database (Need to add parameters). */
-    public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
+    /** Create a new book, add to books list and database. */
+    public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
         // Code here
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description);
+        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
         books.add(book);
     }
 
