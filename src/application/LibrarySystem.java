@@ -118,6 +118,33 @@ public class LibrarySystem {
         return transactions;
     }
 
+    /** Return a reference to a user in the system with userId. */
+    public User getUserById(long userId) {
+        // Code here
+        return null;    // Placeholder
+    }
+
+    /** Delete a user in the system with userId. */
+    public void deleteUserById(long userId) {
+        // Code here
+    }
+
+    /** Return a reference to a book in the system with bookId. */
+    public User getBookById(long bookId) {
+        // Code here
+        return null;    // Placeholder
+    }
+
+    /** Delete a book in the system with bookId. */
+    public void deleteBookById(long bookId) {
+        // Code here
+    }
+
+    /** Log out the current user. */
+    public void logOut() {
+        // Code here
+    }
+
     /** Checks if the email is already registered. */
     public boolean isEmailRegistered(String email) {
         for(User user : users) {
