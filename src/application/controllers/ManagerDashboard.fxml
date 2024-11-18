@@ -5,6 +5,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -63,31 +66,31 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="editMemberBtn" layoutX="84.0" layoutY="353.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="102.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Edit Member" textFill="WHITE">
+                              <Button fx:id="editMemberBtn" layoutX="84.0" layoutY="353.0" mnemonicParsing="false" onAction="#switchToEditMember" prefHeight="30.0" prefWidth="102.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Edit Member" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="deleteMemberBtn" layoutX="70.0" layoutY="383.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="128.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Delete Member" textFill="WHITE">
+                              <Button fx:id="deleteMemberBtn" layoutX="70.0" layoutY="383.0" mnemonicParsing="false" onAction="#switchToDeleteMember" prefHeight="30.0" prefWidth="128.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Delete Member" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="memberListBtn" layoutX="85.0" layoutY="413.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Member List" textFill="WHITE">
+                              <Button fx:id="memberListBtn" layoutX="85.0" layoutY="413.0" mnemonicParsing="false" onAction="#switchToMemberList" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Member List" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="addBookBtn" layoutX="84.0" layoutY="475.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Add Book" textFill="WHITE">
+                              <Button fx:id="addBookBtn" layoutX="84.0" layoutY="475.0" mnemonicParsing="false" onAction="#switchToAddBook" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Add Book" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="editBookBtn" layoutX="84.0" layoutY="504.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Edit Book" textFill="WHITE">
+                              <Button fx:id="editBookBtn" layoutX="84.0" layoutY="504.0" mnemonicParsing="false" onAction="#switchToEditBook" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Edit Book" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="deleteBookBtn" layoutX="84.0" layoutY="535.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Delete Book" textFill="WHITE">
+                              <Button fx:id="deleteBookBtn" layoutX="84.0" layoutY="535.0" mnemonicParsing="false" onAction="#switchToDeleteBook" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Delete Book" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
-                              <Button fx:id="bookListBtn" layoutX="84.0" layoutY="566.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Book List" textFill="WHITE">
+                              <Button fx:id="bookListBtn" layoutX="84.0" layoutY="566.0" mnemonicParsing="false" onAction="#switchToBookList" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Book List" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
@@ -121,7 +124,7 @@
                                     <AnchorPane layoutX="358.0" layoutY="17.0" prefHeight="200.0" prefWidth="267.0" styleClass="nav-form" stylesheets="@mainFormDesign.css">
                                        <children>
                                           <FontAwesomeIcon fill="WHITE" glyphName="BOOK" layoutX="14.0" layoutY="130.0" size="7em" />
-                                          <Label layoutX="111.0" layoutY="160.0" text="Number of Book" textFill="WHITE">
+                                          <Label layoutX="134.0" layoutY="160.0" text="Number of Book" textFill="WHITE">
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
@@ -136,7 +139,7 @@
                                     <AnchorPane layoutX="687.0" layoutY="17.0" prefHeight="200.0" prefWidth="267.0" styleClass="nav-form" stylesheets="@mainFormDesign.css">
                                        <children>
                                           <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="130.0" size="7em" />
-                                          <Label layoutX="111.0" layoutY="160.0" text="Number of Author" textFill="WHITE">
+                                          <Label layoutX="111.0" layoutY="160.0" text="Number of Manager" textFill="WHITE">
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
@@ -155,7 +158,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                               </AnchorPane>
-                              <Label layoutX="14.0" layoutY="14.0" prefHeight="54.0" prefWidth="266.0" text="Welcome, [name]">
+                              <Label fx:id="welcomeUser" layoutX="14.0" layoutY="14.0" prefHeight="54.0" prefWidth="266.0" text="Welcome, [name]">
                                  <font>
                                     <Font name="Arial Bold" size="31.0" />
                                  </font>
@@ -225,11 +228,385 @@
                                     <Button layoutX="730.0" layoutY="292.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
                                     <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Add" textFill="WHITE">
                                        <font>
-                                          <Font name="Cambria Italic" size="9.0" />
+                                          <Font name="Cambria Italic" size="11.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="editMember" layoutX="10.0" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="USERS" layoutX="309.0" layoutY="115.0" size="10em" />
+                              <Label layoutX="459.0" layoutY="47.0" text="Edit Member">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="17.0" layoutY="149.0" prefHeight="546.0" prefWidth="955.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TextField layoutX="226.0" layoutY="131.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="67.0" layoutY="128.0" text="Username:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="69.0" layoutY="280.0" text="Email">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="226.0" layoutY="208.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="67.0" layoutY="204.0" text="Password:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="67.0" layoutY="356.0" text="Role:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox layoutX="226.0" layoutY="359.0" prefHeight="39.0" prefWidth="178.0" />
+                                    <AnchorPane layoutX="708.0" layoutY="27.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="radius" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                    </AnchorPane>
+                                    <TextField layoutX="226.0" layoutY="284.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Button layoutX="730.0" layoutY="292.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                                    <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                    <Label layoutX="67.0" layoutY="49.0" text="Enter member ID:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="315.0" layoutY="52.0" prefHeight="38.0" prefWidth="238.0" />
+                                    <Button layoutX="572.0" layoutY="50.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="105.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="deleteMember" layoutX="10.0" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="USERS" layoutX="309.0" layoutY="115.0" size="10em" />
+                              <Label layoutX="459.0" layoutY="47.0" text="Delete Member">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="17.0" layoutY="149.0" prefHeight="546.0" prefWidth="955.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Button layoutX="359.0" layoutY="197.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Delete" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                    <Label layoutX="237.0" layoutY="99.0" text="Enter member ID:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="479.0" layoutY="103.0" prefHeight="38.0" prefWidth="238.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="memberList" layoutX="10.0" layoutY="11.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="USERS" layoutX="309.0" layoutY="115.0" size="10em" />
+                              <Label layoutX="459.0" layoutY="47.0" text="Member List">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="26.0" layoutY="247.0" prefHeight="450.0" prefWidth="694.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TableView layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="670.0">
+                                      <columns>
+                                        <TableColumn prefWidth="75.20001220703125" text="ID" />
+                                        <TableColumn minWidth="0.0" prefWidth="165.59998321533203" text="Username" />
+                                          <TableColumn minWidth="0.0" prefWidth="136.79998779296875" text="Password" />
+                                          <TableColumn minWidth="0.0" prefWidth="173.5999755859375" text="Email" />
+                                          <TableColumn minWidth="0.0" prefWidth="117.60007324218748" text="Role" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                              <FontAwesomeIcon glyphName="SEARCH" layoutX="27.0" layoutY="213.0" size="3em" />
+                              <TextField layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="410.0" />
+                              <AnchorPane layoutX="741.0" layoutY="247.0" prefHeight="450.0" prefWidth="248.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                              </AnchorPane>
+                              <Button layoutX="489.0" layoutY="184.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="230.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="addBook" layoutX="11.0" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="344.0" layoutY="117.0" size="10em" />
+                              <Label layoutX="498.0" layoutY="48.0" text="Add Book">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="17.0" layoutY="149.0" prefHeight="546.0" prefWidth="955.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TextField layoutX="207.0" layoutY="78.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="75.0" text="ISBN:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <AnchorPane layoutX="720.0" layoutY="26.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="radius" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                    </AnchorPane>
+                                    <Button layoutX="742.0" layoutY="297.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                                    <Button layoutX="358.0" layoutY="488.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                    <TextField layoutX="207.0" layoutY="216.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="213.0" text="Genre:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="207.0" layoutY="170.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="167.0" text="Title:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="207.0" layoutY="124.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="121.0" text="Author:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="207.0" layoutY="262.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="259.0" text="Publisher:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="525.0" layoutY="124.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <Label layoutX="473.0" layoutY="75.0" prefHeight="28.0" prefWidth="246.0" text="Publication Year:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="486.0" layoutY="184.0" text="Copies available:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="525.0" layoutY="235.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <Label layoutX="66.0" layoutY="303.0" text="Desciption:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextArea layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="editBook" layoutX="11.0" layoutY="9.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="344.0" layoutY="117.0" size="10em" />
+                              <Label layoutX="498.0" layoutY="48.0" text="Edit Book">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="17.0" layoutY="149.0" prefHeight="546.0" prefWidth="955.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TextField layoutX="207.0" layoutY="78.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="75.0" text="ISBN:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <AnchorPane layoutX="720.0" layoutY="26.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="radius" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                    </AnchorPane>
+                                    <Button layoutX="742.0" layoutY="297.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                                    <Button layoutX="358.0" layoutY="488.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                    <TextField layoutX="207.0" layoutY="216.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="213.0" text="Genre:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="207.0" layoutY="170.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="167.0" text="Title:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="207.0" layoutY="124.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="121.0" text="Author:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="207.0" layoutY="262.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <Label layoutX="66.0" layoutY="259.0" text="Publisher:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="525.0" layoutY="124.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <Label layoutX="473.0" layoutY="75.0" prefHeight="28.0" prefWidth="246.0" text="Publication Year:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="486.0" layoutY="184.0" text="Copies available:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="525.0" layoutY="235.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <Label layoutX="66.0" layoutY="303.0" text="Desciption:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextArea layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
+                                    <TextField layoutX="273.0" layoutY="17.0" prefHeight="38.0" prefWidth="291.0" />
+                                    <Label layoutX="66.0" layoutY="14.0" text="Enter book ID:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Button layoutX="583.0" layoutY="15.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="105.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="deleteBook" layoutX="10.0" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="309.0" layoutY="115.0" size="10em" />
+                              <Label layoutX="459.0" layoutY="47.0" text="Delete Book">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="17.0" layoutY="149.0" prefHeight="546.0" prefWidth="955.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Button layoutX="359.0" layoutY="197.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Delete" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
+                                    <Label layoutX="237.0" layoutY="99.0" text="Enter book ID:">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="479.0" layoutY="103.0" prefHeight="38.0" prefWidth="238.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="bookList" layoutX="20.0" layoutY="21.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="309.0" layoutY="115.0" size="10em" />
+                              <Label layoutX="459.0" layoutY="47.0" text="Member List">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="26.0" layoutY="247.0" prefHeight="450.0" prefWidth="694.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TableView layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="670.0">
+                                       <columns>
+                                          <TableColumn prefWidth="53.600006103515625" text="ID" />
+                                          <TableColumn minWidth="0.0" prefWidth="147.19998931884766" text="ISBN" />
+                                          <TableColumn minWidth="0.0" prefWidth="160.800048828125" text="Author" />
+                                          <TableColumn minWidth="0.0" prefWidth="190.39993286132812" text="Title" />
+                                          <TableColumn minWidth="0.0" prefWidth="117.60007324218748" text="Role" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                              <FontAwesomeIcon glyphName="SEARCH" layoutX="27.0" layoutY="213.0" size="3em" />
+                              <TextField layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="410.0" />
+                              <AnchorPane layoutX="741.0" layoutY="247.0" prefHeight="450.0" prefWidth="248.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                              </AnchorPane>
+                              <Button layoutX="489.0" layoutY="184.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="230.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" />
                            </children>
                         </AnchorPane>
                      </children></AnchorPane>
