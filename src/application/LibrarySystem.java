@@ -103,6 +103,21 @@ public class LibrarySystem {
         }
     }
 
+    /** Get users list. */
+    public List<User> getUsers() {
+        return users;
+    }
+
+    /** Get books list. */
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    /** Get transactions list. */
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
     /** Checks if the email is already registered. */
     public boolean isEmailRegistered(String email) {
         for(User user : users) {
