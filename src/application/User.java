@@ -9,16 +9,18 @@ public class User {
     private String email;
     private String role;
     private String password;
-    private boolean loggedIn;
+    private byte[] imageUser;
+    private int limitBook;
 
     /** Constructor to initialize user data. */
-    public User(String name, long userId, String email, String password, String role) {
+    public User(String name, long userId, String email, String password, String role, byte[] imageUser) {
         setUsername(name);       // Validates and sets username
         setUserId(userId);       // Directly sets userId (additional validation can be added here if needed)
         setEmail(email);         // Validates and sets email
         setPassword(password);   // Validates and sets password
         setRole(role);           // Validates and sets role
-        this.loggedIn = false;
+        this.imageUser = imageUser;
+        this.limitBook = 10;
     }
 
     public User() {}
@@ -46,6 +48,16 @@ public class User {
     /** Getter for password attribute. */
     public String getPassword() {
         return password;
+    }
+
+    /** Getter for image attribute. */
+    public byte[] getImageUser() {
+        return imageUser;
+    }
+
+    /** Getter for limitBook attribute. */
+    public int getLimitBook() {
+        return limitBook;
     }
 
     /** Setter for email attribute. */
@@ -85,6 +97,11 @@ public class User {
         this.password = password;
     }
 
+    /** Setter for image attribute. */
+    public void setImageUser(byte[] imageUser) {
+        this.imageUser = imageUser;
+    }
+
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
         // The password must be at least 8 characters long.
@@ -106,8 +123,12 @@ public class User {
     /** Checks if two users are equal based on userId. */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
         User other = (User) obj;
         return userId == other.userId;
     }
@@ -117,13 +138,4 @@ public class User {
         return this.password.equals(password);
     }
 
-    /** Checks if user is logged in. */
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    /** Sets login status. */
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
 }

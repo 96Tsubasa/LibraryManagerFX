@@ -1,5 +1,8 @@
 package application;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class LibrarySystem {
@@ -26,7 +29,7 @@ public class LibrarySystem {
     }
 
     /** Create a new user, add to users List and database. */
-    public void addUser(String name, long userId, String email, String password, String role) {
+    public void addUser(String name, long userId, String email, String password, String role, byte[] imageUser) {
         // Code here
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
@@ -36,7 +39,7 @@ public class LibrarySystem {
         }
 
         // Create a new user instance and add to the users list
-        User user = new User(name, userId, email, password, role);
+        User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
     }
 
@@ -78,24 +81,36 @@ public class LibrarySystem {
 
     /** Search books by keywords. */
     public List<Book> searchBooks(String keywords) {
-        // Code here
-        return null;    // Placeholder
+        List<Long> checkId = Database.searchBookIdWithKeyword(keywords);
+        List<Book> printBook = new ArrayList<>();
+        for (Long check : checkId) {
+            for (Book next : books) {
+                if (next.getBookId() == check) {
+                    printBook.add(next);
+                }
+            }
+        }
+        Collections.sort(printBook, new Comparator<Book>() {
+            @Override
+            public int compare(Book b1, Book b2) {
+                return Long.compare(b1.getBookId(), b2.getBookId());
+            }
+        });
+        return printBook;
     }
 
     /** User borrow a book, return true if successful. */
     public boolean borrowBook(long userId, long bookId) {
-        // Code here
         for(Transaction transaction1 : transactions) {
             if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId && !transaction1.isReturned()) {
                 return false;
             }
         }
-        return true;    // Placeholder
+        return true;
     }
 
     /** User return a book. */
     public void returnBook(long userId, long bookId) {
-        // Code here
         for(Transaction transaction1 : transactions) {
             if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId && !transaction1.isReturned()) {
                 transaction1.setReturned(true);
@@ -120,29 +135,46 @@ public class LibrarySystem {
 
     /** Return a reference to a user in the system with userId. */
     public User getUserById(long userId) {
-        // Code here
-        return null;    // Placeholder
+        for (User user : users) {
+            if (user.getUserId() == userId) {
+                return user;
+            }
+        }
+        return null;
     }
 
     /** Delete a user in the system with userId. */
     public void deleteUserById(long userId) {
-        // Code here
+        for (User user : users) {
+            if (user.getUserId() == userId) {
+                users.remove(user);
+            }
+        }
     }
 
     /** Return a reference to a book in the system with bookId. */
-    public User getBookById(long bookId) {
-        // Code here
-        return null;    // Placeholder
+    public Book getBookById(long bookId) {
+        for (Book book : books) {
+            if (book.getBookId() == bookId) {
+                return book;
+            }
+        }
+        return null;
     }
 
     /** Delete a book in the system with bookId. */
     public void deleteBookById(long bookId) {
         // Code here
+        for (Book book : books) {
+            if (book.getBookId() == bookId) {
+                books.remove(book);
+            }
+        }
     }
 
     /** Log out the current user. */
     public void logOut() {
-        // Code here
+        currentUser = null;
     }
 
     /** Checks if the email is already registered. */
