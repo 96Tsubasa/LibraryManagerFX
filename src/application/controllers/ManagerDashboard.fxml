@@ -47,9 +47,9 @@
                                  </font>
                               </Text>
                               <Button fx:id="dashboardBtn" layoutX="34.0" layoutY="202.0" mnemonicParsing="false" onAction="#switchToDashboard" prefHeight="54.0" prefWidth="202.0" styleClass="nav-btn" stylesheets="@mainFormDesign.css" text="DASHBOARD" />
-                              <Button layoutX="75.0" layoutY="658.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="38.0">
+                              <Button fx:id="logout" layoutX="75.0" layoutY="658.0" mnemonicParsing="false" onAction="#logout" prefHeight="32.0" prefWidth="38.0" styleClass="logout" stylesheets="@mainFormDesign.css" textFill="WHITE">
                                  <graphic>
-                                    <FontAwesomeIcon glyphName="SIGN_OUT" />
+                                    <FontAwesomeIcon fill="WHITE" glyphName="SIGN_OUT" text="" />
                                  </graphic>
                               </Button>
                               <Label layoutX="34.0" layoutY="288.0" text="Members" textFill="WHITE">
@@ -102,7 +102,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="85.0" prefHeight="234.0" prefWidth="984.0" stylesheets="@mainFormDesign.css">
                                  <children>
@@ -179,7 +179,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="addMember" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="addMember" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <FontAwesomeIcon glyphName="USERS" layoutX="317.0" layoutY="124.0" size="10em" />
                               <Label layoutX="469.0" layoutY="55.0" text="Add Member">
@@ -194,7 +194,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TextField layoutX="220.0" layoutY="69.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addMemberUsername" layoutX="220.0" layoutY="69.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="61.0" layoutY="66.0" text="Username:">
                                        <font>
                                           <Font size="30.0" />
@@ -205,7 +205,7 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="220.0" layoutY="146.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addMemberPassword" layoutX="220.0" layoutY="146.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="61.0" layoutY="142.0" text="Password:">
                                        <font>
                                           <Font size="30.0" />
@@ -216,7 +216,7 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox layoutX="220.0" layoutY="297.0" prefHeight="39.0" prefWidth="178.0" />
+                                    <ComboBox fx:id="addMemberRole" layoutX="220.0" layoutY="297.0" prefHeight="39.0" prefWidth="178.0" promptText="Choose role" />
                                     <AnchorPane layoutX="708.0" layoutY="27.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
                                        <styleClass>
                                           <String fx:value="white-bg" />
@@ -224,11 +224,11 @@
                                           <String fx:value="shadow" />
                                        </styleClass>
                                     </AnchorPane>
-                                    <TextField layoutX="220.0" layoutY="222.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addMemberEmail" layoutX="220.0" layoutY="222.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Button layoutX="730.0" layoutY="292.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
-                                    <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Add" textFill="WHITE">
+                                    <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" onAction="#addMember" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Add" textFill="WHITE">
                                        <font>
-                                          <Font name="Cambria Italic" size="11.0" />
+                                          <Font name="Cambria Italic" size="16.0" />
                                        </font>
                                     </Button>
                                  </children>
