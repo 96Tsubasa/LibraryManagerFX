@@ -4,21 +4,25 @@ public class User {
     // User attributes
     public static final String NORMAL_USER = "USER";
     public static final String ADMIN = "ADMIN";
+    private int borrowLimit;
     private String username;
     private long userId;
     private String email;
     private String role;
     private String password;
     private boolean loggedIn;
+    private byte[] imageUser;
 
     /** Constructor to initialize user data. */
-    public User(String name, long userId, String email, String password, String role) {
+    public User(String name, long userId, String email, String password, String role, byte[] imageUser) {
         setUsername(name);       // Validates and sets username
         setUserId(userId);       // Directly sets userId (additional validation can be added here if needed)
         setEmail(email);         // Validates and sets email
         setPassword(password);   // Validates and sets password
         setRole(role);           // Validates and sets role
         this.loggedIn = false;
+        this.imageUser = imageUser;
+        borrowLimit = 10;
     }
 
     public User() {}
@@ -46,6 +50,11 @@ public class User {
     /** Getter for password attribute. */
     public String getPassword() {
         return password;
+    }
+
+    /** Getter for image attribute. */
+    public byte[] getImageUser() {
+        return imageUser;
     }
 
     /** Setter for email attribute. */
@@ -85,6 +94,16 @@ public class User {
         this.password = password;
     }
 
+    /** Getter borrowLimit. */
+    public int getBorrowLimit() {
+        return borrowLimit;
+    }
+
+    /** Setter borrowLimit. */
+    public void setBorrowLimit(int borrowLimit) {
+        this.borrowLimit = borrowLimit;
+    }
+
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
         // The password must be at least 8 characters long.
@@ -101,6 +120,11 @@ public class User {
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email.matches(emailRegex);
+    }
+
+    /** Setter for image attribute. */
+    public void setImageUser(byte[] imageUser) {
+        this.imageUser = imageUser;
     }
 
     /** Checks if two users are equal based on userId. */

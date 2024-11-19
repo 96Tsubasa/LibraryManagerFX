@@ -17,7 +17,7 @@ public class LibrarySystem {
     }
 
     /** Create a new user, add to users List and database (Need to add/change parameters). */
-    public void addUser(String name, long userId, String email, String password, String role) {
+    public void addUser(String name, long userId, String email, String password, String role, byte[] imageUser) {
         // Code here
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
@@ -27,7 +27,7 @@ public class LibrarySystem {
         }
 
         // Create a new user instance and add to the users list
-        User user = new User(name, userId, email, password, role);
+        User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
     }
 
@@ -44,9 +44,11 @@ public class LibrarySystem {
     }
 
     /** Create a new book, add to books list and database (Need to add parameters). */
-    public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description) {
+    public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear,
+                        String[] genres, int copiesAvailable, String description,
+                        byte[] coverImage, String isbn) {
         // Code here
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description);
+        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
         books.add(book);
     }
 
