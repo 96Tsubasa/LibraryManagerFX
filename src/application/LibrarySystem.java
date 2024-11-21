@@ -1,5 +1,6 @@
 package application;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,7 +14,7 @@ public class LibrarySystem {
     private User currentUser;
 
     /** Constructor. */
-    private LibrarySystem() {
+    public LibrarySystem() {
         // Load data from database
         books = Database.loadBooks();
         users = Database.loadUsers();
@@ -47,12 +48,15 @@ public class LibrarySystem {
     public User handleLogin(String username, String password) {
         // Code here
         for (User user : users) {
-            if (user.getUsername().equals(username) && user.checkPassword(password)) {
-                currentUser = user;
-                return user;
+            if (user.getUsername().equals(username)) {
+                if (user.checkPassword(password)) {
+                    currentUser = user;
+                    return user;
+                }
+                throw new IllegalArgumentException("Incorrect password.");
             }
         }
-        return null;    // Placeholder
+        throw new IllegalArgumentException("Username does not exist.");
     }
 
     /** Create a new book, add to books list and database. */
@@ -100,22 +104,47 @@ public class LibrarySystem {
     }
 
     /** User borrow a book, return true if successful. */
-    public boolean borrowBook(long userId, long bookId) {
+    public boolean isBorrowBook(long userId, long bookId) {
         for(Transaction transaction1 : transactions) {
-            if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId && !transaction1.isReturned()) {
+            if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId
+                    && !transaction1.isReturned()) {
                 return false;
             }
         }
         return true;
     }
 
+    /** User borrow a book. */
+    public void borrowBook(long transactionId, long userId, long bookId) {
+        if (!isBorrowBook(userId, bookId)) {
+            throw new IllegalArgumentException("The user has already borrowed this book.");
+        }
+        Book book = getBookById(bookId);
+        if (book == null || book.getCopiesAvailable() <= 0) {
+            throw new IllegalArgumentException("The book is not available.");
+        }
+        book.setCopiesAvailable(book.getCopiesAvailable() - 1);
+        Transaction transaction1 = new Transaction(transactionId, userId, bookId, LocalDate.now(),
+                LocalDate.now().plusMonths(6), null, false);
+        transactions.add(transaction1);
+    }
+
     /** User return a book. */
     public void returnBook(long userId, long bookId) {
-        for(Transaction transaction1 : transactions) {
-            if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId && !transaction1.isReturned()) {
-                transaction1.setReturned(true);
+        for (Transaction transaction : transactions) {
+            if (transaction.getUserId() == userId && transaction.getBookId() == bookId
+                    && !transaction.isReturned()) {
+                transaction.setReturned(true);
+                transaction.setReturnDate(LocalDate.now());
+
+                Book book = getBookById(bookId);
+                if (book != null) {
+                    book.setCopiesAvailable(book.getCopiesAvailable() + 1);
+                }
+                return;
             }
         }
+        throw new IllegalArgumentException("No valid return transaction found.");
     }
 
     /** Get users list. */
@@ -145,11 +174,7 @@ public class LibrarySystem {
 
     /** Delete a user in the system with userId. */
     public void deleteUserById(long userId) {
-        for (User user : users) {
-            if (user.getUserId() == userId) {
-                users.remove(user);
-            }
-        }
+        users.removeIf(user -> user.getUserId() == userId);
     }
 
     /** Return a reference to a book in the system with bookId. */
@@ -164,12 +189,7 @@ public class LibrarySystem {
 
     /** Delete a book in the system with bookId. */
     public void deleteBookById(long bookId) {
-        // Code here
-        for (Book book : books) {
-            if (book.getBookId() == bookId) {
-                books.remove(book);
-            }
-        }
+        books.removeIf(book -> book.getBookId() == bookId);
     }
 
     /** Log out the current user. */
