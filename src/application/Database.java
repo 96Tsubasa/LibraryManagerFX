@@ -17,13 +17,15 @@ public class Database {
                 rs.getLong("userId"),
                 rs.getString("email"),
                 rs.getString("password"),
-                rs.getString("role")
+                rs.getString("role"),
+                rs.getBytes("imageUser")
         );
     }
 
     /** Add a new user to the database. */
     public static void addUser(User user) {
-        String query = "INSERT INTO users (userId, username, password, email, role) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users (userId, username, password, email, role, imageUser) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, user.getUserId());
@@ -31,6 +33,7 @@ public class Database {
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getEmail());
             pstmt.setString(5, user.getRole());
+            pstmt.setBytes(6, user.getImageUser());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -39,7 +42,8 @@ public class Database {
 
     /** Edit a user's info by userId. */
     public static void editUserById(User user) {
-        String query = "UPDATE users SET username = ?, password = ?, email = ?, role = ? " +
+        String query = "UPDATE users SET " +
+                "username = ?, password = ?, email = ?, role = ?, imageUser = ? " +
                 "WHERE userId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -47,7 +51,8 @@ public class Database {
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getEmail());
             pstmt.setString(4, user.getRole());
-            pstmt.setLong(5, user.getUserId());
+            pstmt.setBytes(5, user.getImageUser());
+            pstmt.setLong(6, user.getUserId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -75,7 +80,8 @@ public class Database {
 
     /** Edit a user's info by email. */
     public static void editUserByEmail(User user) {
-        String query = "UPDATE users SET userId = ?, username = ?, password = ?, role = ? " +
+        String query = "UPDATE users SET " +
+                "userId = ?, username = ?, password = ?, role = ?, imageUser = ? " +
                 "WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -83,7 +89,8 @@ public class Database {
             pstmt.setString(2, user.getUsername());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getRole());
-            pstmt.setString(5, user.getEmail());
+            pstmt.setBytes(5, user.getImageUser());
+            pstmt.setString(6, user.getEmail());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -121,30 +128,6 @@ public class Database {
             System.out.println(e.getMessage());
         }
         return 1;
-    }
-
-    /** Handle login. Return User object with given username and password, null if no such user found.
-     * This has been changed to private method and will be removed soon. */
-    private static User handleLogin(String username, String password) {
-        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
-        try (Connection conn = DriverManager.getConnection(databaseUrl);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return new User(rs.getString("username"),
-                            rs.getLong("userId"),
-                            rs.getString("email"),
-                            rs.getString("password"),
-                            rs.getString("role"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
     }
 
     /** Add a new author to the database. */
@@ -419,7 +402,7 @@ public class Database {
         return bookList;
     }
 
-    /** Search for books from keywords. */
+    /** Search for books from keywords. Returns a list of bookIds. */
     public static List<Long> searchBookIdWithKeyword(String keyword) {
         List<Long> bookIdList = new ArrayList<>();
 
@@ -519,7 +502,7 @@ public class Database {
     }
 
     /** Run a query that doesn't return results on the database. */
-    public static void execute(String query) {
+    private static void execute(String query) {
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              Statement stmt = conn.createStatement()) {
 
@@ -532,7 +515,7 @@ public class Database {
     }
 
     /** Run a query that return results from the database. */
-    public static List<Map<String, Object>> executeQuery(String query) {
+    private static List<Map<String, Object>> executeQuery(String query) {
         List<Map<String, Object>> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(databaseUrl);
