@@ -31,7 +31,6 @@ public class LibrarySystem {
 
     /** Create a new user, add to users List and database. */
     public void addUser(String name, long userId, String email, String password, String role, byte[] imageUser) {
-        // Code here
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
         }
@@ -46,7 +45,6 @@ public class LibrarySystem {
 
     /** Check username and password with database, return null if no username or false password. */
     public User handleLogin(String username, String password) {
-        // Code here
         for (User user : users) {
             if (user.getUsername().equals(username)) {
                 if (user.checkPassword(password)) {
@@ -61,26 +59,30 @@ public class LibrarySystem {
 
     /** Create a new book, add to books list and database. */
     public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
-        // Code here
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can add books.");
+        }
         Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
         books.add(book);
     }
 
     /** Remove a book. */
     public void removeBook(Book book) {
-        // Code here
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can add books.");
+        }
+
         books.remove(book);
     }
 
     /** Search book by ISBN. */
     public Book searchBookByISBN(String isbn) {
-        // Code here
         for(Book book1 : books) {
             if(book1.getIsbn().equals(isbn)) {
                 return book1;
             }
         }
-        return null;    // Placeholder
+        return null;
     }
 
     /** Search books by keywords. */
