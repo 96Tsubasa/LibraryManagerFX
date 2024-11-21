@@ -69,7 +69,7 @@ public class LibrarySystem {
     /** Remove a book. */
     public void removeBook(Book book) {
         if (!currentUser.getRole().equals(User.ADMIN)) {
-            throw new IllegalArgumentException("Only admins can add books.");
+            throw new IllegalArgumentException("Only admins can remove books.");
         }
 
         books.remove(book);
