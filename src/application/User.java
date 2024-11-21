@@ -65,6 +65,13 @@ public class User {
         if (!isValidEmail(email) || email.isEmpty()) {
             throw new IllegalArgumentException("Invalid or empty email.");
         }
+
+        for (User user : LibrarySystem.getInstance().getUsers()) {
+            if (user.getEmail().equals(email)) {
+                throw new IllegalArgumentException("Email already registered.");
+            }
+        }
+
         this.email = email;
     }
 
@@ -73,6 +80,13 @@ public class User {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Invalid or empty username.");
         }
+
+        for (User user : LibrarySystem.getInstance().getUsers()) {
+            if (user.getUsername().equals(name)) {
+                throw new IllegalArgumentException("Username already taken.");
+            }
+        }
+
         this.username = name;
     }
 
@@ -100,6 +114,14 @@ public class User {
     /** Setter for image attribute. */
     public void setImageUser(byte[] imageUser) {
         this.imageUser = imageUser;
+    }
+
+    /** Setter for limitbook attribute. */
+    public void setLimitBook(int limitBook) {
+        if (limitBook < 1 || limitBook > 10) {
+            throw new IllegalArgumentException("Limit should be greater than zero and less than ten.");
+        }
+        this.limitBook = limitBook;
     }
 
     /** Validates password complexity. */
