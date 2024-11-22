@@ -97,7 +97,7 @@ public class User {
 
     /** Setter for role attribute. */
     public void setRole(String role) {
-        if (role == null) {
+        if (role == null || role != ADMIN || role != NORMAL_USER) {
             throw new IllegalArgumentException("Role cannot be null.");
         }
         this.role = role;
@@ -118,7 +118,7 @@ public class User {
 
     /** Setter for limitbook attribute. */
     public void setLimitBook(int limitBook) {
-        if (limitBook < 1 || limitBook > 10) {
+        if (limitBook < 0 || limitBook > 10) {
             throw new IllegalArgumentException("Limit should be greater than zero and less than ten.");
         }
         this.limitBook = limitBook;
