@@ -124,6 +124,18 @@ public class User {
         this.limitBook = limitBook;
     }
 
+    /** Setter limitbook when borrowing book. */
+    public void borrowBook() {
+        setLimitBook(limitBook--);
+    }
+
+    /** Setter limitbook when returning book. */
+    public void returnBook() {
+        setLimitBook(limitBook++);
+    }
+
+
+
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
         // The password must be at least 8 characters long.
