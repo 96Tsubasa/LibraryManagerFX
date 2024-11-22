@@ -30,7 +30,7 @@ public class LibrarySystem {
     }
 
     /** Create a new user, add to users List and database. */
-    public void addUser(String name, long userId, String email, String password, String role, byte[] imageUser) {
+    public void addUser(String name, String email, String password, String role, byte[] imageUser) {
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
         }
@@ -38,9 +38,11 @@ public class LibrarySystem {
             throw new IllegalArgumentException("Username is already registered.");
         }
 
+        long userId = Database.createNewUserId();
         // Create a new user instance and add to the users list
         User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
+        Database.addUser(user);
     }
 
     /** Check username and password with database, return null if no username or false password. */
@@ -58,12 +60,14 @@ public class LibrarySystem {
     }
 
     /** Create a new book, add to books list and database. */
-    public void addBook(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
+    public void addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
         if (!currentUser.getRole().equals(User.ADMIN)) {
             throw new IllegalArgumentException("Only admins can add books.");
         }
+        long bookId = Database.createNewBookId();
         Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
         books.add(book);
+        Database.addBook(book);
     }
 
     /** Remove a book. */
@@ -72,7 +76,6 @@ public class LibrarySystem {
             throw new IllegalArgumentException("Only admins can remove books.");
         }
 
-        books.remove(book);
     }
 
     /** Search book by ISBN. */
@@ -117,18 +120,20 @@ public class LibrarySystem {
     }
 
     /** User borrow a book. */
-    public void borrowBook(long transactionId, long userId, long bookId) {
-        if (!isBorrowBook(userId, bookId)) {
+    public void borrowBook(long userId, long bookId) {
+        Book book = getBookById(bookId);
+        if (!isBorrowBook(userId, bookId) && !book.borrow()) {
             throw new IllegalArgumentException("The user has already borrowed this book.");
         }
-        Book book = getBookById(bookId);
-        if (book == null || book.getCopiesAvailable() <= 0) {
+        if (book == null || !book.isAvailable()) {
             throw new IllegalArgumentException("The book is not available.");
         }
         book.setCopiesAvailable(book.getCopiesAvailable() - 1);
+        long transactionId = Database.createNewTransactionId();
         Transaction transaction1 = new Transaction(transactionId, userId, bookId, LocalDate.now(),
                 LocalDate.now().plusMonths(6), null, false);
         transactions.add(transaction1);
+        Database.addTransaction(transaction1);
     }
 
     /** User return a book. */
@@ -136,12 +141,11 @@ public class LibrarySystem {
         for (Transaction transaction : transactions) {
             if (transaction.getUserId() == userId && transaction.getBookId() == bookId
                     && !transaction.isReturned()) {
+                Book book = getBookById(bookId);
                 transaction.setReturned(true);
                 transaction.setReturnDate(LocalDate.now());
-
-                Book book = getBookById(bookId);
                 if (book != null) {
-                    book.setCopiesAvailable(book.getCopiesAvailable() + 1);
+                    book.returnBook();
                 }
                 return;
             }
