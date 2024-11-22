@@ -122,13 +122,15 @@ public class LibrarySystem {
     /** User borrow a book. */
     public void borrowBook(long userId, long bookId) {
         Book book = getBookById(bookId);
+        User user = getUserById(userId);
         if (!isBorrowBook(userId, bookId) && !book.borrow()) {
             throw new IllegalArgumentException("The user has already borrowed this book.");
         }
         if (book == null || !book.isAvailable()) {
             throw new IllegalArgumentException("The book is not available.");
         }
-        book.setCopiesAvailable(book.getCopiesAvailable() - 1);
+        user.borrowBook();
+        book.borrow();
         long transactionId = Database.createNewTransactionId();
         Transaction transaction1 = new Transaction(transactionId, userId, bookId, LocalDate.now(),
                 LocalDate.now().plusMonths(6), null, false);
@@ -142,10 +144,12 @@ public class LibrarySystem {
             if (transaction.getUserId() == userId && transaction.getBookId() == bookId
                     && !transaction.isReturned()) {
                 Book book = getBookById(bookId);
+                User user = getUserById(userId);
                 transaction.setReturned(true);
                 transaction.setReturnDate(LocalDate.now());
                 if (book != null) {
                     book.returnBook();
+                    user.returnBook();
                 }
                 return;
             }
