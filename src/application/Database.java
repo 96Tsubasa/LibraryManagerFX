@@ -59,6 +59,18 @@ public class Database {
         }
     }
 
+    /** Delete a user by userId. */
+    public static void deleteUserById(long userId) {
+        String query = "DELETE FROM users WHERE userId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, userId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /** Get user by userId. */
     private static User getUserById(long userId) {
         String query = "SELECT * FROM users WHERE userId = ?";
@@ -344,6 +356,18 @@ public class Database {
         }
     }
 
+    /** Delete a book by bookId. */
+    public static void deleteBookById(long bookId) {
+        String query = "DELETE FROM books WHERE bookId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, bookId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /** Generate a new unique bookId. */
     public static long createNewBookId() {
         String query = "SELECT MAX(bookId) AS max FROM books";
@@ -458,6 +482,43 @@ public class Database {
         }
     }
 
+    /** Edit a transaction's info by transactionId. */
+    public static void editTransactionById(Transaction transaction) {
+        String query = "UPDATE transactions SET userId = ?, bookId = ?, " +
+                "borrowDate = ?, dueDate = ?, returnDate = ?, isReturned = ? " +
+                "WHERE transactionId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, transaction.getUserId());
+            pstmt.setLong(2, transaction.getBookId());
+            pstmt.setString(3, transaction.getBorrowDate().toString());
+            pstmt.setString(4, transaction.getDueDate().toString());
+            if (transaction.getReturnDate() == null) {
+                pstmt.setNull(5, Types.VARCHAR);
+            } else {
+                pstmt.setString(5, transaction.getReturnDate().toString());
+            }
+            pstmt.setBoolean(6, transaction.isReturned());
+            pstmt.setLong(7, transaction.getTransactionId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    /** Delete a transaction by transactionId. */
+    public static void deleteTransactionById(long transactionId) {
+        String query = "DELETE FROM transactions WHERE transactionId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, transactionId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /** Generate a new unique transactionId. */
     public static long createNewTransactionId() {
         String query = "SELECT MAX(transactionId) AS max FROM transactions";
@@ -549,9 +610,16 @@ public class Database {
 //                100,
 //                "When piggies fly! The story of the legendary pigs who fly across the world and fight the evils!"));
 
-        List<Long> result = searchBookIdWithKeyword("tail");
-        for (Long bookId : result) {
-            System.out.println(getBookById(bookId).getBookInfo() + "\n");
-        }
+        Transaction tran = new Transaction(1,
+                1,
+                2,
+                LocalDate.of(2024, 11, 24),
+                LocalDate.of(2024, 11, 30),
+                LocalDate.of(2024, 11, 28),
+                true);
+
+//        Database.addTransaction(tran);
+
+        Database.editTransactionById(tran);
     }
 }
