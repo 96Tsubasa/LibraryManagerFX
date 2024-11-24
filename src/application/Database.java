@@ -1,5 +1,6 @@
 package application;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,6 +54,18 @@ public class Database {
             pstmt.setString(4, user.getRole());
             pstmt.setBytes(5, user.getImageUser());
             pstmt.setLong(6, user.getUserId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /** Delete a user by userId. */
+    public static void deleteUserById(long userId) {
+        String query = "DELETE FROM users WHERE userId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, userId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -344,6 +357,18 @@ public class Database {
         }
     }
 
+    /** Delete a book by bookId. */
+    public static void deleteBookById(long bookId) {
+        String query = "DELETE FROM books WHERE bookId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, bookId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /** Generate a new unique bookId. */
     public static long createNewBookId() {
         String query = "SELECT MAX(bookId) AS max FROM books";
@@ -458,6 +483,18 @@ public class Database {
         }
     }
 
+    /** Delete a transaction by transactionId. */
+    public static void deleteTransactionById(long transactionId) {
+        String query = "DELETE FROM transactions WHERE transactionId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, transactionId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /** Generate a new unique transactionId. */
     public static long createNewTransactionId() {
         String query = "SELECT MAX(transactionId) AS max FROM transactions";
@@ -549,9 +586,6 @@ public class Database {
 //                100,
 //                "When piggies fly! The story of the legendary pigs who fly across the world and fight the evils!"));
 
-        List<Long> result = searchBookIdWithKeyword("tail");
-        for (Long bookId : result) {
-            System.out.println(getBookById(bookId).getBookInfo() + "\n");
-        }
+        Database.deleteUserById(6);
     }
 }
