@@ -3,15 +3,23 @@ package application.controllers;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
+
 import application.LibrarySystem;
+import application.Main;
+import application.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,10 +29,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.fxml.Initializable;
 
@@ -33,39 +49,29 @@ public class ManagerDashboardController implements Initializable{
     private Scene scene;
     private Parent root;
     String current = "dashboard";
+    private Image image;
+    private LibrarySystem librarySystem;
     
-    @FXML
-    private AnchorPane addMember;
-
-    @FXML
-    private AnchorPane editMember;
-
-    @FXML
-    private AnchorPane deleteMember;
-
-    @FXML
-    private AnchorPane memberList;
-
     @FXML
     private AnchorPane addBook;
 
     @FXML
-    private AnchorPane editBook;
+    private Button addBookBtn;
 
     @FXML
-    private AnchorPane deleteBook;
+    private AnchorPane addMember;
 
     @FXML
-    private AnchorPane bookList;
-
-    @FXML
-    private AnchorPane dashboard;
-
-    @FXML
-    private Label welcomeUser;
+    private Button addMemberBtn;
 
     @FXML
     private TextField addMemberEmail;
+
+    @FXML
+    private ImageView addMemberImage;
+
+    @FXML
+    private Button addMemberImport;
 
     @FXML
     private TextField addMemberPassword;
@@ -76,7 +82,94 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private TextField addMemberUsername;
 
-    private String[] roleList = {"Manager", "Member"};
+    @FXML
+    private AnchorPane bookList;
+
+    @FXML
+    private Button bookListBtn;
+
+    @FXML
+    private AnchorPane dashboard;
+
+    @FXML
+    private Button dashboardBtn;
+
+    @FXML
+    private AnchorPane deleteBook;
+
+    @FXML
+    private Button deleteBookBtn;
+
+    @FXML
+    private AnchorPane deleteMember;
+
+    @FXML
+    private Button deleteMemberBtn;
+
+    @FXML
+    private AnchorPane editBook;
+
+    @FXML
+    private Button editBookBtn;
+
+    @FXML
+    private AnchorPane editMember;
+
+    @FXML
+    private Button editMemberBtn;
+
+    @FXML
+    private Button logout;
+
+    @FXML
+    private AnchorPane memberList;
+
+    @FXML
+    private Button memberListBtn;
+
+    @FXML
+    private Label welcomeUser;
+
+    @FXML
+    private TableView<User> memberListTable;
+
+    @FXML
+    private TableColumn<User, String> memberListEmail;
+
+    @FXML
+    private TableColumn<User, String> memberListID;
+
+    @FXML
+    private TableColumn<User, String> memberListPassword;
+
+    @FXML
+    private TableColumn<User, String> memberListRole;
+
+    @FXML
+    private TableColumn<User, String> memberListUsername;
+
+    @FXML
+    private AnchorPane manager_dashboard;
+
+    @FXML
+    private Label memberListEmailShow;
+
+    @FXML
+    private Label memberListIDShow;
+
+    @FXML
+    private Label memberListPasswordShow;
+
+    @FXML
+    private Label memberListRoleShow;
+
+    @FXML
+    private Label memberListUsernameShow;
+
+    @FXML
+    private ImageView memberListImageShow;
+
+    private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
         for (String data : roleList) {
@@ -84,6 +177,35 @@ public class ManagerDashboardController implements Initializable{
         }
         ObservableList listData = FXCollections.observableArrayList(roleL);
         addMemberRole.setItems(listData);
+    }
+
+    private ObservableList<User> memberListData;
+    public void memberListShowData() {
+        memberListData = FXCollections.observableArrayList(librarySystem.getUsers());
+        
+        memberListID.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        memberListUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+        memberListPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+        memberListEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        memberListRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+        memberListTable.setItems(memberListData);
+    }
+
+    public void memberListSelectData() {
+        User user = memberListTable.getSelectionModel().getSelectedItem();
+        int num = memberListTable.getSelectionModel().getSelectedIndex();
+        if (num < 0) return;
+
+        memberListIDShow.setText("ID: " + user.getUserId());
+        memberListUsernameShow.setText("Username: " + user.getUsername());
+        memberListPasswordShow.setText("Password: " + user.getPassword());
+        memberListEmailShow.setText("Email: " + user.getEmail());
+        memberListRoleShow.setText("Role: " + user.getRole());
+        if (user.getImageUser() != null) {
+            memberListImageShow.setImage(convertBytesToImage(user.getImageUser()));
+        } else {
+            memberListImageShow.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
+        }
     }
 
     private void disableNode() {
@@ -184,13 +306,23 @@ public class ManagerDashboardController implements Initializable{
             String password = addMemberPassword.getText();
             String email = addMemberEmail.getText();
             String role = (String) addMemberRole.getValue();
-            LibrarySystem libSys = LibrarySystem.getInstance();
-            libSys.addUser(username, 10, email, password, role);
+            librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
             showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
         } catch (IllegalArgumentException e) {
-            showAlert(AlertType.ERROR, "Error Message", "Username or Email is already registered");
+            showAlert(AlertType.ERROR, "Error Message", "Something is wrong");
         }
+    }
 
+    public void memberListImportBtn() {
+        FileChooser openFile = new FileChooser();
+        openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
+
+        File file = openFile.showOpenDialog(manager_dashboard.getScene().getWindow());
+
+        if (file != null) {
+            image = new Image(file.toURI().toString(), 200, 237, false, true);
+            addMemberImage.setImage(image);
+        }
     }
 
     private void displayUsername() {
@@ -205,9 +337,30 @@ public class ManagerDashboardController implements Initializable{
         alert.showAndWait();
     }
 
+    private byte[] convertImageToBytes(Image image) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            java.awt.image.BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+            
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Image convertBytesToImage(byte[] bytes) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        return new Image(byteArrayInputStream);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         displayUsername();
         userRoleList();
+        librarySystem = LibrarySystem.getInstance();
+        memberListShowData();
     }
 }

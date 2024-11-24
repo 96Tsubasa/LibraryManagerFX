@@ -19,7 +19,7 @@
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.ManagerDashboardController">
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+      <AnchorPane fx:id="manager_dashboard" prefHeight="200.0" prefWidth="200.0">
          <children>
             <BorderPane prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <left>
@@ -102,7 +102,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="85.0" prefHeight="234.0" prefWidth="984.0" stylesheets="@mainFormDesign.css">
                                  <children>
@@ -179,7 +179,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="addMember" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="addMember" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <FontAwesomeIcon glyphName="USERS" layoutX="317.0" layoutY="124.0" size="10em" />
                               <Label layoutX="469.0" layoutY="55.0" text="Add Member">
@@ -223,9 +223,12 @@
                                           <String fx:value="radius" />
                                           <String fx:value="shadow" />
                                        </styleClass>
+                                       <children>
+                                          <ImageView fx:id="addMemberImage" fitHeight="237.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                       </children>
                                     </AnchorPane>
                                     <TextField fx:id="addMemberEmail" layoutX="220.0" layoutY="222.0" prefHeight="38.0" prefWidth="252.0" />
-                                    <Button layoutX="730.0" layoutY="292.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                                    <Button fx:id="addMemberImport" layoutX="730.0" layoutY="292.0" mnemonicParsing="false" onAction="#memberListImportBtn" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
                                     <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" onAction="#addMember" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Add" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="16.0" />
@@ -347,13 +350,13 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TableView layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="670.0">
+                                    <TableView fx:id="memberListTable" layoutX="10.0" layoutY="13.0" onMouseClicked="#memberListSelectData" prefHeight="428.0" prefWidth="670.0">
                                       <columns>
-                                        <TableColumn prefWidth="75.20001220703125" text="ID" />
-                                        <TableColumn minWidth="0.0" prefWidth="165.59998321533203" text="Username" />
-                                          <TableColumn minWidth="0.0" prefWidth="136.79998779296875" text="Password" />
-                                          <TableColumn minWidth="0.0" prefWidth="173.5999755859375" text="Email" />
-                                          <TableColumn minWidth="0.0" prefWidth="117.60007324218748" text="Role" />
+                                        <TableColumn fx:id="memberListID" prefWidth="75.20001220703125" text="ID" />
+                                        <TableColumn fx:id="memberListUsername" minWidth="0.0" prefWidth="165.59998321533203" text="Username" />
+                                          <TableColumn fx:id="memberListPassword" minWidth="0.0" prefWidth="136.79998779296875" text="Password" />
+                                          <TableColumn fx:id="memberListEmail" minWidth="0.0" prefWidth="173.5999755859375" text="Email" />
+                                          <TableColumn fx:id="memberListRole" minWidth="0.0" prefWidth="117.60007324218748" text="Role" />
                                       </columns>
                                     </TableView>
                                  </children>
@@ -366,6 +369,38 @@
                                     <String fx:value="radius" />
                                     <String fx:value="shadow" />
                                  </styleClass>
+                                 <children>
+                                    <ImageView fx:id="memberListImageShow" fitHeight="240.0" fitWidth="200.0" layoutX="24.0" layoutY="21.0" pickOnBounds="true">
+                                       <image>
+                                          <Image url="@../../resources/image/avatar.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label fx:id="memberListIDShow" layoutX="24.0" layoutY="273.0" text="ID:">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="memberListPasswordShow" layoutX="24.0" layoutY="341.0" text="Password:">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="memberListRoleShow" layoutX="24.0" layoutY="409.0" text="Role:">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="memberListEmailShow" layoutX="24.0" layoutY="375.0" text="Email:">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="memberListUsernameShow" layoutX="24.0" layoutY="307.0" text="Username:">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
                               </AnchorPane>
                               <Button layoutX="489.0" layoutY="184.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="230.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" />
                            </children>

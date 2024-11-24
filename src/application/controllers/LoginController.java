@@ -19,6 +19,7 @@ public class LoginController {
     private Stage stage;
     private Scene scene;
     private Parent root;
+    public static User currentUser;
 
     @FXML
     private TextField usernameField;
@@ -30,8 +31,7 @@ public class LoginController {
     private void login(ActionEvent event) throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
-        LibrarySystem libsys = new LibrarySystem();
-        User currentUser = libsys.handleLogin(username, password);
+        currentUser = LibrarySystem.getInstance().handleLogin(username, password);
         //if login successfully
         if (currentUser != null) {
             //if user account is ADMIN
