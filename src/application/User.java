@@ -66,12 +66,6 @@ public class User {
             throw new IllegalArgumentException("Invalid or empty email.");
         }
 
-        for (User user : LibrarySystem.getInstance().getUsers()) {
-            if (user.getEmail().equals(email)) {
-                throw new IllegalArgumentException("Email already registered.");
-            }
-        }
-
         this.email = email;
     }
 
@@ -79,12 +73,6 @@ public class User {
     public void setUsername(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Invalid or empty username.");
-        }
-
-        for (User user : LibrarySystem.getInstance().getUsers()) {
-            if (user.getUsername().equals(name)) {
-                throw new IllegalArgumentException("Username already taken.");
-            }
         }
 
         this.username = name;
