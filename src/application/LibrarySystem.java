@@ -12,6 +12,8 @@ public class LibrarySystem {
     private List<User> users;
     private List<Transaction> transactions;
     private User currentUser;
+    private int countAdmin;
+    private int countUser;
 
     /** Constructor. */
     public LibrarySystem() {
@@ -106,6 +108,18 @@ public class LibrarySystem {
             }
         });
         return printBook;
+    }
+
+    /** Getter for count admin. */
+    public int getCountAdmin() {
+        setCountAdmin();
+        return countAdmin;
+    }
+
+    /** Getter for count user. */
+    public int getCountUser() {
+        setCountUser();
+        return countUser;
     }
 
     /** User borrow a book, return true if successful. */
@@ -227,5 +241,27 @@ public class LibrarySystem {
             }
         }
         return true;
+    }
+
+    /** Setter for count admin. */
+    public void setCountAdmin() {
+        int count = 0;
+        for (User user : users) {
+            if (user.getRole().equals(User.ADMIN)) {
+                count ++;
+            }
+        }
+        this.countAdmin = count;
+    }
+
+    /** Setter for count user. */
+    public void setCountUser() {
+        int count = 0;
+        for (User user : users) {
+            if (user.getRole().equals(User.NORMAL_USER)) {
+                count ++;
+            }
+        }
+        this.countUser = count;
     }
 }
