@@ -31,8 +31,8 @@ public class LibrarySystem {
         return instance;
     }
 
-    /** Create a new user, add to users List and database. */
-    public void addUser(String name, String email, String password, String role, byte[] imageUser) {
+    /** Create a new user, add to users List and database. Return the user object if successful. */
+    public User addUser(String name, String email, String password, String role, byte[] imageUser) {
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
         }
@@ -45,6 +45,7 @@ public class LibrarySystem {
         User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
         Database.addUser(user);
+        return user;
     }
 
     /** Check username and password with database, return null if no username or false password. */
