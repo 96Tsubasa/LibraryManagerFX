@@ -310,7 +310,7 @@ public class ManagerDashboardController implements Initializable{
             memberListData.add(newUser);
             showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
         } catch (IllegalArgumentException e) {
-            showAlert(AlertType.ERROR, "Error Message", "Something is wrong");
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
     }
 
