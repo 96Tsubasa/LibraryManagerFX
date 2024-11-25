@@ -212,10 +212,10 @@ public class LibrarySystem {
         for(User user : users) {
             // If an email match is found, throw an exception indicating the email is already registered
             if(user.getEmail().equals(email)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /** Checks if the username is already registered. */
