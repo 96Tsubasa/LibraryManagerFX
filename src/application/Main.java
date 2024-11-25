@@ -23,7 +23,7 @@ public class Main extends Application {
 	}
 
 	public void showLoginScreen(Stage stage) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("/resources/fxml/LoginScreen.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/application/controllers/LoginScreen.fxml"));
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
