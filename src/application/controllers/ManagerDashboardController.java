@@ -306,7 +306,8 @@ public class ManagerDashboardController implements Initializable{
             String password = addMemberPassword.getText();
             String email = addMemberEmail.getText();
             String role = (String) addMemberRole.getValue();
-            librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
+            User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
+            memberListData.add(newUser);
             showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", "Something is wrong");

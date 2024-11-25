@@ -31,8 +31,8 @@ public class LibrarySystem {
         return instance;
     }
 
-    /** Create a new user, add to users List and database. */
-    public void addUser(String name, String email, String password, String role, byte[] imageUser) {
+    /** Create a new user, add to users List and database. Return the user object if successful. */
+    public User addUser(String name, String email, String password, String role, byte[] imageUser) {
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
         }
@@ -45,6 +45,7 @@ public class LibrarySystem {
         User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
         Database.addUser(user);
+        return user;
     }
 
     /** Check username and password with database, return null if no username or false password. */
@@ -223,9 +224,9 @@ public class LibrarySystem {
 
     /** Checks if the email is already registered. */
     public boolean isEmailRegistered(String email) {
-        for(User user : users) {
+        for (User user : users) {
             // If an email match is found, throw an exception indicating the email is already registered
-            if(user.getEmail().equals(email)) {
+            if (user.getEmail().equals(email)) {
                 return true;
             }
         }
@@ -234,13 +235,13 @@ public class LibrarySystem {
 
     /** Checks if the username is already registered. */
     public boolean isUserRegistered(String username) {
-        for(User user : users) {
+        for (User user : users) {
             // If a username match is found, throw an exception indicating the email is already registered
-            if(user.getUsername().equals(username)) {
-                return false;
+            if (user.getUsername().equals(username)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /** Setter for count admin. */
@@ -248,7 +249,7 @@ public class LibrarySystem {
         int count = 0;
         for (User user : users) {
             if (user.getRole().equals(User.ADMIN)) {
-                count ++;
+                count++;
             }
         }
         this.countAdmin = count;
@@ -259,7 +260,7 @@ public class LibrarySystem {
         int count = 0;
         for (User user : users) {
             if (user.getRole().equals(User.NORMAL_USER)) {
-                count ++;
+                count++;
             }
         }
         this.countUser = count;
