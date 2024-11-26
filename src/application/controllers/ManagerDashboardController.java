@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -169,6 +170,27 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private ImageView memberListImageShow;
 
+    @FXML
+    private TextField deleteMemberID;
+
+    @FXML
+    private TextField editMemberEmail;
+
+    @FXML
+    private TextField editMemberID;
+
+    @FXML
+    private TextField editMemberPassword;
+
+    @FXML
+    private ComboBox<String> editMemberRole;
+
+    @FXML
+    private TextField editMemberUsername;
+
+    @FXML
+    private ImageView editMemberImage;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -177,6 +199,7 @@ public class ManagerDashboardController implements Initializable{
         }
         ObservableList listData = FXCollections.observableArrayList(roleL);
         addMemberRole.setItems(listData);
+        editMemberRole.setItems(listData);
     }
 
     private ObservableList<User> memberListData;
@@ -321,6 +344,41 @@ public class ManagerDashboardController implements Initializable{
             clearAddMemberInput();
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void deleteMember(ActionEvent event) throws IOException {
+        try {
+            long userID = Long.parseLong(deleteMemberID.getText());
+            librarySystem.deleteUserById(userID);
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void searchMember(ActionEvent event) {
+        try {
+            long userID = Long.parseLong(editMemberID.getText());
+            User editingUser = librarySystem.getUserById(userID);
+            if (editingUser != null) {
+                editMemberUsername.setText(editingUser.getUsername());
+                editMemberPassword.setText(editingUser.getPassword());
+                editMemberEmail.setText(editingUser.getEmail());
+                if (editingUser.getImageUser() != null) {
+                    image = convertBytesToImage(editingUser.getImageUser());
+                } else {
+                    image = new Image("/resources/image/avatar.png");
+                }
+                editMemberImage.setImage(image);
+                String role = editingUser.getRole();
+                editMemberRole.getSelectionModel().select(role);
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "That user doesn't exist!");
+            }
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid Member ID!");
         }
     }
 

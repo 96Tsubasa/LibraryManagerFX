@@ -102,7 +102,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="85.0" prefHeight="234.0" prefWidth="984.0" stylesheets="@mainFormDesign.css">
                                  <children>
@@ -179,7 +179,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="addMember" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="addMember" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <FontAwesomeIcon glyphName="USERS" layoutX="317.0" layoutY="124.0" size="10em" />
                               <Label layoutX="469.0" layoutY="55.0" text="Add Member">
@@ -256,7 +256,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TextField layoutX="226.0" layoutY="131.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editMemberUsername" layoutX="226.0" layoutY="131.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="67.0" layoutY="128.0" text="Username:">
                                        <font>
                                           <Font size="30.0" />
@@ -267,7 +267,7 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="226.0" layoutY="208.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editMemberPassword" layoutX="226.0" layoutY="208.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="67.0" layoutY="204.0" text="Password:">
                                        <font>
                                           <Font size="30.0" />
@@ -278,15 +278,18 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox layoutX="226.0" layoutY="359.0" prefHeight="39.0" prefWidth="178.0" />
+                                    <ComboBox fx:id="editMemberRole" layoutX="226.0" layoutY="359.0" prefHeight="39.0" prefWidth="178.0" />
                                     <AnchorPane layoutX="708.0" layoutY="27.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
                                        <styleClass>
                                           <String fx:value="white-bg" />
                                           <String fx:value="radius" />
                                           <String fx:value="shadow" />
                                        </styleClass>
+                                       <children>
+                                          <ImageView fx:id="editMemberImage" fitHeight="240.0" fitWidth="201.0" pickOnBounds="true" />
+                                       </children>
                                     </AnchorPane>
-                                    <TextField layoutX="226.0" layoutY="284.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editMemberEmail" layoutX="226.0" layoutY="284.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Button layoutX="730.0" layoutY="292.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
                                     <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
                                        <font>
@@ -298,8 +301,8 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="315.0" layoutY="52.0" prefHeight="38.0" prefWidth="238.0" />
-                                    <Button layoutX="572.0" layoutY="50.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="105.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" textFill="WHITE">
+                                    <TextField fx:id="editMemberID" layoutX="315.0" layoutY="52.0" prefHeight="38.0" prefWidth="238.0" />
+                                    <Button layoutX="572.0" layoutY="50.0" mnemonicParsing="false" onAction="#searchMember" prefHeight="42.0" prefWidth="105.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
@@ -323,7 +326,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <Button layoutX="359.0" layoutY="197.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Delete" textFill="WHITE">
+                                    <Button layoutX="359.0" layoutY="197.0" mnemonicParsing="false" onAction="#deleteMember" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Delete" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
@@ -333,7 +336,7 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="479.0" layoutY="103.0" prefHeight="38.0" prefWidth="238.0" />
+                                    <TextField fx:id="deleteMemberID" layoutX="479.0" layoutY="103.0" prefHeight="38.0" prefWidth="238.0" />
                                  </children>
                               </AnchorPane>
                            </children>
