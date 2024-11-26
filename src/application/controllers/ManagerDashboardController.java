@@ -52,6 +52,7 @@ public class ManagerDashboardController implements Initializable{
     String current = "dashboard";
     private Image image;
     private LibrarySystem librarySystem;
+    private User editingUser;
     
     @FXML
     private AnchorPane addBook;
@@ -70,9 +71,6 @@ public class ManagerDashboardController implements Initializable{
 
     @FXML
     private ImageView addMemberImage;
-
-    @FXML
-    private Button addMemberImport;
 
     @FXML
     private TextField addMemberPassword;
@@ -190,6 +188,15 @@ public class ManagerDashboardController implements Initializable{
 
     @FXML
     private ImageView editMemberImage;
+
+    @FXML
+    private Label memberNumber;
+
+    @FXML
+    private Label bookNumber;
+
+    @FXML
+    private Label managerNumber;
 
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
@@ -361,7 +368,7 @@ public class ManagerDashboardController implements Initializable{
     private void searchMember(ActionEvent event) {
         try {
             long userID = Long.parseLong(editMemberID.getText());
-            User editingUser = librarySystem.getUserById(userID);
+            editingUser = librarySystem.getUserById(userID);
             if (editingUser != null) {
                 editMemberUsername.setText(editingUser.getUsername());
                 editMemberPassword.setText(editingUser.getPassword());
@@ -382,7 +389,18 @@ public class ManagerDashboardController implements Initializable{
         }
     }
 
-    public void memberListImportBtn() {
+    @FXML
+    private void editMember(ActionEvent e) {
+        String username = editMemberUsername.getText();
+        String email = editMemberEmail.getText();
+        String password = editMemberPassword.getText();
+        String role = editMemberRole.getSelectionModel().getSelectedItem();
+        byte[] bytes = convertImageToBytes(image);
+        librarySystem.editUserById(editingUser, username, email, password, role, bytes);
+        memberListShowData();;
+    }
+
+    public void addMemberImportBtn() {
         FileChooser openFile = new FileChooser();
         openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
 
@@ -391,6 +409,18 @@ public class ManagerDashboardController implements Initializable{
         if (file != null) {
             image = new Image(file.toURI().toString(), 200, 237, false, true);
             addMemberImage.setImage(image);
+        }
+    }
+
+    public void editMemberImportBtn() {
+        FileChooser openFile = new FileChooser();
+        openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
+
+        File file = openFile.showOpenDialog(manager_dashboard.getScene().getWindow());
+
+        if (file != null) {
+            image = new Image(file.toURI().toString(), 200, 237, false, true);
+            editMemberImage.setImage(image);
         }
     }
 
@@ -425,11 +455,18 @@ public class ManagerDashboardController implements Initializable{
         return new Image(byteArrayInputStream);
     }
 
+    private void showDashboardInformation() {
+        memberNumber.setText(String.valueOf(librarySystem.getCountUser()));
+        bookNumber.setText(String.valueOf(librarySystem.getBooks().size()));
+        managerNumber.setText(String.valueOf(librarySystem.getCountAdmin()));
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         displayUsername();
         userRoleList();
         librarySystem = LibrarySystem.getInstance();
         memberListShowData();
+        //showDashboardInformation();
     }
 }
