@@ -114,7 +114,7 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="237.0" layoutY="14.0" text="0" textFill="WHITE">
+                                          <Label fx:id="memberNumber" layoutX="237.0" layoutY="14.0" text="0" textFill="WHITE">
                                              <font>
                                                 <Font size="28.0" />
                                              </font>
@@ -129,7 +129,7 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="237.0" layoutY="14.0" text="0" textFill="WHITE">
+                                          <Label fx:id="bookNumber" layoutX="237.0" layoutY="14.0" text="0" textFill="WHITE">
                                              <font>
                                                 <Font size="28.0" />
                                              </font>
@@ -144,7 +144,7 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="237.0" layoutY="14.0" text="0" textFill="WHITE">
+                                          <Label fx:id="managerNumber" layoutX="237.0" layoutY="14.0" text="0" textFill="WHITE">
                                              <font>
                                                 <Font size="28.0" />
                                              </font>
@@ -226,7 +226,7 @@
                                        <children>
                                           <ImageView fx:id="addMemberImage" fitHeight="237.0" fitWidth="200.0" pickOnBounds="true">
                                              <image>
-                                                <Image url="@../../resources/image/avatar.png" />
+                                                <Image url="/resources/image/avatar.png" />
                                              </image></ImageView>
                                        </children>
                                     </AnchorPane>
@@ -288,7 +288,7 @@
                                        <children>
                                           <ImageView fx:id="editMemberImage" fitHeight="240.0" fitWidth="201.0" pickOnBounds="true">
                                              <image>
-                                                <Image url="@../../resources/image/avatar.png" />
+                                                <Image url="/resources/image/avatar.png" />
                                              </image></ImageView>
                                        </children>
                                     </AnchorPane>
@@ -381,7 +381,7 @@
                                  <children>
                                     <ImageView fx:id="memberListImageShow" fitHeight="240.0" fitWidth="200.0" layoutX="24.0" layoutY="21.0" pickOnBounds="true">
                                        <image>
-                                          <Image url="@../../resources/image/avatar.png" />
+                                          <Image url="/resources/image/avatar.png" />
                                        </image>
                                     </ImageView>
                                     <Label fx:id="memberListIDShow" layoutX="24.0" layoutY="273.0" text="ID:">
