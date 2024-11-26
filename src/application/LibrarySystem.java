@@ -197,6 +197,17 @@ public class LibrarySystem {
         return null;
     }
 
+    /** Edit a user by userId. */
+    public void editUserById(User user, String newUsername, String newEmail, String newPassword,
+                             String newRole, byte[] newImageUser) {
+        user.setUsername(newUsername);
+        user.setEmail(newEmail);
+        user.setPassword(newPassword);
+        user.setRole(newRole);
+        user.setImageUser(newImageUser);
+        Database.editUserById(user);
+    }
+
     /** Delete a user in the system with userId. */
     public void deleteUserById(long userId) {
         users.removeIf(user -> user.getUserId() == userId);
