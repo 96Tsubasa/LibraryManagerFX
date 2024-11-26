@@ -298,6 +298,15 @@ public class ManagerDashboardController implements Initializable{
             stage.show();
         }
     }
+    
+    private void clearAddMemberInput() {
+        addMemberUsername.clear();
+        addMemberPassword.clear();
+        addMemberEmail.clear();
+        addMemberRole.getSelectionModel().clearSelection();
+        image = new Image("/resources/image/avatar.png");
+        addMemberImage.setImage(image);
+    }
 
     @FXML
     private void addMember(ActionEvent event) throws IOException {
@@ -309,6 +318,7 @@ public class ManagerDashboardController implements Initializable{
             User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
             memberListData.add(newUser);
             showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
+            clearAddMemberInput();
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
