@@ -405,6 +405,19 @@ public class ManagerDashboardController implements Initializable{
         }
     }
 
+    @FXML
+    private void editMemberClearImage(ActionEvent e) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Error Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to clear the avatar?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get().equals(ButtonType.OK)) {
+            image = new Image("/resources/image/avatar.png");
+            editMemberImage.setImage(image);
+        }
+    }
+
     public void addMemberImportBtn() {
         FileChooser openFile = new FileChooser();
         openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));

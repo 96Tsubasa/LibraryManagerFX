@@ -226,7 +226,7 @@
                                        <children>
                                           <ImageView fx:id="addMemberImage" fitHeight="237.0" fitWidth="200.0" pickOnBounds="true">
                                              <image>
-                                                <Image url="/resources/image/avatar.png" />
+                                                <Image url="@../../resources/image/avatar.png" />
                                              </image></ImageView>
                                        </children>
                                     </AnchorPane>
@@ -288,12 +288,12 @@
                                        <children>
                                           <ImageView fx:id="editMemberImage" fitHeight="240.0" fitWidth="201.0" pickOnBounds="true">
                                              <image>
-                                                <Image url="/resources/image/avatar.png" />
+                                                <Image url="@../../resources/image/avatar.png" />
                                              </image></ImageView>
                                        </children>
                                     </AnchorPane>
                                     <TextField fx:id="editMemberEmail" layoutX="226.0" layoutY="284.0" prefHeight="38.0" prefWidth="252.0" />
-                                    <Button layoutX="730.0" layoutY="292.0" mnemonicParsing="false" onAction="#editMemberImportBtn" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                                    <Button layoutX="708.0" layoutY="285.0" mnemonicParsing="false" onAction="#editMemberImportBtn" prefHeight="35.0" prefWidth="87.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
                                     <Button layoutX="358.0" layoutY="426.0" mnemonicParsing="false" onAction="#editMember" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
@@ -310,6 +310,7 @@
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
                                     </Button>
+                                    <Button layoutX="822.0" layoutY="285.0" mnemonicParsing="false" onAction="#editMemberClearImage" prefHeight="35.0" prefWidth="87.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Clear" />
                                  </children>
                               </AnchorPane>
                            </children>
@@ -381,7 +382,7 @@
                                  <children>
                                     <ImageView fx:id="memberListImageShow" fitHeight="240.0" fitWidth="200.0" layoutX="24.0" layoutY="21.0" pickOnBounds="true">
                                        <image>
-                                          <Image url="/resources/image/avatar.png" />
+                                          <Image url="@../../resources/image/avatar.png" />
                                        </image>
                                     </ImageView>
                                     <Label fx:id="memberListIDShow" layoutX="24.0" layoutY="273.0" text="ID:">
@@ -429,13 +430,13 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TextField layoutX="207.0" layoutY="78.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addBookISBN" layoutX="207.0" layoutY="78.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="75.0" text="ISBN:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <AnchorPane layoutX="720.0" layoutY="26.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
+                                    <AnchorPane fx:id="addBookImage" layoutX="720.0" layoutY="26.0" prefHeight="238.0" prefWidth="191.0" stylesheets="@mainFormDesign.css">
                                        <styleClass>
                                           <String fx:value="white-bg" />
                                           <String fx:value="radius" />
@@ -448,31 +449,31 @@
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
                                     </Button>
-                                    <TextField layoutX="207.0" layoutY="216.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addBookGenre" layoutX="207.0" layoutY="216.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="213.0" text="Genre:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="207.0" layoutY="170.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addBookTitle" layoutX="207.0" layoutY="170.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="167.0" text="Title:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="207.0" layoutY="124.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addBookAuthor" layoutX="207.0" layoutY="124.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="121.0" text="Author:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="207.0" layoutY="262.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="addBookPublisher" layoutX="207.0" layoutY="262.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="259.0" text="Publisher:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="525.0" layoutY="124.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <TextField fx:id="addBookPublicationYear" layoutX="525.0" layoutY="124.0" prefHeight="38.0" prefWidth="142.0" />
                                     <Label layoutX="473.0" layoutY="75.0" prefHeight="28.0" prefWidth="246.0" text="Publication Year:">
                                        <font>
                                           <Font size="30.0" />
@@ -483,13 +484,13 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="525.0" layoutY="235.0" prefHeight="38.0" prefWidth="142.0" />
-                                    <Label layoutX="66.0" layoutY="303.0" text="Desciption:">
+                                    <TextField fx:id="addBookCopiesAvailable" layoutX="525.0" layoutY="235.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <Label layoutX="66.0" layoutY="303.0" text="Description:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextArea layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
+                                    <TextArea fx:id="addBookDescription" layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
                                  </children>
                               </AnchorPane>
                            </children>
