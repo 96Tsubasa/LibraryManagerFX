@@ -397,7 +397,7 @@ public class ManagerDashboardController implements Initializable{
         String role = editMemberRole.getSelectionModel().getSelectedItem();
         byte[] bytes = convertImageToBytes(image);
         librarySystem.editUserById(editingUser, username, email, password, role, bytes);
-        memberListShowData();;
+        memberListTable.refresh();
     }
 
     public void addMemberImportBtn() {
