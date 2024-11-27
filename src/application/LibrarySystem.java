@@ -20,7 +20,21 @@ public class LibrarySystem {
         // Load data from database
         books = Database.loadBooks();
         users = Database.loadUsers();
+        setCount();
         transactions = Database.loadTransactions();
+    }
+
+    /** Set countAdmin and countUser. */
+    public void setCount() {
+        countUser = 0;
+        countAdmin = 0;
+        for (User user : users) {
+            if (user.getRole().equals(User.ADMIN)) {
+                countAdmin ++;
+            } else if (user.getRole().equals(User.NORMAL_USER)) {
+                countUser ++;
+            }
+        }
     }
 
     /** Get the static instance of this class. */
@@ -44,6 +58,11 @@ public class LibrarySystem {
         // Create a new user instance and add to the users list
         User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
+        if (user.getRole().equals(User.ADMIN)) {
+            countAdmin ++;
+        } else {
+            countUser ++;
+        }
         Database.addUser(user);
         return user;
     }
@@ -113,13 +132,11 @@ public class LibrarySystem {
 
     /** Getter for count admin. */
     public int getCountAdmin() {
-        setCountAdmin();
         return countAdmin;
     }
 
     /** Getter for count user. */
     public int getCountUser() {
-        setCountUser();
         return countUser;
     }
 
@@ -253,27 +270,5 @@ public class LibrarySystem {
             }
         }
         return false;
-    }
-
-    /** Setter for count admin. */
-    public void setCountAdmin() {
-        int count = 0;
-        for (User user : users) {
-            if (user.getRole().equals(User.ADMIN)) {
-                count++;
-            }
-        }
-        this.countAdmin = count;
-    }
-
-    /** Setter for count user. */
-    public void setCountUser() {
-        int count = 0;
-        for (User user : users) {
-            if (user.getRole().equals(User.NORMAL_USER)) {
-                count++;
-            }
-        }
-        this.countUser = count;
     }
 }
