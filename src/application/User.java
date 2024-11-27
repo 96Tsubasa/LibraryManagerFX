@@ -85,9 +85,6 @@ public class User {
 
     /** Setter for role attribute. */
     public void setRole(String role) {
-        if (role == null || !role.equals(ADMIN) && !role.equals(NORMAL_USER)) {
-            throw new IllegalArgumentException("Role cannot be null.");
-        }
         this.role = role;
     }
 

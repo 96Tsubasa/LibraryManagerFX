@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -51,6 +52,7 @@ public class ManagerDashboardController implements Initializable{
     String current = "dashboard";
     private Image image;
     private LibrarySystem librarySystem;
+    private User editingUser;
     
     @FXML
     private AnchorPane addBook;
@@ -69,9 +71,6 @@ public class ManagerDashboardController implements Initializable{
 
     @FXML
     private ImageView addMemberImage;
-
-    @FXML
-    private Button addMemberImport;
 
     @FXML
     private TextField addMemberPassword;
@@ -169,6 +168,36 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private ImageView memberListImageShow;
 
+    @FXML
+    private TextField deleteMemberID;
+
+    @FXML
+    private TextField editMemberEmail;
+
+    @FXML
+    private TextField editMemberID;
+
+    @FXML
+    private TextField editMemberPassword;
+
+    @FXML
+    private ComboBox<String> editMemberRole;
+
+    @FXML
+    private TextField editMemberUsername;
+
+    @FXML
+    private ImageView editMemberImage;
+
+    @FXML
+    private Label memberNumber;
+
+    @FXML
+    private Label bookNumber;
+
+    @FXML
+    private Label managerNumber;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -177,6 +206,7 @@ public class ManagerDashboardController implements Initializable{
         }
         ObservableList listData = FXCollections.observableArrayList(roleL);
         addMemberRole.setItems(listData);
+        editMemberRole.setItems(listData);
     }
 
     private ObservableList<User> memberListData;
@@ -298,6 +328,15 @@ public class ManagerDashboardController implements Initializable{
             stage.show();
         }
     }
+    
+    private void clearAddMemberInput() {
+        addMemberUsername.clear();
+        addMemberPassword.clear();
+        addMemberEmail.clear();
+        addMemberRole.getSelectionModel().clearSelection();
+        image = new Image("/resources/image/avatar.png");
+        addMemberImage.setImage(image);
+    }
 
     @FXML
     private void addMember(ActionEvent event) throws IOException {
@@ -306,14 +345,67 @@ public class ManagerDashboardController implements Initializable{
             String password = addMemberPassword.getText();
             String email = addMemberEmail.getText();
             String role = (String) addMemberRole.getValue();
-            librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
+            User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
+            memberListData.add(newUser);
             showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
+            clearAddMemberInput();
         } catch (IllegalArgumentException e) {
-            showAlert(AlertType.ERROR, "Error Message", "Something is wrong");
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
     }
 
-    public void memberListImportBtn() {
+    @FXML
+    private void deleteMember(ActionEvent event) throws IOException {
+        try {
+            long userID = Long.parseLong(deleteMemberID.getText());
+            librarySystem.deleteUserById(userID);
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void searchMember(ActionEvent event) {
+        try {
+            long userID = Long.parseLong(editMemberID.getText());
+            editingUser = librarySystem.getUserById(userID);
+            if (editingUser != null) {
+                editMemberUsername.setText(editingUser.getUsername());
+                editMemberPassword.setText(editingUser.getPassword());
+                editMemberEmail.setText(editingUser.getEmail());
+                if (editingUser.getImageUser() != null) {
+                    image = convertBytesToImage(editingUser.getImageUser());
+                } else {
+                    image = new Image("/resources/image/avatar.png");
+                }
+                editMemberImage.setImage(image);
+                String role = editingUser.getRole();
+                editMemberRole.getSelectionModel().select(role);
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "That user doesn't exist!");
+            }
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid Member ID!");
+        }
+    }
+
+    @FXML
+    private void editMember(ActionEvent e) throws IllegalArgumentException {
+        try {
+            String username = editMemberUsername.getText();
+            String email = editMemberEmail.getText();
+            String password = editMemberPassword.getText();
+            String role = editMemberRole.getSelectionModel().getSelectedItem();
+            byte[] bytes = convertImageToBytes(image);
+            librarySystem.editUserById(editingUser, username, email, password, role, bytes);
+            memberListTable.refresh();
+            showAlert(AlertType.INFORMATION, "Information Message", "You updated a member successfully!");
+        } catch (IllegalArgumentException exception) {
+            showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
+        }
+    }
+
+    public void addMemberImportBtn() {
         FileChooser openFile = new FileChooser();
         openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
 
@@ -322,6 +414,18 @@ public class ManagerDashboardController implements Initializable{
         if (file != null) {
             image = new Image(file.toURI().toString(), 200, 237, false, true);
             addMemberImage.setImage(image);
+        }
+    }
+
+    public void editMemberImportBtn() {
+        FileChooser openFile = new FileChooser();
+        openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
+
+        File file = openFile.showOpenDialog(manager_dashboard.getScene().getWindow());
+
+        if (file != null) {
+            image = new Image(file.toURI().toString(), 200, 237, false, true);
+            editMemberImage.setImage(image);
         }
     }
 
@@ -356,11 +460,18 @@ public class ManagerDashboardController implements Initializable{
         return new Image(byteArrayInputStream);
     }
 
+    private void showDashboardInformation() {
+        memberNumber.setText(String.valueOf(librarySystem.getCountUser()));
+        bookNumber.setText(String.valueOf(librarySystem.getBooks().size()));
+        managerNumber.setText(String.valueOf(librarySystem.getCountAdmin()));
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         displayUsername();
         userRoleList();
         librarySystem = LibrarySystem.getInstance();
         memberListShowData();
+        //showDashboardInformation();
     }
 }
