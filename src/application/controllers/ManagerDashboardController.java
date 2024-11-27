@@ -390,14 +390,19 @@ public class ManagerDashboardController implements Initializable{
     }
 
     @FXML
-    private void editMember(ActionEvent e) {
-        String username = editMemberUsername.getText();
-        String email = editMemberEmail.getText();
-        String password = editMemberPassword.getText();
-        String role = editMemberRole.getSelectionModel().getSelectedItem();
-        byte[] bytes = convertImageToBytes(image);
-        librarySystem.editUserById(editingUser, username, email, password, role, bytes);
-        memberListTable.refresh();
+    private void editMember(ActionEvent e) throws IllegalArgumentException {
+        try {
+            String username = editMemberUsername.getText();
+            String email = editMemberEmail.getText();
+            String password = editMemberPassword.getText();
+            String role = editMemberRole.getSelectionModel().getSelectedItem();
+            byte[] bytes = convertImageToBytes(image);
+            librarySystem.editUserById(editingUser, username, email, password, role, bytes);
+            memberListTable.refresh();
+            showAlert(AlertType.INFORMATION, "Information Message", "You updated a member successfully!");
+        } catch (IllegalArgumentException exception) {
+            showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
+        }
     }
 
     public void addMemberImportBtn() {
