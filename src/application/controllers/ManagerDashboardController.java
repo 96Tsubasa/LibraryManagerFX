@@ -18,6 +18,7 @@ import java.net.URL;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -229,6 +230,9 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private TextField addBookTitle;
 
+    @FXML
+    private TextField memberListSearch;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -241,6 +245,7 @@ public class ManagerDashboardController implements Initializable{
     }
 
     private ObservableList<User> memberListData;
+    private FilteredList<User> filteredData;
     public void memberListShowData() {
         memberListData = FXCollections.observableArrayList(librarySystem.getUsers());
         
@@ -250,6 +255,23 @@ public class ManagerDashboardController implements Initializable{
         memberListEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         memberListRole.setCellValueFactory(new PropertyValueFactory<>("role"));
         memberListTable.setItems(memberListData);
+
+        filteredData = new FilteredList<>(memberListData, b -> true);
+        memberListTable.setItems(filteredData);
+    }
+
+    private void handleSearch() {
+        memberListSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(user -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+    
+                //searchByUsername
+                return user.getUsername().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
     }
 
     public void memberListSelectData() {
@@ -535,5 +557,6 @@ public class ManagerDashboardController implements Initializable{
         memberListShowData();
         showDashboardInformation();
         addMemberImage = new Image("/resources/image/avatar.png");
+        handleSearch();
     }
 }

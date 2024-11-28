@@ -373,7 +373,7 @@
                                  </children>
                               </AnchorPane>
                               <FontAwesomeIcon glyphName="SEARCH" layoutX="27.0" layoutY="213.0" size="3em" />
-                              <TextField layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="410.0" />
+                              <TextField fx:id="memberListSearch" layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="646.0" />
                               <AnchorPane layoutX="741.0" layoutY="247.0" prefHeight="450.0" prefWidth="248.0" stylesheets="@mainFormDesign.css">
                                  <styleClass>
                                     <String fx:value="white-bg" />
@@ -413,7 +413,6 @@
                                     </Label>
                                  </children>
                               </AnchorPane>
-                              <Button layoutX="489.0" layoutY="184.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="230.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" />
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="addBook" layoutX="11.0" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
