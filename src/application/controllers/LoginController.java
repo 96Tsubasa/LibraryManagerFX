@@ -29,28 +29,29 @@ public class LoginController {
 
     @FXML
     private void login(ActionEvent event) throws IOException {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-        currentUser = LibrarySystem.getInstance().handleLogin(username, password);
-        //if login successfully
-        if (currentUser != null) {
-            //if user account is ADMIN
-            if (currentUser.getRole().equals("ADMIN")) {
-                root = FXMLLoader.load(getClass().getResource("ManagerDashboard.fxml"));
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            }
-            /*
-             * code for normal user
-             */
-        } else {
+        try {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
             if (username.equals("") || password.equals("")) {
-                showAlert(AlertType.ERROR, "Login Failed", "You must enter username and password!");
-            } else {
-                showAlert(AlertType.ERROR, "Login Failed", "Wrong username and password!");
+                showAlert(AlertType.ERROR, "Error Message", "You must enter username and password!");
+                return;
             }
+            currentUser = LibrarySystem.getInstance().handleLogin(username, password);
+            if (currentUser != null) {
+                //if user account is ADMIN
+                if (currentUser.getRole().equals("ADMIN")) {
+                    root = FXMLLoader.load(getClass().getResource("ManagerDashboard.fxml"));
+                    stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                    scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.show();
+                }
+                /*
+                 * code for normal user
+                 */
+            }
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
     }
 
