@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import application.LibrarySystem;
-import application.Main;
 import application.User;
 
 import java.util.ArrayList;
@@ -29,9 +28,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -49,9 +48,14 @@ public class ManagerDashboardController implements Initializable{
     private Stage stage;
     private Scene scene;
     private Parent root;
+
     String current = "dashboard";
+    
     private Image image;
+    private Image addMemberImage;
+
     private LibrarySystem librarySystem;
+    
     private User editingUser;
     
     @FXML
@@ -70,7 +74,7 @@ public class ManagerDashboardController implements Initializable{
     private TextField addMemberEmail;
 
     @FXML
-    private ImageView addMemberImage;
+    private ImageView addMemberImageView;
 
     @FXML
     private TextField addMemberPassword;
@@ -197,6 +201,33 @@ public class ManagerDashboardController implements Initializable{
 
     @FXML
     private Label managerNumber;
+
+    @FXML
+    private TextField addBookAuthor;
+
+    @FXML
+    private TextField addBookCopiesAvailable;
+
+    @FXML
+    private TextArea addBookDescription;
+
+    @FXML
+    private TextField addBookGenre;
+
+    @FXML
+    private TextField addBookISBN;
+
+    @FXML
+    private AnchorPane addBookImage;
+
+    @FXML
+    private TextField addBookPublicationYear;
+
+    @FXML
+    private TextField addBookPublisher;
+
+    @FXML
+    private TextField addBookTitle;
 
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
@@ -334,8 +365,8 @@ public class ManagerDashboardController implements Initializable{
         addMemberPassword.clear();
         addMemberEmail.clear();
         addMemberRole.getSelectionModel().clearSelection();
-        image = new Image("/resources/image/avatar.png");
-        addMemberImage.setImage(image);
+        addMemberImage = new Image("/resources/image/avatar.png");
+        addMemberImageView.setImage(addMemberImage);
     }
 
     @FXML
@@ -345,12 +376,29 @@ public class ManagerDashboardController implements Initializable{
             String password = addMemberPassword.getText();
             String email = addMemberEmail.getText();
             String role = (String) addMemberRole.getValue();
-            User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(image));
-            memberListData.add(newUser);
-            showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
-            clearAddMemberInput();
+            User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(addMemberImage));
+            if (username.equals("") || password.equals("") || email.equals("") || role.equals("")) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill all information!");
+            } else {
+                memberListData.add(newUser);
+                showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
+                clearAddMemberInput();
+            }
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void addMemberClearImage(ActionEvent e) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Error Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to clear the avatar?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get().equals(ButtonType.OK)) {
+            addMemberImage = new Image("/resources/image/avatar.png");
+            addMemberImageView.setImage(addMemberImage);
         }
     }
 
@@ -425,8 +473,8 @@ public class ManagerDashboardController implements Initializable{
         File file = openFile.showOpenDialog(manager_dashboard.getScene().getWindow());
 
         if (file != null) {
-            image = new Image(file.toURI().toString(), 200, 237, false, true);
-            addMemberImage.setImage(image);
+            addMemberImage = new Image(file.toURI().toString(), 200, 237, false, true);
+            addMemberImageView.setImage(addMemberImage);
         }
     }
 
@@ -485,6 +533,7 @@ public class ManagerDashboardController implements Initializable{
         userRoleList();
         librarySystem = LibrarySystem.getInstance();
         memberListShowData();
-        //showDashboardInformation();
+        showDashboardInformation();
+        addMemberImage = new Image("/resources/image/avatar.png");
     }
 }
