@@ -135,6 +135,14 @@ public class Book {
         this.coverImage = coverImage;
     }
 
+    public String getAuthorsAsString() {
+        return String.join(", ", authors);
+    }
+
+    public String getGenresAsString() {
+        return String.join(", ", genres);
+    }
+
     /** Check if there are any copies available in the Library. */
     public boolean isAvailable() {
         return (copiesAvailable > 0);
