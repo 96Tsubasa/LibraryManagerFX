@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
+import application.Book;
 import application.LibrarySystem;
 import application.User;
 
@@ -236,6 +237,18 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private TextField memberListSearch;
 
+    @FXML
+    private ImageView DashboardImage1;
+
+    @FXML
+    private ImageView DashboardImage2;
+
+    @FXML
+    private ImageView DashboardImage3;
+
+    @FXML
+    private ImageView DashboardImage4;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -248,7 +261,7 @@ public class ManagerDashboardController implements Initializable{
     }
 
     private ObservableList<User> memberListData;
-    private FilteredList<User> filteredData;
+    private FilteredList<User> filteredMemberData;
     public void memberListShowData() {
         memberListData = FXCollections.observableArrayList(librarySystem.getUsers());
         
@@ -259,13 +272,13 @@ public class ManagerDashboardController implements Initializable{
         memberListRole.setCellValueFactory(new PropertyValueFactory<>("role"));
         memberListTable.setItems(memberListData);
 
-        filteredData = new FilteredList<>(memberListData, b -> true);
-        memberListTable.setItems(filteredData);
+        filteredMemberData = new FilteredList<>(memberListData, b -> true);
+        memberListTable.setItems(filteredMemberData);
     }
 
-    private void handleSearch() {
+    private void handleMemberSearch() {
         memberListSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(user -> {
+            filteredMemberData.setPredicate(user -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
@@ -587,6 +600,8 @@ public class ManagerDashboardController implements Initializable{
         addBookImageView.setImage(addBookImage);
     }
 
+    
+
     private void displayUsername() {
         welcomeUser.setText("Welcome " + LoginController.currentUser.getUsername());
     }
@@ -622,6 +637,11 @@ public class ManagerDashboardController implements Initializable{
         memberNumber.setText(String.valueOf(librarySystem.getCountUser()));
         bookNumber.setText(String.valueOf(librarySystem.getBooks().size()));
         managerNumber.setText(String.valueOf(librarySystem.getCountAdmin()));
+        // List<Book> recentBooks = librarySystem.getRecentBooks();
+        // DashboardImage1.setImage(convertBytesToImage(recentBooks.get(0).getCoverImage()));
+        // DashboardImage2.setImage(convertBytesToImage(recentBooks.get(1).getCoverImage()));
+        // DashboardImage3.setImage(convertBytesToImage(recentBooks.get(2).getCoverImage()));
+        // DashboardImage4.setImage(convertBytesToImage(recentBooks.get(3).getCoverImage()));
     }
 
     private void initializeSpinner() {
@@ -639,7 +659,7 @@ public class ManagerDashboardController implements Initializable{
         memberListShowData();
         showDashboardInformation();
         addMemberImage = new Image("/resources/image/avatar.png");
-        handleSearch();
+        handleMemberSearch();
         initializeSpinner();
     }
 }

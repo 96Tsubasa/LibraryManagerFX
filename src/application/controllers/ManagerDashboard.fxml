@@ -171,6 +171,10 @@
                                           <Font size="26.0" />
                                        </font>
                                     </Label>
+                                    <ImageView fx:id="DashboardImage1" fitHeight="303.0" fitWidth="200.0" layoutX="14.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="DashboardImage2" fitHeight="303.0" fitWidth="200.0" layoutX="270.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="DashboardImage3" fitHeight="303.0" fitWidth="200.0" layoutX="534.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="DashboardImage4" fitHeight="303.0" fitWidth="200.0" layoutX="770.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                                  <styleClass>
                                     <String fx:value="white-bg" />
@@ -628,7 +632,7 @@
                                     <Font name="System Bold" size="36.0" />
                                  </font>
                               </Label>
-                              <AnchorPane layoutX="26.0" layoutY="247.0" prefHeight="450.0" prefWidth="694.0" stylesheets="@mainFormDesign.css">
+                              <AnchorPane layoutX="26.0" layoutY="247.0" prefHeight="450.0" prefWidth="755.0" stylesheets="@mainFormDesign.css">
                                  <styleClass>
                                     <String fx:value="white-bg" />
                                     <String fx:value="radius" />
@@ -637,18 +641,17 @@
                                  <children>
                                     <TableView layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="670.0">
                                        <columns>
-                                          <TableColumn prefWidth="53.600006103515625" text="ID" />
-                                          <TableColumn minWidth="0.0" prefWidth="147.19998931884766" text="ISBN" />
-                                          <TableColumn minWidth="0.0" prefWidth="160.800048828125" text="Author" />
-                                          <TableColumn minWidth="0.0" prefWidth="190.39993286132812" text="Title" />
-                                          <TableColumn minWidth="0.0" prefWidth="117.60007324218748" text="Role" />
+                                          <TableColumn prefWidth="36.79998779296875" text="ID" />
+                                          <TableColumn minWidth="0.0" prefWidth="115.20001983642578" text="ISBN" />
+                                          <TableColumn minWidth="0.0" prefWidth="110.39996337890625" text="Author" />
+                                          <TableColumn minWidth="0.0" prefWidth="129.5999755859375" text="Title" />
                                        </columns>
                                     </TableView>
                                  </children>
                               </AnchorPane>
                               <FontAwesomeIcon glyphName="SEARCH" layoutX="27.0" layoutY="213.0" size="3em" />
                               <TextField layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="410.0" />
-                              <AnchorPane layoutX="741.0" layoutY="247.0" prefHeight="450.0" prefWidth="248.0" stylesheets="@mainFormDesign.css">
+                              <AnchorPane layoutX="796.0" layoutY="247.0" prefHeight="450.0" prefWidth="193.0" stylesheets="@mainFormDesign.css">
                                  <styleClass>
                                     <String fx:value="white-bg" />
                                     <String fx:value="radius" />
