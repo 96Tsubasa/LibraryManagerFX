@@ -201,8 +201,12 @@ public class LibrarySystem {
 
     /** Get the recently added books in the library. */
     public List<Book> getRecentBooks() {
-        // Code here
-        return null;    // Placeholder
+        if (books == null || books.isEmpty()) {
+            return new ArrayList<>(); // return
+        }
+        int startIndex = Math.max(books.size() - 4, 0);
+        List<Book> recent = books.subList(startIndex, books.size());
+        return recent;
     }
 
     /** Get transactions list. */
