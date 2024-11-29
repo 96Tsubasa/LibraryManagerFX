@@ -626,8 +626,8 @@
                         </AnchorPane>
                         <AnchorPane fx:id="bookList" layoutX="20.0" layoutY="21.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
                            <children>
-                              <FontAwesomeIcon glyphName="BOOK" layoutX="309.0" layoutY="115.0" size="10em" />
-                              <Label layoutX="459.0" layoutY="47.0" text="Member List">
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="352.0" layoutY="117.0" size="10em" />
+                              <Label layoutX="502.0" layoutY="49.0" text="Book List">
                                  <font>
                                     <Font name="System Bold" size="36.0" />
                                  </font>
@@ -639,18 +639,21 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TableView layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="670.0">
+                                    <TableView fx:id="bookListTable" layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="738.0">
                                        <columns>
-                                          <TableColumn prefWidth="36.79998779296875" text="ID" />
-                                          <TableColumn minWidth="0.0" prefWidth="115.20001983642578" text="ISBN" />
-                                          <TableColumn minWidth="0.0" prefWidth="110.39996337890625" text="Author" />
-                                          <TableColumn minWidth="0.0" prefWidth="129.5999755859375" text="Title" />
+                                          <TableColumn fx:id="bookListID" prefWidth="36.79998779296875" text="ID" />
+                                          <TableColumn fx:id="bookListAuthor" minWidth="0.0" prefWidth="98.40003204345703" text="Author" />
+                                          <TableColumn fx:id="bookListTitle" minWidth="0.0" prefWidth="148.79998779296875" text="Title" />
+                                          <TableColumn fx:id="bookListGenre" minWidth="0.0" prefWidth="124.0" text="Genre" />
+                                          <TableColumn fx:id="bookListPublisher" minWidth="0.0" prefWidth="124.79995727539062" text="Publisher" />
+                                          <TableColumn fx:id="bookListPublicationYear" minWidth="0.0" prefWidth="98.4000244140625" text="Publication Year" />
+                                          <TableColumn fx:id="bookListCopiesAvailable" minWidth="0.0" prefWidth="111.199951171875" text="Copies Available" />
                                        </columns>
                                     </TableView>
                                  </children>
                               </AnchorPane>
                               <FontAwesomeIcon glyphName="SEARCH" layoutX="27.0" layoutY="213.0" size="3em" />
-                              <TextField layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="410.0" />
+                              <TextField fx:id="bookListSearch" layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="703.0" />
                               <AnchorPane layoutX="796.0" layoutY="247.0" prefHeight="450.0" prefWidth="193.0" stylesheets="@mainFormDesign.css">
                                  <styleClass>
                                     <String fx:value="white-bg" />
@@ -658,7 +661,6 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                               </AnchorPane>
-                              <Button layoutX="489.0" layoutY="184.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="230.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" />
                            </children>
                         </AnchorPane>
                      </children></AnchorPane>

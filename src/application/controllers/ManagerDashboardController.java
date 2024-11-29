@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -249,6 +250,33 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private ImageView DashboardImage4;
 
+    @FXML
+    private TableColumn<Book, Integer> bookListCopiesAvailable;
+
+    @FXML
+    private TableColumn<Book, String> bookListGenre;
+
+    @FXML
+    private TableColumn<Book, Long> bookListID;
+
+    @FXML
+    private TableColumn<Book, Integer> bookListPublicationYear;
+
+    @FXML
+    private TableColumn<Book, String> bookListPublisher;
+
+    @FXML
+    private TableView<Book> bookListTable;
+
+    @FXML
+    private TableColumn<Book, String> bookListTitle;
+
+    @FXML
+    private TableColumn<Book, String> bookListAuthor;
+
+    @FXML
+    private TextField bookListSearch;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -286,6 +314,38 @@ public class ManagerDashboardController implements Initializable{
     
                 //searchByUsername
                 return user.getUsername().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+    }
+
+    private ObservableList<Book> bookListData;
+    private FilteredList<Book> filteredBookData;
+    public void bookListShowData() {
+        bookListData = FXCollections.observableArrayList(librarySystem.getBooks());
+        
+        bookListID.setCellValueFactory(new PropertyValueFactory<>("bookId"));
+        bookListTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        bookListPublisher.setCellValueFactory(new PropertyValueFactory<>("publisher"));
+        bookListCopiesAvailable.setCellValueFactory(new PropertyValueFactory<>("copiesAvailable"));
+        bookListPublicationYear.setCellValueFactory(new PropertyValueFactory<>("publicationYear"));
+        bookListAuthor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAuthorsAsString()));
+        bookListGenre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getGenresAsString()));
+        bookListTable.setItems(bookListData);
+
+        filteredBookData = new FilteredList<>(bookListData, b -> true);
+        bookListTable.setItems(filteredBookData);
+    }
+
+    private void handleBookSearch() {
+        bookListSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredBookData.setPredicate(book -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+    
+                //searchByTitle
+                return book.getTitle().toLowerCase().contains(lowerCaseFilter);
             });
         });
     }
@@ -657,9 +717,11 @@ public class ManagerDashboardController implements Initializable{
         userRoleList();
         librarySystem = LibrarySystem.getInstance();
         memberListShowData();
+        bookListShowData();
         showDashboardInformation();
         addMemberImage = new Image("/resources/image/avatar.png");
         handleMemberSearch();
+        handleBookSearch();
         initializeSpinner();
     }
 }
