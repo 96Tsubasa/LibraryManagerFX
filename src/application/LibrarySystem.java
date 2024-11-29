@@ -199,6 +199,12 @@ public class LibrarySystem {
         return books;
     }
 
+    /** Get the recently added books in the library. */
+    public List<Book> getRecentBooks() {
+        // Code here
+        return null;    // Placeholder
+    }
+
     /** Get transactions list. */
     public List<Transaction> getTransactions() {
         return transactions;
