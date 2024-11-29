@@ -529,6 +529,18 @@ public class ManagerDashboardController implements Initializable{
 
     public void addBook() {
         try {
+            if (addBookISBN.getText().isEmpty() || 
+                addBookAuthor.getText().isEmpty() || 
+                addBookTitle.getText().isEmpty() || 
+                addBookGenre.getText().isEmpty() || 
+                addBookPublisher.getText().isEmpty() || 
+                addBookDescription.getText().isEmpty() || 
+                addBookPublicationYear.getText().isEmpty()) {
+
+                showAlert(AlertType.ERROR, "Error Message", "Please fill all information!");
+                return;
+        }
+            
             String isbn = addBookISBN.getText();
             String[] authors = addBookAuthor.getText().split("\\s*,\\s*");
             String title = addBookTitle.getText();
