@@ -29,6 +29,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -54,6 +56,7 @@ public class ManagerDashboardController implements Initializable{
     
     private Image image;
     private Image addMemberImage;
+    private Image addBookImage;
 
     private LibrarySystem librarySystem;
     
@@ -207,7 +210,7 @@ public class ManagerDashboardController implements Initializable{
     private TextField addBookAuthor;
 
     @FXML
-    private TextField addBookCopiesAvailable;
+    private Spinner<Integer> addBookCopiesAvailable;
 
     @FXML
     private TextArea addBookDescription;
@@ -219,7 +222,7 @@ public class ManagerDashboardController implements Initializable{
     private TextField addBookISBN;
 
     @FXML
-    private AnchorPane addBookImage;
+    private ImageView addBookImageView;
 
     @FXML
     private TextField addBookPublicationYear;
@@ -512,6 +515,66 @@ public class ManagerDashboardController implements Initializable{
         }
     }
 
+    public void addBookImportBtn() {
+        FileChooser openFile = new FileChooser();
+        openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
+
+        File file = openFile.showOpenDialog(manager_dashboard.getScene().getWindow());
+
+        if (file != null) {
+            addBookImage = new Image(file.toURI().toString(), 200, 237, false, true);
+            addBookImageView.setImage(addBookImage);
+        }
+    }
+
+    public void addBook() {
+        try {
+            String isbn = addBookISBN.getText();
+            String[] authors = addBookAuthor.getText().split("\\s*,\\s*");
+            String title = addBookTitle.getText();
+            String[] genres = addBookGenre.getText().split("\\s*,\\s*");
+            String publisher = addBookPublisher.getText();
+            String description = addBookDescription.getText();
+            
+            int publicationYear;
+            try {
+                publicationYear = Integer.parseInt(addBookPublicationYear.getText());
+            } catch (NumberFormatException e) {
+                showAlert(AlertType.ERROR, "Error Message", "Publication year must be a valid number!");
+                return;
+            }
+            
+            int copiesAvailable = addBookCopiesAvailable.getValue();
+            librarySystem.addBook(
+                title, 
+                authors, 
+                publisher, 
+                publicationYear, 
+                genres, 
+                copiesAvailable, 
+                description, 
+                convertImageToBytes(addBookImage), 
+                isbn
+            );
+            showAlert(AlertType.INFORMATION, "Success", "Book added successfully!");
+            clearAddBookInput();
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Error", "An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    private void clearAddBookInput() {
+        addBookISBN.clear();
+        addBookAuthor.clear();
+        addBookTitle.clear();
+        addBookGenre.clear();
+        addBookPublisher.clear();
+        addBookDescription.clear();
+        addBookPublicationYear.clear();
+        addBookImage = null;
+        addBookImageView.setImage(addBookImage);
+    }
+
     private void displayUsername() {
         welcomeUser.setText("Welcome " + LoginController.currentUser.getUsername());
     }
@@ -549,6 +612,13 @@ public class ManagerDashboardController implements Initializable{
         managerNumber.setText(String.valueOf(librarySystem.getCountAdmin()));
     }
 
+    private void initializeSpinner() {
+        SpinnerValueFactory<Integer> valueFactory =
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100);
+            valueFactory.setValue(0);
+            addBookCopiesAvailable.setValueFactory(valueFactory);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         displayUsername();
@@ -558,5 +628,6 @@ public class ManagerDashboardController implements Initializable{
         showDashboardInformation();
         addMemberImage = new Image("/resources/image/avatar.png");
         handleSearch();
+        initializeSpinner();
     }
 }
