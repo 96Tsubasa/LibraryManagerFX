@@ -748,7 +748,7 @@ public class ManagerDashboardController implements Initializable{
                 showAlert(AlertType.ERROR, "Error Message", "Publication year or Copies available must be a valid number!");
                 return;
             }
-            librarySystem.editBookById(editingBook, title, authors, publisher, publicationYear, genres, copiesAvailable, description, null, isbn);
+            librarySystem.editBookById(editingBook, title, authors, publisher, publicationYear, genres, copiesAvailable, description, convertImageToBytes(editBookImage), isbn);
             bookListTable.refresh();
             showAlert(AlertType.INFORMATION, "Information Message", "You updated a book successfully!");
         } catch (IllegalArgumentException exception) {

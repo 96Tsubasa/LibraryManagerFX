@@ -534,7 +534,7 @@
                                           <ImageView fx:id="editBookImageView" fitHeight="239.0" fitWidth="200.0" layoutX="-4.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true" />
                                        </children>
                                     </AnchorPane>
-                                    <Button layoutX="742.0" layoutY="297.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                                    <Button layoutX="742.0" layoutY="297.0" mnemonicParsing="false" onAction="#editBookImportBtn" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
                                     <Button layoutX="358.0" layoutY="488.0" mnemonicParsing="false" onAction="#editBook" prefHeight="43.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
