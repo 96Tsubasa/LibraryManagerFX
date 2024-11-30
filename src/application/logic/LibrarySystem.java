@@ -1,6 +1,7 @@
 package application.logic;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +14,7 @@ public class LibrarySystem {
     private List<Book> books;
     private List<User> users;
     private List<Transaction> transactions;
+    private List<Rating> ratings;
     private User currentUser;
     private int countAdmin;
     private int countUser;
@@ -301,9 +303,8 @@ public class LibrarySystem {
     }
 
     /** Edit a transaction by transactionId. */
-    public void editTransactionById(Transaction transaction, long transactionId, long userId, long bookId,
+    public void editTransactionById(Transaction transaction, long userId, long bookId,
                                     LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
-        transaction.setTransactionId(transactionId);
         transaction.setUserId(userId);
         transaction.setBook(bookId);
         transaction.setBorrowDate(borrowDate);
@@ -318,6 +319,82 @@ public class LibrarySystem {
         for (Transaction transaction : transactions) {
             if (transaction.getTransactionId() == transactionId) {
                 return transaction;
+            }
+        }
+        return null;
+    }
+
+    /** Return avgrating. */
+    public double getAvgBookRating(long bookId) {
+        int sum = 0;
+        int count = 0;
+        for (Rating rating : ratings) {
+            if (rating.getBookId() == bookId) {
+                sum += rating.getStar();
+                count ++;
+            }
+        }
+        return (double) sum / count;
+    }
+
+    /** User changes rating. */
+    public void editRatingByUserId(Rating rating, int star, String comment) {
+        rating.setStar(star);
+        rating.setRateDate(LocalDateTime.now());
+        rating.setComment(comment);
+    }
+
+    /** Return ratings. */
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    /** Return Rating for User. */
+    public List<Rating> getRatingforUserId(long userId) {
+        List<Rating> returnRateForUser = new ArrayList<>();
+        for (Rating rating : ratings) {
+            if (rating.getUserId() == userId) {
+                returnRateForUser.add(rating);
+            }
+        }
+        returnRateForUser.sort((r1, r2) -> r2.getRateDate().compareTo(r1.getRateDate()));
+        return returnRateForUser;
+    }
+
+    /** Return Rating for Book. */
+    public List<Rating> getRatingforBookId(long bookId) {
+        List<Rating> returnRateForBook = new ArrayList<>();
+        for (Rating rating : ratings) {
+            if (rating.getBookId() == bookId) {
+                returnRateForBook.add(rating);
+            }
+        }
+        returnRateForBook.sort((r1, r2) -> r2.getRateDate().compareTo(r1.getRateDate()));
+        return returnRateForBook;
+    }
+
+    /** Return Rating for news. */
+    public List<Rating> getRecentRating() {
+        if (ratings == null || ratings.isEmpty()) {
+            return new ArrayList<>(); // return
+        }
+        int startIndex = Math.max(ratings.size() - 5, 0);
+        List<Rating> recent = ratings.subList(startIndex, ratings.size());
+        return recent;
+    }
+
+    /** Add rating. */
+//    public void addRating(long userId, long bookId, int star, LocalDateTime rateDate, String comment) {
+//        long ratingId = Database.createNewRatingId();
+//        Rating newrating = new Rating(ratingId, userId, bookId, rateDate, comment);
+//        Database.addRating(newrating);
+//    }
+
+    /** Get rating for search. */
+    public Rating getRatingbyRatingId(long ratingId) {
+        for (Rating rating : ratings) {
+            if (rating.getRateId() == ratingId) {
+                return rating;
             }
         }
         return null;
