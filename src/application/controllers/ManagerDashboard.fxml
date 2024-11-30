@@ -103,7 +103,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="85.0" prefHeight="234.0" prefWidth="984.0" stylesheets="@mainFormDesign.css">
                                  <children>
@@ -503,7 +503,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="editBook" layoutX="11.0" layoutY="9.0" prefHeight="720.0" prefWidth="1009.6">
+                        <AnchorPane fx:id="editBook" layoutX="11.0" layoutY="9.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
                            <children>
                               <FontAwesomeIcon glyphName="BOOK" layoutX="344.0" layoutY="117.0" size="10em" />
                               <Label layoutX="498.0" layoutY="48.0" text="Edit Book">
