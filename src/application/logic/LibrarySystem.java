@@ -252,6 +252,22 @@ public class LibrarySystem {
         return null;
     }
 
+    /** Edit a book by bookId. */
+    public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher,
+                             int newPublicationYear, String[] newGenres, int newCopiesAvailable,
+                             String newDescription, byte[] newCoverImage, String newIsbn) {
+        book.setTitle(newTitle);
+        book.setAuthors(newAuthors);
+        book.setPublisher(newPublisher);
+        book.setPublicationYear(newPublicationYear);
+        book.setGenres(newGenres);
+        book.setCopiesAvailable(newCopiesAvailable);
+        book.setDescription(newDescription);
+        book.setCoverImage(newCoverImage);
+        book.setIsbn(newIsbn);
+        Database.editBookById(book);
+    }
+
     /** Delete a book in the system with bookId. */
     public void deleteBookById(long bookId) {
         books.removeIf(book -> book.getBookId() == bookId);
