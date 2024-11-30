@@ -59,10 +59,12 @@ public class ManagerDashboardController implements Initializable{
     private Image image;
     private Image addMemberImage;
     private Image addBookImage;
+    private Image editBookImage;
 
     private LibrarySystem librarySystem;
     
     private User editingUser;
+    private Book editingBook;
     
     @FXML
     private AnchorPane addBook;
@@ -276,6 +278,36 @@ public class ManagerDashboardController implements Initializable{
 
     @FXML
     private TextField bookListSearch;
+
+    @FXML
+    private TextField editBookAuthor;
+
+    @FXML
+    private TextField editBookCopiesAvailable;
+
+    @FXML
+    private TextArea editBookDescription;
+
+    @FXML
+    private TextField editBookGenre;
+
+    @FXML
+    private TextField editBookID;
+
+    @FXML
+    private TextField editBookISBN;
+
+    @FXML
+    private TextField editBookPublicationYear;
+
+    @FXML
+    private TextField editBookPublisher;
+
+    @FXML
+    private TextField editBookTitle;
+
+    @FXML
+    private ImageView editBookImageView;
 
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
@@ -660,7 +692,81 @@ public class ManagerDashboardController implements Initializable{
         addBookImageView.setImage(addBookImage);
     }
 
-    
+    public void searchBook() {
+        try {
+            long bookID = Long.parseLong(editBookID.getText());
+            editingBook = librarySystem.getBookById(bookID);
+            if (editingBook != null) {
+                editBookISBN.setText(editingBook.getIsbn());
+                editBookAuthor.setText(editingBook.getAuthorsAsString());
+                editBookTitle.setText(editingBook.getTitle());
+                editBookGenre.setText(editingBook.getGenresAsString());
+                editBookPublisher.setText(editingBook.getPublisher());
+                editBookDescription.setText(editingBook.getDescription());
+                editBookPublicationYear.setText(String.valueOf(editingBook.getPublicationYear()));
+                editBookCopiesAvailable.setText(String.valueOf(editingBook.getCopiesAvailable()));
+                if (editingBook.getCoverImage() != null) {
+                    editBookImageView.setImage(convertBytesToImage(editingBook.getCoverImage()));
+                } else {
+                    editBookImageView.setImage(null);
+                }
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "That book doesn't exist!");
+            }
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid Book ID!");
+        }
+    }
+
+    public void editBook() throws IllegalArgumentException {
+        try {
+            if (editBookISBN.getText().isEmpty() || 
+                editBookAuthor.getText().isEmpty() || 
+                editBookTitle.getText().isEmpty() || 
+                editBookGenre.getText().isEmpty() || 
+                editBookPublisher.getText().isEmpty() || 
+                editBookDescription.getText().isEmpty() || 
+                editBookPublicationYear.getText().isEmpty()) {
+
+                showAlert(AlertType.ERROR, "Error Message", "Please fill all information!");
+                return;
+            }
+            
+            String isbn = editBookISBN.getText();
+            String[] authors = editBookAuthor.getText().split("\\s*,\\s*");
+            String title = editBookTitle.getText();
+            String[] genres = editBookGenre.getText().split("\\s*,\\s*");
+            String publisher = editBookPublisher.getText();
+            String description = editBookDescription.getText();
+            
+            int copiesAvailable;
+            int publicationYear;
+            try {
+                publicationYear = Integer.parseInt(editBookPublicationYear.getText());
+                copiesAvailable = Integer.parseInt(editBookCopiesAvailable.getText());
+            } catch (NumberFormatException e) {
+                showAlert(AlertType.ERROR, "Error Message", "Publication year or Copies available must be a valid number!");
+                return;
+            }
+            librarySystem.editBookById(editingBook, title, authors, publisher, publicationYear, genres, copiesAvailable, description, null, isbn);
+            bookListTable.refresh();
+            showAlert(AlertType.INFORMATION, "Information Message", "You updated a book successfully!");
+        } catch (IllegalArgumentException exception) {
+            showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
+        }
+    }
+
+    public void editBookImportBtn() {
+        FileChooser openFile = new FileChooser();
+        openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
+
+        File file = openFile.showOpenDialog(manager_dashboard.getScene().getWindow());
+
+        if (file != null) {
+            editBookImage = new Image(file.toURI().toString(), 200, 237, false, true);
+            editBookImageView.setImage(editBookImage);
+        }
+    }
 
     private void displayUsername() {
         welcomeUser.setText("Welcome " + LoginController.currentUser.getUsername());

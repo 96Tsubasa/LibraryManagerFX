@@ -103,7 +103,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="dashboard" layoutX="206.0" layoutY="142.0" prefHeight="720.0" prefWidth="1009.6" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="85.0" prefHeight="234.0" prefWidth="984.0" stylesheets="@mainFormDesign.css">
                                  <children>
@@ -503,7 +503,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="editBook" layoutX="11.0" layoutY="9.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                        <AnchorPane fx:id="editBook" layoutX="11.0" layoutY="9.0" prefHeight="720.0" prefWidth="1009.6">
                            <children>
                               <FontAwesomeIcon glyphName="BOOK" layoutX="344.0" layoutY="117.0" size="10em" />
                               <Label layoutX="498.0" layoutY="48.0" text="Edit Book">
@@ -518,7 +518,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TextField layoutX="207.0" layoutY="78.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editBookISBN" layoutX="207.0" layoutY="78.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="75.0" text="ISBN:">
                                        <font>
                                           <Font size="30.0" />
@@ -530,38 +530,41 @@
                                           <String fx:value="radius" />
                                           <String fx:value="shadow" />
                                        </styleClass>
+                                       <children>
+                                          <ImageView fx:id="editBookImageView" fitHeight="239.0" fitWidth="200.0" layoutX="-4.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true" />
+                                       </children>
                                     </AnchorPane>
                                     <Button layoutX="742.0" layoutY="297.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
-                                    <Button layoutX="358.0" layoutY="488.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
+                                    <Button layoutX="358.0" layoutY="488.0" mnemonicParsing="false" onAction="#editBook" prefHeight="43.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
                                     </Button>
-                                    <TextField layoutX="207.0" layoutY="216.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editBookGenre" layoutX="207.0" layoutY="216.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="213.0" text="Genre:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="207.0" layoutY="170.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editBookTitle" layoutX="207.0" layoutY="170.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="167.0" text="Title:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="207.0" layoutY="124.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editBookAuthor" layoutX="207.0" layoutY="124.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="121.0" text="Author:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="207.0" layoutY="262.0" prefHeight="38.0" prefWidth="252.0" />
+                                    <TextField fx:id="editBookPublisher" layoutX="207.0" layoutY="262.0" prefHeight="38.0" prefWidth="252.0" />
                                     <Label layoutX="66.0" layoutY="259.0" text="Publisher:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="525.0" layoutY="124.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <TextField fx:id="editBookPublicationYear" layoutX="525.0" layoutY="124.0" prefHeight="38.0" prefWidth="142.0" />
                                     <Label layoutX="473.0" layoutY="75.0" prefHeight="28.0" prefWidth="246.0" text="Publication Year:">
                                        <font>
                                           <Font size="30.0" />
@@ -572,20 +575,20 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="525.0" layoutY="235.0" prefHeight="38.0" prefWidth="142.0" />
-                                    <Label layoutX="66.0" layoutY="303.0" text="Desciption:">
+                                    <TextField fx:id="editBookCopiesAvailable" layoutX="525.0" layoutY="235.0" prefHeight="38.0" prefWidth="142.0" />
+                                    <Label layoutX="66.0" layoutY="303.0" text="Description:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextArea layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
-                                    <TextField layoutX="273.0" layoutY="17.0" prefHeight="38.0" prefWidth="291.0" />
+                                    <TextArea fx:id="editBookDescription" layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
+                                    <TextField fx:id="editBookID" layoutX="273.0" layoutY="17.0" prefHeight="38.0" prefWidth="291.0" />
                                     <Label layoutX="66.0" layoutY="14.0" text="Enter book ID:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <Button layoutX="583.0" layoutY="15.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="105.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" textFill="WHITE">
+                                    <Button layoutX="583.0" layoutY="15.0" mnemonicParsing="false" onAction="#searchBook" prefHeight="42.0" prefWidth="105.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
