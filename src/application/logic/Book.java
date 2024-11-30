@@ -1,4 +1,4 @@
-package application;
+package application.logic;
 
 import java.util.Arrays;
 

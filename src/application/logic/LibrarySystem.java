@@ -1,10 +1,12 @@
-package application;
+package application.logic;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import application.database.Database;
 
 public class LibrarySystem {
     private static LibrarySystem instance;

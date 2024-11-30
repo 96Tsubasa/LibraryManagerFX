@@ -1,4 +1,4 @@
-package application;
+package application.logic;
 
 public class User {
     // User attributes
