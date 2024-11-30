@@ -1,4 +1,4 @@
-package application;
+package application.database;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import application.logic.Book;
+import application.logic.Transaction;
+import application.logic.User;
 
 public class Database {
     private static final String databaseUrl = "jdbc:sqlite:library.db";

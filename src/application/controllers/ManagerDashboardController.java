@@ -5,9 +5,9 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
-import application.Book;
-import application.LibrarySystem;
-import application.User;
+import application.logic.Book;
+import application.logic.LibrarySystem;
+import application.logic.User;
 
 import java.util.ArrayList;
 import java.util.List;

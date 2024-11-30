@@ -12,8 +12,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import java.io.IOException;
 
-import application.LibrarySystem;
-import application.User;
+import application.logic.LibrarySystem;
+import application.logic.User;
 
 public class LoginController {
     private Stage stage;
