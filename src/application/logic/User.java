@@ -23,8 +23,6 @@ public class User {
         this.limitBook = 10;
     }
 
-    public User() {}
-
     /** Getter for email attribute. */
     public String getEmail() {
         return email;
