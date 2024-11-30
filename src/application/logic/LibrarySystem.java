@@ -299,4 +299,27 @@ public class LibrarySystem {
         }
         return false;
     }
+
+    /** Edit a transaction by transactionId. */
+    public void editTransactionById(Transaction transaction, long transactionId, long userId, long bookId,
+                                    LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
+        transaction.setTransactionId(transactionId);
+        transaction.setUserId(userId);
+        transaction.setBook(bookId);
+        transaction.setBorrowDate(borrowDate);
+        transaction.setDueDate(dueDate);
+        transaction.setReturnDate(returnDate);
+        transaction.setReturned(isReturned);
+        Database.editTransactionById(transaction);
+    }
+
+    /** Return a reference to a transaction in the system with bookId. */
+    public Transaction getTransactionById(long transactionId) {
+        for (Transaction transaction : transactions) {
+            if (transaction.getTransactionId() == transactionId) {
+                return transaction;
+            }
+        }
+        return null;
+    }
 }
