@@ -60,6 +60,7 @@ public class ManagerDashboardController implements Initializable{
     private Image addMemberImage;
     private Image addBookImage;
     private Image editBookImage;
+    private Image bookListImage;
 
     private LibrarySystem librarySystem;
     
@@ -309,6 +310,12 @@ public class ManagerDashboardController implements Initializable{
     @FXML
     private ImageView editBookImageView;
 
+    @FXML
+    private Label bookListShow;
+
+    @FXML
+    private ImageView bookListShowImage;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -397,6 +404,28 @@ public class ManagerDashboardController implements Initializable{
         } else {
             memberListImageShow.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
         }
+    }
+
+    public void bookListSelectData() {
+        Book book = bookListTable.getSelectionModel().getSelectedItem();
+        int num = bookListTable.getSelectionModel().getSelectedIndex();
+        if (num < 0) return;
+
+        StringBuilder content = new StringBuilder();
+        content.append("ID: ").append(book.getBookId()).append("\n")
+            .append("ISBN: ").append(book.getIsbn()).append("\n")
+            .append("Author: ").append(book.getAuthorsAsString()).append("\n")
+            .append("Title: ").append(book.getTitle()).append("\n")
+            .append("Genre: ").append(book.getGenresAsString()).append("\n")
+            .append("Publisher: ").append(book.getPublisher()).append("\n")
+            .append("Publication Year: ").append(book.getPublicationYear()).append("\n")
+            .append("Copies Available: ").append(book.getCopiesAvailable()).append("\n")
+            .append("Description: ").append(book.getDescription());
+
+        bookListShow.setText(content.toString());
+
+        bookListImage = convertBytesToImage(book.getCoverImage());
+        bookListShowImage.setImage(bookListImage);
     }
 
     private void disableNode() {
@@ -803,11 +832,11 @@ public class ManagerDashboardController implements Initializable{
         memberNumber.setText(String.valueOf(librarySystem.getCountUser()));
         bookNumber.setText(String.valueOf(librarySystem.getBooks().size()));
         managerNumber.setText(String.valueOf(librarySystem.getCountAdmin()));
-        // List<Book> recentBooks = librarySystem.getRecentBooks();
-        // DashboardImage1.setImage(convertBytesToImage(recentBooks.get(0).getCoverImage()));
-        // DashboardImage2.setImage(convertBytesToImage(recentBooks.get(1).getCoverImage()));
-        // DashboardImage3.setImage(convertBytesToImage(recentBooks.get(2).getCoverImage()));
-        // DashboardImage4.setImage(convertBytesToImage(recentBooks.get(3).getCoverImage()));
+        List<Book> recentBooks = librarySystem.getRecentBooks();
+        DashboardImage1.setImage(convertBytesToImage(recentBooks.get(0).getCoverImage()));
+        DashboardImage2.setImage(convertBytesToImage(recentBooks.get(1).getCoverImage()));
+        DashboardImage3.setImage(convertBytesToImage(recentBooks.get(2).getCoverImage()));
+        DashboardImage4.setImage(convertBytesToImage(recentBooks.get(3).getCoverImage()));
     }
 
     private void initializeSpinner() {

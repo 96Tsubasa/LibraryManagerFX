@@ -171,10 +171,10 @@
                                           <Font size="26.0" />
                                        </font>
                                     </Label>
-                                    <ImageView fx:id="DashboardImage1" fitHeight="303.0" fitWidth="200.0" layoutX="14.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
-                                    <ImageView fx:id="DashboardImage2" fitHeight="303.0" fitWidth="200.0" layoutX="270.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
-                                    <ImageView fx:id="DashboardImage3" fitHeight="303.0" fitWidth="200.0" layoutX="534.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
-                                    <ImageView fx:id="DashboardImage4" fitHeight="303.0" fitWidth="200.0" layoutX="770.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="DashboardImage1" fitHeight="303.0" fitWidth="200.0" layoutX="14.0" layoutY="52.0" pickOnBounds="true" />
+                                    <ImageView fx:id="DashboardImage2" fitHeight="303.0" fitWidth="200.0" layoutX="263.0" layoutY="52.0" pickOnBounds="true" />
+                                    <ImageView fx:id="DashboardImage3" fitHeight="303.0" fitWidth="200.0" layoutX="527.0" layoutY="52.0" pickOnBounds="true" />
+                                    <ImageView fx:id="DashboardImage4" fitHeight="303.0" fitWidth="200.0" layoutX="770.0" layoutY="52.0" pickOnBounds="true" />
                                  </children>
                                  <styleClass>
                                     <String fx:value="white-bg" />
@@ -635,34 +635,42 @@
                                     <Font name="System Bold" size="36.0" />
                                  </font>
                               </Label>
-                              <AnchorPane layoutX="26.0" layoutY="247.0" prefHeight="450.0" prefWidth="755.0" stylesheets="@mainFormDesign.css">
+                              <AnchorPane layoutX="26.0" layoutY="247.0" prefHeight="450.0" prefWidth="694.0" stylesheets="@mainFormDesign.css">
                                  <styleClass>
                                     <String fx:value="white-bg" />
                                     <String fx:value="radius" />
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TableView fx:id="bookListTable" layoutX="10.0" layoutY="13.0" prefHeight="428.0" prefWidth="738.0">
+                                    <TableView fx:id="bookListTable" layoutX="13.0" layoutY="11.0" onMouseClicked="#bookListSelectData" prefHeight="428.0" prefWidth="678.0">
                                        <columns>
                                           <TableColumn fx:id="bookListID" prefWidth="36.79998779296875" text="ID" />
                                           <TableColumn fx:id="bookListAuthor" minWidth="0.0" prefWidth="98.40003204345703" text="Author" />
-                                          <TableColumn fx:id="bookListTitle" minWidth="0.0" prefWidth="148.79998779296875" text="Title" />
-                                          <TableColumn fx:id="bookListGenre" minWidth="0.0" prefWidth="124.0" text="Genre" />
-                                          <TableColumn fx:id="bookListPublisher" minWidth="0.0" prefWidth="124.79995727539062" text="Publisher" />
-                                          <TableColumn fx:id="bookListPublicationYear" minWidth="0.0" prefWidth="98.4000244140625" text="Publication Year" />
-                                          <TableColumn fx:id="bookListCopiesAvailable" minWidth="0.0" prefWidth="111.199951171875" text="Copies Available" />
+                                          <TableColumn fx:id="bookListTitle" minWidth="0.0" prefWidth="106.40005493164062" text="Title" />
+                                          <TableColumn fx:id="bookListGenre" minWidth="0.0" prefWidth="128.79998779296875" text="Genre" />
+                                          <TableColumn fx:id="bookListPublisher" minWidth="0.0" prefWidth="158.39993286132812" text="Publisher" />
+                                          <TableColumn fx:id="bookListPublicationYear" minWidth="0.0" prefWidth="100.79998779296875" text="Publication Year" />
+                                          <TableColumn fx:id="bookListCopiesAvailable" minWidth="0.0" prefWidth="48.0" text="Copies" />
                                        </columns>
                                     </TableView>
                                  </children>
                               </AnchorPane>
                               <FontAwesomeIcon glyphName="SEARCH" layoutX="27.0" layoutY="213.0" size="3em" />
                               <TextField fx:id="bookListSearch" layoutX="70.0" layoutY="182.0" prefHeight="36.0" prefWidth="703.0" />
-                              <AnchorPane layoutX="796.0" layoutY="247.0" prefHeight="450.0" prefWidth="193.0" stylesheets="@mainFormDesign.css">
+                              <AnchorPane layoutX="728.0" layoutY="247.0" prefHeight="450.0" prefWidth="262.0" stylesheets="@mainFormDesign.css">
                                  <styleClass>
                                     <String fx:value="white-bg" />
                                     <String fx:value="radius" />
                                     <String fx:value="shadow" />
                                  </styleClass>
+                                 <children>
+                                    <ImageView fx:id="bookListShowImage" fitHeight="173.0" fitWidth="151.0" layoutX="56.0" layoutY="14.0" pickOnBounds="true" />
+                                    <Label fx:id="bookListShow" layoutX="5.0" layoutY="187.0" prefHeight="254.0" prefWidth="251.0" wrapText="true">
+                                       <font>
+                                          <Font size="13.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
                               </AnchorPane>
                            </children>
                         </AnchorPane>
