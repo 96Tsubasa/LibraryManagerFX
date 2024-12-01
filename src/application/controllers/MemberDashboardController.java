@@ -55,10 +55,7 @@ public class MemberDashboardController implements Initializable {
         }
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        librarySystem = LibrarySystem.getInstance();
-        
+    private void loadBookContainer() {
         int column = 0;
         int row = 1;
         try {
@@ -80,5 +77,11 @@ public class MemberDashboardController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        librarySystem = LibrarySystem.getInstance();
+        loadBookContainer();
     }
 }
