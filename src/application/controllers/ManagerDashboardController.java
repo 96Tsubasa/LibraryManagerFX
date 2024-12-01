@@ -49,7 +49,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.fxml.Initializable;
 
-public class ManagerDashboardController implements Initializable{
+public class ManagerDashboardController implements Initializable {
     private Stage stage;
     private Scene scene;
     private Parent root;

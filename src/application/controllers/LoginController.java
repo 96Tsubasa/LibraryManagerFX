@@ -45,10 +45,13 @@ public class LoginController {
                     scene = new Scene(root);
                     stage.setScene(scene);
                     stage.show();
+                } else {
+                    root = FXMLLoader.load(getClass().getResource("MemberDashboard.fxml"));
+                    stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                    scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.show();
                 }
-                /*
-                 * code for normal user
-                 */
             }
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
