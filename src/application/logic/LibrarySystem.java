@@ -9,6 +9,8 @@ import java.util.List;
 
 import application.database.Database;
 
+import javax.xml.crypto.Data;
+
 public class LibrarySystem {
     private static LibrarySystem instance;
     private List<Book> books;
@@ -20,7 +22,7 @@ public class LibrarySystem {
     private int countUser;
 
     /** Constructor. */
-    public LibrarySystem() {
+    private LibrarySystem() {
         // Load data from database
         books = Database.loadBooks();
         users = Database.loadUsers();
@@ -29,7 +31,7 @@ public class LibrarySystem {
     }
 
     /** Set countAdmin and countUser. */
-    public void setCount() {
+    private void setCount() {
         countUser = 0;
         countAdmin = 0;
         for (User user : users) {
@@ -86,7 +88,7 @@ public class LibrarySystem {
     }
 
     /** Create a new book, add to books list and database. */
-    public void addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
+    public Book addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
         if (!currentUser.getRole().equals(User.ADMIN)) {
             throw new IllegalArgumentException("Only admins can add books.");
         }
@@ -94,6 +96,7 @@ public class LibrarySystem {
         Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
         books.add(book);
         Database.addBook(book);
+        return book;
     }
 
     /** Remove a book. */
@@ -242,6 +245,7 @@ public class LibrarySystem {
     /** Delete a user in the system with userId. */
     public void deleteUserById(long userId) {
         users.removeIf(user -> user.getUserId() == userId);
+        Database.deleteUserById(userId);
     }
 
     /** Return a reference to a book in the system with bookId. */
@@ -273,6 +277,7 @@ public class LibrarySystem {
     /** Delete a book in the system with bookId. */
     public void deleteBookById(long bookId) {
         books.removeIf(book -> book.getBookId() == bookId);
+        Database.deleteBookById(bookId);
     }
 
     /** Log out the current user. */
