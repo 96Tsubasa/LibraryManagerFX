@@ -117,8 +117,6 @@ public class User {
         setLimitBook(limitBook++);
     }
 
-
-
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
         // The password must be at least 8 characters long.
@@ -133,7 +131,7 @@ public class User {
 
     /** Validates email format. */
     private boolean isValidEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$";
         return email.matches(emailRegex);
     }
 
