@@ -316,6 +316,9 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private ImageView bookListShowImage;
 
+    @FXML
+    private TextField deleteBookID;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -561,8 +564,7 @@ public class ManagerDashboardController implements Initializable {
         }
     }
 
-    @FXML
-    public void deleteMember(ActionEvent event) throws IOException {
+    public void deleteMember() {
         try {
             long userID = Long.parseLong(deleteMemberID.getText());
             User deletingUser = librarySystem.getUserById(userID);
@@ -590,6 +592,40 @@ public class ManagerDashboardController implements Initializable {
         builder.append("Username: ").append(user.getUsername()).append('\n');
         builder.append("Email: ").append(user.getEmail()).append('\n');
         builder.append("Role: ").append(user.getRole()).append('\n');
+        return builder.toString();
+    }
+
+    public void deleteBook() {
+        try {
+            long bookID = Long.parseLong(deleteBookID.getText());
+            Book deletingBook = librarySystem.getBookById(bookID);
+            if (deletingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "That Book is not exist!");
+            } else {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Are you sure you want to delete?");
+                alert.setContentText(getBookDetail(deletingBook));
+                Optional<ButtonType> option = alert.showAndWait();
+                if (option.get().equals(ButtonType.OK)) {
+                    librarySystem.deleteBookById(bookID);
+                    bookListData.removeIf(book -> book.getBookId() == bookID);
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Book ID is not valid!");
+        }
+    }
+
+    private String getBookDetail(Book book) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ID: " ).append(book.getBookId()).append('\n');
+        builder.append("Title: " ).append(book.getTitle()).append('\n');
+        builder.append("Author: " ).append(book.getAuthorsAsString()).append('\n');
+        builder.append("Genre: " ).append(book.getGenresAsString()).append('\n');
+        builder.append("ISBN: " ).append(book.getIsbn()).append('\n');
+        builder.append("Publisher: " ).append(book.getPublisher()).append('\n');
+        builder.append("Publication Year: " ).append(book.getPublicationYear()).append('\n');
         return builder.toString();
     }
 

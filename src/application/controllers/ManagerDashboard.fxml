@@ -612,7 +612,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <Button layoutX="359.0" layoutY="197.0" mnemonicParsing="false" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Delete" textFill="WHITE">
+                                    <Button layoutX="359.0" layoutY="197.0" mnemonicParsing="false" onAction="#deleteBook" prefHeight="89.0" prefWidth="239.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Delete" textFill="WHITE">
                                        <font>
                                           <Font name="Cambria Italic" size="11.0" />
                                        </font>
@@ -622,7 +622,7 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="479.0" layoutY="103.0" prefHeight="38.0" prefWidth="238.0" />
+                                    <TextField fx:id="deleteBookID" layoutX="479.0" layoutY="103.0" prefHeight="38.0" prefWidth="238.0" />
                                  </children>
                               </AnchorPane>
                            </children>
