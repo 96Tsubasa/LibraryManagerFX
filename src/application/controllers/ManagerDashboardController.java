@@ -535,10 +535,10 @@ public class ManagerDashboardController implements Initializable {
             String password = addMemberPassword.getText();
             String email = addMemberEmail.getText();
             String role = (String) addMemberRole.getValue();
-            User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(addMemberImage));
             if (username.equals("") || password.equals("") || email.equals("") || role.equals("")) {
                 showAlert(AlertType.ERROR, "Error Message", "You must fill all information!");
             } else {
+                User newUser = librarySystem.addUser(username, email, password, role, convertImageToBytes(addMemberImage));
                 memberListData.add(newUser);
                 showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
                 clearAddMemberInput();
@@ -562,13 +562,35 @@ public class ManagerDashboardController implements Initializable {
     }
 
     @FXML
-    private void deleteMember(ActionEvent event) throws IOException {
+    public void deleteMember(ActionEvent event) throws IOException {
         try {
             long userID = Long.parseLong(deleteMemberID.getText());
-            librarySystem.deleteUserById(userID);
+            User deletingUser = librarySystem.getUserById(userID);
+            if (deletingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "That User is not exist!");
+            } else {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Are you sure you want to delete?");
+                alert.setContentText(getUserDetail(deletingUser));
+                Optional<ButtonType> option = alert.showAndWait();
+                if (option.get().equals(ButtonType.OK)) {
+                    librarySystem.deleteUserById(userID);
+                    memberListData.removeIf(member -> member.getUserId() == userID);
+                }
+            }
         } catch (IllegalArgumentException e) {
-            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+            showAlert(AlertType.ERROR, "Error Message", "User ID is not valid!");
         }
+    }
+
+    private String getUserDetail(User user) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ID: " ).append(user.getUserId()).append('\n');
+        builder.append("Username: ").append(user.getUsername()).append('\n');
+        builder.append("Email: ").append(user.getEmail()).append('\n');
+        builder.append("Role: ").append(user.getRole()).append('\n');
+        return builder.toString();
     }
 
     @FXML
