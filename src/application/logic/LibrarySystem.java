@@ -331,7 +331,9 @@ public class LibrarySystem {
                 count ++;
             }
         }
-        return (double) sum / count;
+        double avg = (sum * 1.0) / count;
+        double rounded = Math.round(avg * 10.0) / 10.0;
+        return rounded;
     }
 
     /** User changes rating. */
