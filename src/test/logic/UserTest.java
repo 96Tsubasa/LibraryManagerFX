@@ -17,7 +17,7 @@ public class UserTest {
     @Before
     public void setUp() {
         username = "testUsername";
-        userId = 100001;
+        userId = 900000001;
         email = "testmail@hotmail.com";
         password = "strongPassword";
         image = new byte[] {1, 2, 3};
