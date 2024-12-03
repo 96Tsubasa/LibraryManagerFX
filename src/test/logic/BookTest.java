@@ -21,7 +21,7 @@ public class BookTest {
 
     @Before
     public void setUp() {
-        bookId = 100001;
+        bookId = 900000001;
         isbn = "9000000000001";
         title = "Super Awesome Book Title";
         authors = new String[] {"Author A"};

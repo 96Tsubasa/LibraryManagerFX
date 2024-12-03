@@ -20,9 +20,9 @@ public class TransactionTest {
 
     @Before
     public void setUp() {
-        transactionId = 100001;
-        userId = 200001;
-        bookId = 300001;
+        transactionId = 900000001;
+        userId = 900000002;
+        bookId = 900000003;
         borrowDate = LocalDate.of(2024, 11, 1);
         dueDate = LocalDate.of(2024, 11, 8);
         returnDate = LocalDate.of(2024, 11, 7);
