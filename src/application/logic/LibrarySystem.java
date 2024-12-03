@@ -99,14 +99,6 @@ public class LibrarySystem {
         return book;
     }
 
-    /** Remove a book. */
-    public void removeBook(Book book) {
-        if (!currentUser.getRole().equals(User.ADMIN)) {
-            throw new IllegalArgumentException("Only admins can remove books.");
-        }
-
-    }
-
     /** Search book by ISBN. */
     public Book searchBookByISBN(String isbn) {
         for(Book book1 : books) {
@@ -403,5 +395,17 @@ public class LibrarySystem {
             }
         }
         return null;
+    }
+
+    /** Return list book user borrow. */
+    private List<Book> getBookListUserBorrowing(long userId) {
+        List<Book> borrowing = new ArrayList<>();
+        for(Transaction transaction : transactions) {
+            if(transaction.getUserId() == userId && transaction.isReturned() == false) {
+                Book book = getBookById(transaction.getBookId());
+                borrowing.add((book));
+            }
+        }
+        return borrowing;
     }
 }
