@@ -4,35 +4,35 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Rating {
-    private long rateId;
+    private long ratingId;
     private long userId;
     private long bookId;
     private int star;
-    private LocalDateTime rateDate;
+    private LocalDate ratingDate;
     private String comment;
 
     /**
      * Create a new rating.
-     * @param rateId Unique ID for this rating.
+     * @param ratingId Unique ID for this rating.
      * @param userId The user involved in this rating.
      * @param bookId The book involved in this rating.
-     * @param rateDate The date and time this user rated the book.
+     * @param ratingDate The date and time this user rated the book.
      * @param star The point.
      */
-    public Rating(long rateId, long userId, long bookId, int star, LocalDateTime rateDate, String comment) {
-        this.rateId = rateId;
+    public Rating(long ratingId, long userId, long bookId, int star, LocalDate ratingDate, String comment) {
+        this.ratingId = ratingId;
         this.userId = userId;
         this.bookId = bookId;
         this.star = star;
         this.comment = comment;
     }
 
-    public long getRateId() {
-        return rateId;
+    public long getRatingId() {
+        return ratingId;
     }
 
-    public void setRateId(long rateId) {
-        this.rateId = rateId;
+    public void setRatingId(long ratingId) {
+        this.ratingId = ratingId;
     }
 
     public long getUserId() {
@@ -67,11 +67,11 @@ public class Rating {
         this.comment = comment;
     }
 
-    public LocalDateTime getRateDate() {
-        return rateDate;
+    public LocalDate getRatingDate() {
+        return ratingDate;
     }
 
-    public void setRateDate(LocalDateTime rateDate) {
-        this.rateDate = rateDate;
+    public void setRatingDate(LocalDate ratingDate) {
+        this.ratingDate = ratingDate;
     }
 }

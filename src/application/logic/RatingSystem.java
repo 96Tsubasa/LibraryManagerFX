@@ -1,5 +1,6 @@
 package application.logic;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class RatingSystem {
                 returnRateForUser.add(rating);
             }
         }
-        returnRateForUser.sort((r1, r2) -> r2.getRateDate().compareTo(r1.getRateDate()));
+        returnRateForUser.sort((r1, r2) -> r2.getRatingDate().compareTo(r1.getRatingDate()));
         return returnRateForUser;
     }
 
@@ -51,7 +52,7 @@ public class RatingSystem {
                 returnRateForBook.add(rating);
             }
         }
-        returnRateForBook.sort((r1, r2) -> r2.getRateDate().compareTo(r1.getRateDate()));
+        returnRateForBook.sort((r1, r2) -> r2.getRatingDate().compareTo(r1.getRatingDate()));
         return returnRateForBook;
     }
 
@@ -68,7 +69,7 @@ public class RatingSystem {
     /** Get rating for search. */
     public Rating getRatingbyRatingId(long ratingId) {
         for (Rating rating : ratings) {
-            if (rating.getRateId() == ratingId) {
+            if (rating.getRatingId() == ratingId) {
                 return rating;
             }
         }
@@ -78,12 +79,12 @@ public class RatingSystem {
     /** User changes rating. */
     public void editRatingByUserId(Rating rating, int star, String comment) {
         rating.setStar(star);
-        rating.setRateDate(LocalDateTime.now());
+        rating.setRatingDate(LocalDate.now());
         rating.setComment(comment);
     }
 
     /** Add rating. */
-//    public void addRating(long userId, long bookId, int star, LocalDateTime rateDate, String comment) {
+//    public void addRating(long userId, long bookId, int star, LocalDate rateDate, String comment) {
 //        long ratingId = Database.createNewRatingId();
 //        Rating newrating = new Rating(ratingId, userId, bookId, rateDate, comment);
 //        Database.addRating(newrating);
