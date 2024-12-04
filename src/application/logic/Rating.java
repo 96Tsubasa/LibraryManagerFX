@@ -23,6 +23,7 @@ public class Rating {
         this.ratingId = ratingId;
         this.userId = userId;
         this.bookId = bookId;
+        this.ratingDate = ratingDate;
         this.star = star;
         this.comment = comment;
     }
