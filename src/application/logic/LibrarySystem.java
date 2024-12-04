@@ -9,38 +9,21 @@ import java.util.List;
 
 import application.database.Database;
 
-import javax.xml.crypto.Data;
-
 public class LibrarySystem {
     private static LibrarySystem instance;
-    private List<Book> books;
-    private List<User> users;
-    private List<Transaction> transactions;
-    private List<Rating> ratings;
-    private User currentUser;
-    private int countAdmin;
-    private int countUser;
+
+    private UserSystem userSystem;
+    private BookSystem bookSystem;
+    private TransactionSystem transactionSystem;
+    private RatingSystem ratingSystem;
 
     /** Constructor. */
     private LibrarySystem() {
         // Load data from database
-        books = Database.loadBooks();
-        users = Database.loadUsers();
-        setCount();
-        transactions = Database.loadTransactions();
-    }
-
-    /** Set countAdmin and countUser. */
-    private void setCount() {
-        countUser = 0;
-        countAdmin = 0;
-        for (User user : users) {
-            if (user.getRole().equals(User.ADMIN)) {
-                countAdmin ++;
-            } else if (user.getRole().equals(User.NORMAL_USER)) {
-                countUser ++;
-            }
-        }
+        bookSystem = new BookSystem();
+        userSystem = new UserSystem();
+        transactionSystem = new TransactionSystem();
+        ratingSystem = new RatingSystem();
     }
 
     /** Get the static instance of this class. */
@@ -53,361 +36,162 @@ public class LibrarySystem {
 
     /** Create a new user, add to users List and database. Return the user object if successful. */
     public User addUser(String name, String email, String password, String role, byte[] imageUser) {
-        if (isEmailRegistered(email)) {
-            throw new IllegalArgumentException("Email is already registered.");
-        }
-        if (isUserRegistered(name)) {
-            throw new IllegalArgumentException("Username is already registered.");
-        }
-
-        long userId = Database.createNewUserId();
-        // Create a new user instance and add to the users list
-        User user = new User(name, userId, email, password, role, imageUser);
-        users.add(user);
-        if (user.getRole().equals(User.ADMIN)) {
-            countAdmin ++;
-        } else {
-            countUser ++;
-        }
-        Database.addUser(user);
-        return user;
+        return userSystem.addUser(name, email, password, role, imageUser);
     }
 
-    /** Check username and password with database, return null if no username or false password. */
+    /** Check username and password with the system, return null if no username or false password. */
     public User handleLogin(String username, String password) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                if (user.checkPassword(password)) {
-                    currentUser = user;
-                    return user;
-                }
-                throw new IllegalArgumentException("Incorrect password.");
-            }
-        }
-        throw new IllegalArgumentException("Username does not exist.");
+        return userSystem.handleLogin(username, password);
     }
 
     /** Create a new book, add to books list and database. */
     public Book addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
-        if (!currentUser.getRole().equals(User.ADMIN)) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
             throw new IllegalArgumentException("Only admins can add books.");
         }
-        long bookId = Database.createNewBookId();
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
-        books.add(book);
-        Database.addBook(book);
-        return book;
+
+        return bookSystem.addBook(title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
     }
 
     /** Search book by ISBN. */
     public Book searchBookByISBN(String isbn) {
-        for(Book book1 : books) {
-            if(book1.getIsbn().equals(isbn)) {
-                return book1;
-            }
-        }
-        return null;
+        return bookSystem.searchBookByISBN(isbn);
     }
 
     /** Search books by keywords. */
     public List<Book> searchBooks(String keywords) {
-        List<Long> checkId = Database.searchBookIdWithKeyword(keywords);
-        List<Book> printBook = new ArrayList<>();
-        for (Long check : checkId) {
-            for (Book next : books) {
-                if (next.getBookId() == check) {
-                    printBook.add(next);
-                }
-            }
-        }
-        Collections.sort(printBook, new Comparator<Book>() {
-            @Override
-            public int compare(Book b1, Book b2) {
-                return Long.compare(b1.getBookId(), b2.getBookId());
-            }
-        });
-        return printBook;
+        return bookSystem.searchBooks(keywords);
     }
 
     /** Getter for count admin. */
     public int getCountAdmin() {
-        return countAdmin;
+        return userSystem.getCountAdmin();
     }
 
     /** Getter for count user. */
     public int getCountUser() {
-        return countUser;
-    }
-
-    /** User borrow a book, return true if successful. */
-    public boolean isBorrowBook(long userId, long bookId) {
-        for(Transaction transaction1 : transactions) {
-            if(transaction1.getUserId() == userId && transaction1.getBookId() == bookId
-                    && !transaction1.isReturned()) {
-                return false;
-            }
-        }
-        return true;
+        return userSystem.getCountUser();
     }
 
     /** User borrow a book. */
     public void borrowBook(long userId, long bookId) {
         Book book = getBookById(bookId);
         User user = getUserById(userId);
-        if (!isBorrowBook(userId, bookId) && !book.borrow()) {
-            throw new IllegalArgumentException("The user has already borrowed this book.");
-        }
-        if (book == null || !book.isAvailable()) {
-            throw new IllegalArgumentException("The book is not available.");
-        }
-        user.borrowBook();
-        book.borrow();
-        long transactionId = Database.createNewTransactionId();
-        Transaction transaction1 = new Transaction(transactionId, userId, bookId, LocalDate.now(),
-                LocalDate.now().plusMonths(6), null, false);
-        transactions.add(transaction1);
-        Database.addTransaction(transaction1);
+        transactionSystem.borrowBook(user, book);
     }
 
     /** User return a book. */
     public void returnBook(long userId, long bookId) {
-        for (Transaction transaction : transactions) {
-            if (transaction.getUserId() == userId && transaction.getBookId() == bookId
-                    && !transaction.isReturned()) {
-                Book book = getBookById(bookId);
-                User user = getUserById(userId);
-                transaction.setReturned(true);
-                transaction.setReturnDate(LocalDate.now());
-                if (book != null) {
-                    book.returnBook();
-                    user.returnBook();
-                }
-                return;
-            }
-        }
-        throw new IllegalArgumentException("No valid return transaction found.");
+        Book book = getBookById(bookId);
+        User user = getUserById(userId);
+        transactionSystem.returnBook(user, book);
     }
 
     /** Get users list. */
     public List<User> getUsers() {
-        return users;
+        return userSystem.getUsers();
     }
 
     /** Get books list. */
     public List<Book> getBooks() {
-        return books;
+        return bookSystem.getBooks();
     }
 
     /** Get the recently added books in the library. */
     public List<Book> getRecentBooks() {
-        if (books == null || books.isEmpty()) {
-            return new ArrayList<>(); // return
-        }
-        int startIndex = Math.max(books.size() - 4, 0);
-        List<Book> recent = books.subList(startIndex, books.size());
-        return recent;
+        return bookSystem.getRecentBooks();
     }
 
     /** Get transactions list. */
     public List<Transaction> getTransactions() {
-        return transactions;
+        return transactionSystem.getTransactions();
     }
 
     /** Return a reference to a user in the system with userId. */
     public User getUserById(long userId) {
-        for (User user : users) {
-            if (user.getUserId() == userId) {
-                return user;
-            }
-        }
-        return null;
+        return userSystem.getUserById(userId);
     }
 
     /** Edit a user by userId. */
     public void editUserById(User user, String newUsername, String newEmail, String newPassword,
                              String newRole, byte[] newImageUser) {
-        user.setUsername(newUsername);
-        user.setEmail(newEmail);
-        user.setPassword(newPassword);
-        user.setRole(newRole);
-        user.setImageUser(newImageUser);
-        Database.editUserById(user);
+        userSystem.editUserById(user, newUsername, newEmail, newPassword, newRole, newImageUser);
     }
 
     /** Delete a user in the system with userId. */
     public void deleteUserById(long userId) {
-        users.removeIf(user -> user.getUserId() == userId);
-        Database.deleteUserById(userId);
+        userSystem.deleteUserById(userId);
     }
 
     /** Return a reference to a book in the system with bookId. */
     public Book getBookById(long bookId) {
-        for (Book book : books) {
-            if (book.getBookId() == bookId) {
-                return book;
-            }
-        }
-        return null;
+        return bookSystem.getBookById(bookId);
     }
 
     /** Edit a book by bookId. */
     public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher,
                              int newPublicationYear, String[] newGenres, int newCopiesAvailable,
                              String newDescription, byte[] newCoverImage, String newIsbn) {
-        book.setTitle(newTitle);
-        book.setAuthors(newAuthors);
-        book.setPublisher(newPublisher);
-        book.setPublicationYear(newPublicationYear);
-        book.setGenres(newGenres);
-        book.setCopiesAvailable(newCopiesAvailable);
-        book.setDescription(newDescription);
-        book.setCoverImage(newCoverImage);
-        book.setIsbn(newIsbn);
-        Database.editBookById(book);
+        bookSystem.editBookById(book, newTitle, newAuthors, newPublisher, newPublicationYear,
+                newGenres, newCopiesAvailable, newDescription, newCoverImage, newIsbn);
     }
 
     /** Delete a book in the system with bookId. */
     public void deleteBookById(long bookId) {
-        books.removeIf(book -> book.getBookId() == bookId);
-        Database.deleteBookById(bookId);
-    }
-
-    /** Log out the current user. */
-    public void logOut() {
-        currentUser = null;
-    }
-
-    /** Checks if the email is already registered. */
-    public boolean isEmailRegistered(String email) {
-        for (User user : users) {
-            // If an email match is found, throw an exception indicating the email is already registered
-            if (user.getEmail().equals(email)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /** Checks if the username is already registered. */
-    public boolean isUserRegistered(String username) {
-        for (User user : users) {
-            // If a username match is found, throw an exception indicating the email is already registered
-            if (user.getUsername().equals(username)) {
-                return true;
-            }
-        }
-        return false;
+        bookSystem.deleteBookById(bookId);
     }
 
     /** Edit a transaction by transactionId. */
     public void editTransactionById(Transaction transaction, long userId, long bookId,
                                     LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
-        transaction.setUserId(userId);
-        transaction.setBook(bookId);
-        transaction.setBorrowDate(borrowDate);
-        transaction.setDueDate(dueDate);
-        transaction.setReturnDate(returnDate);
-        transaction.setReturned(isReturned);
-        Database.editTransactionById(transaction);
+        transactionSystem.editTransactionById(transaction, userId, bookId, borrowDate,
+                dueDate, returnDate, isReturned);
     }
 
     /** Return a reference to a transaction in the system with bookId. */
     public Transaction getTransactionById(long transactionId) {
-        for (Transaction transaction : transactions) {
-            if (transaction.getTransactionId() == transactionId) {
-                return transaction;
-            }
-        }
-        return null;
+        return transactionSystem.getTransactionById(transactionId);
     }
 
-    /** Return avgrating. */
+    /** Return average rating of a book. */
     public double getAvgBookRating(long bookId) {
-        int sum = 0;
-        int count = 0;
-        for (Rating rating : ratings) {
-            if (rating.getBookId() == bookId) {
-                sum += rating.getStar();
-                count ++;
-            }
-        }
-        double avg = (sum * 1.0) / count;
-        double rounded = Math.round(avg * 10.0) / 10.0;
-        return rounded;
+        return ratingSystem.getAvgBookRating(bookId);
     }
 
     /** User changes rating. */
     public void editRatingByUserId(Rating rating, int star, String comment) {
-        rating.setStar(star);
-        rating.setRateDate(LocalDateTime.now());
-        rating.setComment(comment);
+        ratingSystem.editRatingByUserId(rating, star, comment);
     }
 
     /** Return ratings. */
     public List<Rating> getRatings() {
-        return ratings;
+        return ratingSystem.getRatings();
     }
 
     /** Return Rating for User. */
     public List<Rating> getRatingforUserId(long userId) {
-        List<Rating> returnRateForUser = new ArrayList<>();
-        for (Rating rating : ratings) {
-            if (rating.getUserId() == userId) {
-                returnRateForUser.add(rating);
-            }
-        }
-        returnRateForUser.sort((r1, r2) -> r2.getRateDate().compareTo(r1.getRateDate()));
-        return returnRateForUser;
+        return ratingSystem.getRatingforUserId(userId);
     }
 
     /** Return Rating for Book. */
     public List<Rating> getRatingforBookId(long bookId) {
-        List<Rating> returnRateForBook = new ArrayList<>();
-        for (Rating rating : ratings) {
-            if (rating.getBookId() == bookId) {
-                returnRateForBook.add(rating);
-            }
-        }
-        returnRateForBook.sort((r1, r2) -> r2.getRateDate().compareTo(r1.getRateDate()));
-        return returnRateForBook;
+        return ratingSystem.getRatingforBookId(bookId);
     }
 
     /** Return Rating for news. */
     public List<Rating> getRecentRating() {
-        if (ratings == null || ratings.isEmpty()) {
-            return new ArrayList<>(); // return
-        }
-        int startIndex = Math.max(ratings.size() - 5, 0);
-        List<Rating> recent = ratings.subList(startIndex, ratings.size());
-        return recent;
+        return ratingSystem.getRecentRating();
     }
 
-    /** Add rating. */
-//    public void addRating(long userId, long bookId, int star, LocalDateTime rateDate, String comment) {
-//        long ratingId = Database.createNewRatingId();
-//        Rating newrating = new Rating(ratingId, userId, bookId, rateDate, comment);
-//        Database.addRating(newrating);
-//    }
+
 
     /** Get rating for search. */
     public Rating getRatingbyRatingId(long ratingId) {
-        for (Rating rating : ratings) {
-            if (rating.getRateId() == ratingId) {
-                return rating;
-            }
-        }
-        return null;
+        return ratingSystem.getRatingbyRatingId(ratingId);
     }
 
     /** Return list book user borrow. */
     private List<Book> getBookListUserBorrowing(long userId) {
-        List<Book> borrowing = new ArrayList<>();
-        for(Transaction transaction : transactions) {
-            if(transaction.getUserId() == userId && transaction.isReturned() == false) {
-                Book book = getBookById(transaction.getBookId());
-                borrowing.add((book));
-            }
-        }
-        return borrowing;
+        return transactionSystem.getBookListUserBorrowing(userId, bookSystem);
     }
 }
