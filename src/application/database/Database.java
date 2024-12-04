@@ -2,14 +2,13 @@ package application.database;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import application.logic.Book;
-import application.logic.Transaction;
-import application.logic.User;
+import application.logic.*;
 
 public class Database {
     private static final String databaseUrl = "jdbc:sqlite:library.db";
@@ -462,6 +461,23 @@ public class Database {
         return bookIdList;
     }
 
+    /** Create Book object from Result set. */
+    private static Transaction createTransactionFromResultSet(ResultSet rs)
+            throws SQLException {
+        long transactionId = rs.getLong("transactionId");
+        long userId = rs.getLong("userId");
+        long bookId = rs.getLong("bookId");
+        LocalDate borrowDate = LocalDate.parse(rs.getString("borrowDate"));
+        LocalDate dueDate = LocalDate.parse(rs.getString("dueDate"));
+        LocalDate returnDate = null;
+        if (rs.getString("returnDate") != null) {
+            returnDate = LocalDate.parse(rs.getString("returnDate"));
+        }
+        boolean isReturned = rs.getBoolean("isReturned");
+        return new Transaction(transactionId, userId, bookId,
+                borrowDate, dueDate, returnDate, isReturned);
+    }
+
     /** Add a new transaction to the database. */
     public static void addTransaction(Transaction transaction) {
         String query = "INSERT INTO transactions (transactionId, userId, bookId, borrowDate, " +
@@ -548,22 +564,106 @@ public class Database {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                LocalDate returnDate = null;
-                if (rs.getString("returnDate") != null) {
-                    returnDate = LocalDate.parse(rs.getString("returnDate"));
-                }
-                transactionList.add(new Transaction(rs.getLong("transactionId"),
-                        rs.getLong("userId"),
-                        rs.getLong("bookId"),
-                        LocalDate.parse(rs.getString("borrowDate")),
-                        LocalDate.parse(rs.getString("dueDate")),
-                        returnDate,
-                        rs.getBoolean("isReturned")));
+                transactionList.add(createTransactionFromResultSet(rs));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return transactionList;
+    }
+
+    /** Create Book object from Result set. */
+    private static Rating createRatingFromResultSet(ResultSet rs) throws SQLException {
+        long rateId = rs.getLong("rateId");
+        long userId = rs.getLong("userId");
+        long bookId = rs.getLong("bookId");
+        int star = rs.getInt("star");
+        LocalDate rateDate = LocalDate.parse(rs.getString("rateDate"));
+        String comment = rs.getString("comment");
+
+        return new Rating(rateId, userId, bookId, star, rateDate, comment);
+    }
+
+    /** Add a new rating to the database. */
+    public static void addRating(Rating rating) {
+        String query = "INSERT INTO ratings (ratingId, userId, bookId, star, rateDate, comment) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, rating.getRateId());
+            pstmt.setLong(2, rating.getUserId());
+            pstmt.setLong(3, rating.getBookId());
+            pstmt.setInt(4, rating.getStar());
+            pstmt.setString(5, rating.getRateDate().toString());
+            pstmt.setString(6, rating.getComment());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /** Add a new rating to the database. */
+    public static void editRatingById(Rating rating) {
+        String query = "UPDATE ratings " +
+                "SET userId = ?, bookId = ?, star = ?, rateDate = ?, comment = ? " +
+                "WHERE rateId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, rating.getUserId());
+            pstmt.setLong(2, rating.getBookId());
+            pstmt.setInt(3, rating.getStar());
+            pstmt.setString(4, rating.getRateDate().toString());
+            pstmt.setString(5, rating.getComment());
+            pstmt.setLong(6, rating.getRateId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /** Delete a rating by rateId. */
+    public static void deleteRatingById(long rateId) {
+        String query = "DELETE FROM ratings WHERE rateId = ?";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, rateId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /** Generate a new unique rateId. */
+    public static long createNewRateId() {
+        String query = "SELECT MAX(rateId) AS max FROM ratings";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong("max") + 1;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 1;
+    }
+
+    /** Load all ratings' data from database. */
+    public static List<Rating> loadRatings() {
+        List<Rating> ratingList = new ArrayList<>();
+
+        String query = "SELECT * FROM ratings";
+        try (Connection conn = DriverManager.getConnection(databaseUrl);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                ratingList.add(createRatingFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return ratingList;
     }
 
     /** Run a query that doesn't return results on the database. */
@@ -604,26 +704,6 @@ public class Database {
 
     /** Testing. */
     public static void main(String[] args) {
-//        LibrarySystem libSys = new LibrarySystem();
-//        addBook(new Book(createNewBookId(),
-//                "Piggies Fly!",
-//                new String[] {"Author H"},
-//                "Publisher C",
-//                2020,
-//                new String[] {"Action", "Adventure", "Fantasy"},
-//                100,
-//                "When piggies fly! The story of the legendary pigs who fly across the world and fight the evils!"));
-
-        Transaction tran = new Transaction(1,
-                1,
-                2,
-                LocalDate.of(2024, 11, 24),
-                LocalDate.of(2024, 11, 30),
-                LocalDate.of(2024, 11, 28),
-                true);
-
-//        Database.addTransaction(tran);
-
-        Database.editTransactionById(tran);
+        
     }
 }
