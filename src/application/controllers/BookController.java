@@ -21,6 +21,8 @@ public class BookController {
     private LibrarySystem librarySystem;
     private final int maxRating = 5;
 
+    private MemberDashboardController memberDashboardController;
+
     @FXML
     private Label bookAuthor;
 
@@ -32,6 +34,10 @@ public class BookController {
 
     @FXML
     private ImageView rating;
+
+    public void setMemberDashboardController(MemberDashboardController controller) {
+        this.memberDashboardController = controller;
+    }
 
     public void setData(Book book) {
         this.book = book;
@@ -72,6 +78,7 @@ public class BookController {
             // Lấy controller của BookDetails để truyền dữ liệu
             BookDetailsController detailsController = fxmlLoader.getController();
             detailsController.setBookData(book);
+            detailsController.setMemberDashboardController(this.memberDashboardController);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));

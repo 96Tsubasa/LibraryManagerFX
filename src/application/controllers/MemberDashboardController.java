@@ -45,6 +45,12 @@ public class MemberDashboardController implements Initializable {
     private AnchorPane browseBook;
 
     @FXML
+    private AnchorPane inventory;
+
+    @FXML
+    private GridPane inventoryContainer;
+
+    @FXML
     private Button logout;
 
     @FXML
@@ -89,6 +95,9 @@ public class MemberDashboardController implements Initializable {
             case "profile":
                 profile.setVisible(false);
                 break;
+            case "inventory":
+                inventory.setVisible(false);
+                break;
         }
     }
 
@@ -104,6 +113,12 @@ public class MemberDashboardController implements Initializable {
         profile.setVisible(true);
     }
 
+    public void switchToInventory() {
+        disablePane();
+        currentPane = "inventory";
+        inventory.setVisible(true);
+    }
+
     private void loadBookContainer() {
         int column = 0;
         int row = 1;
@@ -114,6 +129,7 @@ public class MemberDashboardController implements Initializable {
                 VBox bookBox = fxmlLoader.load();
                 BookController bookController = fxmlLoader.getController();
                 bookController.setData(book);
+                bookController.setMemberDashboardController(this);
 
                 if (column == 5) {
                     column = 0;
@@ -141,6 +157,30 @@ public class MemberDashboardController implements Initializable {
         }
     }
 
+    public void loadInventory() {
+        int column = 0;
+        int row = 1;
+        try {
+            for (Book book : librarySystem.getBookListUserBorrowing(LoginController.currentUser.getUserId())) {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("book.fxml"));
+                VBox bookBox = fxmlLoader.load();
+                BookController bookController = fxmlLoader.getController();
+                bookController.setData(book);
+
+                if (column == 5) {
+                    column = 0;
+                    row++;
+                }
+
+                inventoryContainer.add(bookBox, column++, row);
+                GridPane.setMargin(bookBox, new Insets(4));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Image convertBytesToImage(byte[] bytes) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
         return new Image(byteArrayInputStream);
@@ -151,5 +191,6 @@ public class MemberDashboardController implements Initializable {
         librarySystem = LibrarySystem.getInstance();
         loadBookContainer();
         loadProfileData();
+        loadInventory();
     }
 }

@@ -49,7 +49,7 @@
                               <FontAwesomeIcon fill="WHITE" glyphName="SIGN_OUT" text="" />
                            </graphic>
                         </Button>
-                        <Button layoutX="34.0" layoutY="310.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="202.0" styleClass="nav-btn" stylesheets="@mainFormDesign.css" text="Inventory" />
+                        <Button layoutX="34.0" layoutY="310.0" mnemonicParsing="false" onAction="#switchToInventory" prefHeight="54.0" prefWidth="202.0" styleClass="nav-btn" stylesheets="@mainFormDesign.css" text="Inventory" />
                         <Button layoutX="34.0" layoutY="418.0" mnemonicParsing="false" onAction="#switchToProfile" prefHeight="54.0" prefWidth="202.0" styleClass="nav-btn" stylesheets="@mainFormDesign.css" text="Profile" />
                      </children>
                   </AnchorPane>
@@ -116,6 +116,30 @@
                         <String fx:value="shadow" />
                      </styleClass>
                   </AnchorPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="inventory" layoutX="268.0" prefHeight="720.0" prefWidth="1010.0" visible="false">
+               <children>
+                  <TextField layoutX="66.0" layoutY="18.0" prefHeight="32.0" prefWidth="340.0" />
+                  <FontAwesomeIcon glyphName="SEARCH" layoutX="32.0" layoutY="44.0" size="2.5em" />
+                  <VBox layoutX="29.0" layoutY="59.0" prefHeight="634.0" prefWidth="950.0">
+                     <children>
+                        <ScrollPane prefHeight="200.0" prefWidth="200.0" stylesheets="@mainFormDesign.css" VBox.vgrow="ALWAYS">
+                           <content>
+                              <GridPane fx:id="inventoryContainer" prefHeight="2.0" prefWidth="0.0">
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                           <styleClass>
+                              <String fx:value="radius" />
+                              <String fx:value="shadow" />
+                              <String fx:value="white-bg" />
+                           </styleClass>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
                </children>
             </AnchorPane>
          </children>

@@ -33,7 +33,7 @@
                   <Insets top="-270.0" />
                </StackPane.margin>
             </Label>
-            <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="118.0" styleClass="nav-form" stylesheets="@mainFormDesign.css" text="Borrow" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#borrowBook" prefHeight="48.0" prefWidth="118.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Borrow" textFill="WHITE">
                <StackPane.margin>
                   <Insets top="-150.0" />
                </StackPane.margin>
