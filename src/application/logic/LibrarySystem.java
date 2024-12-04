@@ -191,7 +191,7 @@ public class LibrarySystem {
     }
 
     /** Return list book user borrow. */
-    private List<Book> getBookListUserBorrowing(long userId) {
+    public List<Book> getBookListUserBorrowing(long userId) {
         return transactionSystem.getBookListUserBorrowing(userId, bookSystem);
     }
 }
