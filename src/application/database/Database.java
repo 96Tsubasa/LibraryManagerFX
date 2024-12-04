@@ -2,7 +2,6 @@ package application.database;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -461,7 +460,7 @@ public class Database {
         return bookIdList;
     }
 
-    /** Create Book object from Result set. */
+    /** Create Transaction object from Result set. */
     private static Transaction createTransactionFromResultSet(ResultSet rs)
             throws SQLException {
         long transactionId = rs.getLong("transactionId");
@@ -572,29 +571,29 @@ public class Database {
         return transactionList;
     }
 
-    /** Create Book object from Result set. */
+    /** Create Rating object from Result set. */
     private static Rating createRatingFromResultSet(ResultSet rs) throws SQLException {
-        long rateId = rs.getLong("rateId");
+        long ratingId = rs.getLong("ratingId");
         long userId = rs.getLong("userId");
         long bookId = rs.getLong("bookId");
         int star = rs.getInt("star");
-        LocalDate rateDate = LocalDate.parse(rs.getString("rateDate"));
+        LocalDate ratingDate = LocalDate.parse(rs.getString("ratingDate"));
         String comment = rs.getString("comment");
 
-        return new Rating(rateId, userId, bookId, star, rateDate, comment);
+        return new Rating(ratingId, userId, bookId, star, ratingDate, comment);
     }
 
     /** Add a new rating to the database. */
     public static void addRating(Rating rating) {
-        String query = "INSERT INTO ratings (ratingId, userId, bookId, star, rateDate, comment) " +
+        String query = "INSERT INTO ratings (ratingId, userId, bookId, star, ratingDate, comment) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setLong(1, rating.getRateId());
+            pstmt.setLong(1, rating.getRatingId());
             pstmt.setLong(2, rating.getUserId());
             pstmt.setLong(3, rating.getBookId());
             pstmt.setInt(4, rating.getStar());
-            pstmt.setString(5, rating.getRateDate().toString());
+            pstmt.setString(5, rating.getRatingDate().toString());
             pstmt.setString(6, rating.getComment());
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -605,37 +604,37 @@ public class Database {
     /** Add a new rating to the database. */
     public static void editRatingById(Rating rating) {
         String query = "UPDATE ratings " +
-                "SET userId = ?, bookId = ?, star = ?, rateDate = ?, comment = ? " +
-                "WHERE rateId = ?";
+                "SET userId = ?, bookId = ?, star = ?, ratingDate = ?, comment = ? " +
+                "WHERE ratingId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, rating.getUserId());
             pstmt.setLong(2, rating.getBookId());
             pstmt.setInt(3, rating.getStar());
-            pstmt.setString(4, rating.getRateDate().toString());
+            pstmt.setString(4, rating.getRatingDate().toString());
             pstmt.setString(5, rating.getComment());
-            pstmt.setLong(6, rating.getRateId());
+            pstmt.setLong(6, rating.getRatingId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    /** Delete a rating by rateId. */
-    public static void deleteRatingById(long rateId) {
-        String query = "DELETE FROM ratings WHERE rateId = ?";
+    /** Delete a rating by ratingId. */
+    public static void deleteRatingById(long ratingId) {
+        String query = "DELETE FROM ratings WHERE ratingId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setLong(1, rateId);
+            pstmt.setLong(1, ratingId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    /** Generate a new unique rateId. */
-    public static long createNewRateId() {
-        String query = "SELECT MAX(rateId) AS max FROM ratings";
+    /** Generate a new unique ratingId. */
+    public static long createNewRatingId() {
+        String query = "SELECT MAX(ratingId) AS max FROM ratings";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
@@ -704,6 +703,6 @@ public class Database {
 
     /** Testing. */
     public static void main(String[] args) {
-        
+
     }
 }
