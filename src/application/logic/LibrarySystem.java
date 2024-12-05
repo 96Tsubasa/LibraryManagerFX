@@ -36,6 +36,9 @@ public class LibrarySystem {
 
     /** Create a new user, add to users List and database. Return the user object if successful. */
     public User addUser(String name, String email, String password, String role, byte[] imageUser) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can add user.");
+        }
         return userSystem.addUser(name, email, password, role, imageUser);
     }
 
@@ -115,6 +118,16 @@ public class LibrarySystem {
     /** Edit a user by userId. */
     public void editUserById(User user, String newUsername, String newEmail, String newPassword,
                              String newRole, byte[] newImageUser) {
+        User currentUser = userSystem.getCurrentUser();
+
+        // If the current user is not an admin, ensure they can only edit their own account
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            if (!currentUser.equals(user)) {
+                // If the user being edited is not the same as the current user, throw an exception
+                throw new IllegalArgumentException("You can only edit your own account.");
+            }
+        }
+
         userSystem.editUserById(user, newUsername, newEmail, newPassword, newRole, newImageUser);
     }
 
@@ -132,6 +145,10 @@ public class LibrarySystem {
     public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher,
                              int newPublicationYear, String[] newGenres, int newCopiesAvailable,
                              String newDescription, byte[] newCoverImage, String newIsbn) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can edit books.");
+        }
+
         bookSystem.editBookById(book, newTitle, newAuthors, newPublisher, newPublicationYear,
                 newGenres, newCopiesAvailable, newDescription, newCoverImage, newIsbn);
     }
@@ -144,6 +161,10 @@ public class LibrarySystem {
     /** Edit a transaction by transactionId. */
     public void editTransactionById(Transaction transaction, long userId, long bookId,
                                     LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can edit transactions.");
+        }
+
         transactionSystem.editTransactionById(transaction, userId, bookId, borrowDate,
                 dueDate, returnDate, isReturned);
     }
@@ -160,7 +181,36 @@ public class LibrarySystem {
 
     /** User changes rating. */
     public void editRatingByUserId(Rating rating, int star, String comment) {
+        User currentUser = userSystem.getCurrentUser();
+
+        // If the current user is not an admin, ensure they can only edit their own rating
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            if (!currentUser.equals(rating.getUserId())) {
+                // If the user being edited is not the same as the current user, throw an exception
+                throw new IllegalArgumentException("You can only edit your own rating.");
+            }
+        }
         ratingSystem.editRatingByUserId(rating, star, comment);
+    }
+
+    /** Add rating. */
+    public void addRating(long userId, long bookId, int star, LocalDate ratingDate, String comment) {
+        ratingSystem.addRating(userId, bookId, star, ratingDate, comment);
+    }
+
+    /** Delete rating.*/
+    public void deleteRating(long ratingId) {
+        User currentUser = userSystem.getCurrentUser();
+        Rating rating = ratingSystem.getRatingbyRatingId(ratingId);
+
+        // If the current user is not an admin, ensure they can only edit their own rating
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            if (!currentUser.equals(rating.getUserId())) {
+                // If the user being edited is not the same as the current user, throw an exception
+                throw new IllegalArgumentException("You can only delete your own rating.");
+            }
+        }
+        ratingSystem.deleteRating(ratingId);
     }
 
     /** Return ratings. */
@@ -182,8 +232,6 @@ public class LibrarySystem {
     public List<Rating> getRecentRating() {
         return ratingSystem.getRecentRating();
     }
-
-
 
     /** Get rating for search. */
     public Rating getRatingbyRatingId(long ratingId) {
