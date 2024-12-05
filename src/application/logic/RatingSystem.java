@@ -1,5 +1,7 @@
 package application.logic;
 
+import application.database.Database;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -81,12 +83,19 @@ public class RatingSystem {
         rating.setStar(star);
         rating.setRatingDate(LocalDate.now());
         rating.setComment(comment);
+        Database.editRatingById(rating);
     }
 
     /** Add rating. */
-//    public void addRating(long userId, long bookId, int star, LocalDate rateDate, String comment) {
-//        long ratingId = Database.createNewRatingId();
-//        Rating newrating = new Rating(ratingId, userId, bookId, rateDate, comment);
-//        Database.addRating(newrating);
-//    }
+   public void addRating(long userId, long bookId, int star, LocalDate ratingDate, String comment) {
+       long ratingId = Database.createNewRatingId();
+       Rating newrating = new Rating(ratingId, userId, bookId, star, ratingDate, comment);
+       Database.addRating(newrating);
+   }
+
+   /** Delete rating. */
+   public void deleteRating(long ratingId) {
+       ratings.removeIf(rating -> rating.getRatingId() == ratingId);
+       Database.deleteRatingById(ratingId);
+   }
 }
