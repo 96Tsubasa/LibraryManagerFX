@@ -749,7 +749,7 @@ public class ManagerDashboardController implements Initializable {
             }
             
             int copiesAvailable = addBookCopiesAvailable.getValue();
-            librarySystem.addBook(
+            Book newBook = librarySystem.addBook(
                 title, 
                 authors, 
                 publisher, 
@@ -760,6 +760,7 @@ public class ManagerDashboardController implements Initializable {
                 convertImageToBytes(addBookImage), 
                 isbn
             );
+            bookListData.add(newBook);
             showAlert(AlertType.INFORMATION, "Success", "Book added successfully!");
             clearAddBookInput();
         } catch (Exception e) {
