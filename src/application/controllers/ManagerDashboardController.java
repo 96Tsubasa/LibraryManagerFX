@@ -597,8 +597,13 @@ public class ManagerDashboardController implements Initializable {
                     showAlert(AlertType.INFORMATION, "Success", "Delete member successfully!");
 
                     //if selecting user is deleted, clear data on memberList
+                    String userIDText = memberListIDShow.getText();
+                    if (userIDText.length() < 5) {
+                        return;
+                    }
+
                     if (String.valueOf(userID).equals(memberListIDShow.getText().substring(4))) {
-                    clearMemberData();
+                        clearMemberData();
                     }
                 }
             }
