@@ -151,16 +151,13 @@ public class Book {
         return (copiesAvailable > 0);
     }
 
-    /** Update copiesAvailable after borrowing or print error message if no copies available. */
-    public boolean borrow() {
+    /** Update copiesAvailable after a user borrow this book. */
+    public void borrow() {
         if (isAvailable()) {
             copiesAvailable--;
             Database.editBookById(this);
-            System.out.println("Borrowed book successfully.");
-            return true;
         } else {
-            System.out.println("This book is not available for borrowing at the moment.");
-            return false;
+            throw new RuntimeException("This book is not available for borrowing at the moment.");
         }
     }
 
