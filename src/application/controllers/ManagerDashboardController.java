@@ -594,6 +594,8 @@ public class ManagerDashboardController implements Initializable {
                     librarySystem.deleteUserById(userID);
                     memberListData.removeIf(member -> member.getUserId() == userID);
 
+                    showAlert(AlertType.INFORMATION, "Success", "Delete member successfully!");
+
                     //if selecting user is deleted, clear data on memberList
                     if (String.valueOf(userID).equals(memberListIDShow.getText().substring(4))) {
                     clearMemberData();
@@ -682,6 +684,10 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private void editMember(ActionEvent e) throws IllegalArgumentException {
         try {
+            if (editingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a user first!");
+            }
+            
             String username = editMemberUsername.getText();
             String email = editMemberEmail.getText();
             String password = editMemberPassword.getText();
@@ -690,9 +696,20 @@ public class ManagerDashboardController implements Initializable {
             librarySystem.editUserById(editingUser, username, email, password, role, bytes);
             memberListTable.refresh();
             showAlert(AlertType.INFORMATION, "Information Message", "You updated a member successfully!");
+            clearEditMemberInput();
         } catch (IllegalArgumentException exception) {
             showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
         }
+    }
+
+    private void clearEditMemberInput() {
+        editMemberID.clear();
+        editMemberUsername.clear();
+        editMemberPassword.clear();
+        editMemberEmail.clear();
+        editMemberRole.getSelectionModel().clearSelection();
+        editMemberImage.setImage(new Image("/resources/image/avatar.png"));
+        editingUser = null;
     }
 
     @FXML
