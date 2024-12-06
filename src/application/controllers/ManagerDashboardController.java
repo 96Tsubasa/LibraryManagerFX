@@ -431,6 +431,20 @@ public class ManagerDashboardController implements Initializable {
         bookListShowImage.setImage(bookListImage);
     }
 
+    private void clearMemberData() {
+        memberListIDShow.setText("ID:");
+        memberListUsernameShow.setText("Username:");
+        memberListPasswordShow.setText("Password:");
+        memberListEmailShow.setText("Email:");
+        memberListRoleShow.setText("Role:");
+        memberListImageShow.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
+    }
+
+    private void clearBookData() {
+        bookListShow.setText("");
+        bookListShowImage.setImage(null);
+    }
+
     private void disableNode() {
         if (current.equals("dashboard")) dashboard.setVisible(false);
         if (current.equals("addMember")) addMember.setVisible(false);
@@ -579,6 +593,11 @@ public class ManagerDashboardController implements Initializable {
                 if (option.get().equals(ButtonType.OK)) {
                     librarySystem.deleteUserById(userID);
                     memberListData.removeIf(member -> member.getUserId() == userID);
+
+                    //if selecting user is deleted, clear data on memberList
+                    if (String.valueOf(userID).equals(memberListIDShow.getText().substring(4))) {
+                    clearMemberData();
+                    }
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -610,6 +629,12 @@ public class ManagerDashboardController implements Initializable {
                 if (option.get().equals(ButtonType.OK)) {
                     librarySystem.deleteBookById(bookID);
                     bookListData.removeIf(book -> book.getBookId() == bookID);
+
+                    //if showing book is deleted, clear data in book list
+                    String showingBookID = bookListShow.getText().split("\n")[0].substring(4);
+                    if (String.valueOf(bookID).equals(showingBookID)) {
+                        clearBookData();
+                    }
                 }
             }
         } catch (IllegalArgumentException e) {
