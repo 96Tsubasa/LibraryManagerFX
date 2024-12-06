@@ -14,7 +14,7 @@ public class Database {
 
     /** Create User object from Result set. */
     private static User createUserFromResultSet(ResultSet rs) throws SQLException {
-        return new User(
+        User result = new User(
                 rs.getString("username"),
                 rs.getLong("userId"),
                 rs.getString("email"),
@@ -22,12 +22,16 @@ public class Database {
                 rs.getString("role"),
                 rs.getBytes("imageUser")
         );
+        result.setLimitBook(rs.getInt("borrowLimit"));
+
+        return result;
     }
 
     /** Add a new user to the database. */
     public static void addUser(User user) {
-        String query = "INSERT INTO users (userId, username, password, email, role, imageUser) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users " +
+                "(userId, username, password, email, role, borrowLimit, imageUser) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, user.getUserId());
@@ -35,7 +39,8 @@ public class Database {
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getEmail());
             pstmt.setString(5, user.getRole());
-            pstmt.setBytes(6, user.getImageUser());
+            pstmt.setInt(6, user.getLimitBook());
+            pstmt.setBytes(7, user.getImageUser());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -45,7 +50,8 @@ public class Database {
     /** Edit a user's info by userId. */
     public static void editUserById(User user) {
         String query = "UPDATE users SET " +
-                "username = ?, password = ?, email = ?, role = ?, imageUser = ? " +
+                "username = ?, password = ?, email = ?, " +
+                "role = ?, borrowLimit = ?, imageUser = ? " +
                 "WHERE userId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -53,8 +59,9 @@ public class Database {
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getEmail());
             pstmt.setString(4, user.getRole());
-            pstmt.setBytes(5, user.getImageUser());
-            pstmt.setLong(6, user.getUserId());
+            pstmt.setInt(5, user.getLimitBook());
+            pstmt.setBytes(6, user.getImageUser());
+            pstmt.setLong(7, user.getUserId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -95,7 +102,8 @@ public class Database {
     /** Edit a user's info by email. */
     public static void editUserByEmail(User user) {
         String query = "UPDATE users SET " +
-                "userId = ?, username = ?, password = ?, role = ?, imageUser = ? " +
+                "userId = ?, username = ?, password = ?, " +
+                "role = ?, borrowLimit = ?, imageUser = ? " +
                 "WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -103,8 +111,9 @@ public class Database {
             pstmt.setString(2, user.getUsername());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getRole());
-            pstmt.setBytes(5, user.getImageUser());
-            pstmt.setString(6, user.getEmail());
+            pstmt.setInt(5, user.getLimitBook());
+            pstmt.setBytes(6, user.getImageUser());
+            pstmt.setString(7, user.getEmail());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -156,7 +165,7 @@ public class Database {
         }
     }
 
-    /** Get authorId by authorName. Returns -1 if not found in database. */
+    /** Get authorId by authorName. Add the author to the database if not found. */
     private static long getAuthorIdByName(String authorName) {
         String query = "SELECT * FROM authors WHERE authorName = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
@@ -206,7 +215,7 @@ public class Database {
         }
     }
 
-    /** Get genreId by genreName. Returns -1 if not found in database. */
+    /** Get genreId by genreName. Add the genre to the database if not found. */
     private static long getGenreIdByName(String genreName) {
         String query = "SELECT * FROM genres WHERE genreName = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
