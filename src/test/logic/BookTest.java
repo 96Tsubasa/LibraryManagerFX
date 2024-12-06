@@ -87,14 +87,23 @@ public class BookTest {
 
     @Test
     public void testBorrow_Success() {
-        assertTrue(validBook.borrow());
+        validBook.borrow();
         assertEquals(99, validBook.getCopiesAvailable());
     }
 
     @Test
     public void testBorrow_Failed() {
         validBook.setCopiesAvailable(0);
-        assertFalse(validBook.borrow());
+
+        try {
+            validBook.borrow();
+
+            fail("testBorrow_Failed() failed: Expected an exception when borrowing a book " +
+                    "that is not available.");
+        } catch (Exception e) {
+            assertEquals("This book is not available for borrowing at the moment.",
+                    e.getMessage());
+        }
     }
 
     @Test
