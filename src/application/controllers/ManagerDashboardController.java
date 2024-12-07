@@ -559,6 +559,7 @@ public class ManagerDashboardController implements Initializable {
                 memberListData.add(newUser);
                 showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
                 clearAddMemberInput();
+                showDashboardInformation();
             }
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
@@ -605,6 +606,8 @@ public class ManagerDashboardController implements Initializable {
                     if (String.valueOf(userID).equals(memberListIDShow.getText().substring(4))) {
                         clearMemberData();
                     }
+
+                    showDashboardInformation();
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -637,6 +640,9 @@ public class ManagerDashboardController implements Initializable {
                     librarySystem.deleteBookById(bookID);
                     bookListData.removeIf(book -> book.getBookId() == bookID);
 
+                    showAlert(AlertType.INFORMATION, "Success", "Delete book successfully!");
+                    showDashboardInformation();
+
                     //if showing book is deleted, clear data in book list
                     if (bookListShow.getText().length() < 5) {
                         return;
@@ -646,8 +652,6 @@ public class ManagerDashboardController implements Initializable {
                     if (String.valueOf(bookID).equals(showingBookID)) {
                         clearBookData();
                     }
-
-                    showAlert(AlertType.INFORMATION, "Success", "Delete book successfully!");
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -831,6 +835,8 @@ public class ManagerDashboardController implements Initializable {
             bookListData.add(newBook);
             showAlert(AlertType.INFORMATION, "Success", "Book added successfully!");
             clearAddBookInput();
+
+            showDashboardInformation();
         } catch (Exception e) {
             showAlert(AlertType.ERROR, "Error", "An unexpected error occurred: " + e.getMessage());
         }
@@ -914,6 +920,8 @@ public class ManagerDashboardController implements Initializable {
             bookListTable.refresh();
             showAlert(AlertType.INFORMATION, "Information Message", "You updated a book successfully!");
             clearEditBookInput();
+
+            showDashboardInformation();
         } catch (IllegalArgumentException exception) {
             showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
         }
