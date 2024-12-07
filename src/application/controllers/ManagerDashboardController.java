@@ -638,10 +638,16 @@ public class ManagerDashboardController implements Initializable {
                     bookListData.removeIf(book -> book.getBookId() == bookID);
 
                     //if showing book is deleted, clear data in book list
+                    if (bookListShow.getText().length() < 5) {
+                        return;
+                    }
+
                     String showingBookID = bookListShow.getText().split("\n")[0].substring(4);
                     if (String.valueOf(bookID).equals(showingBookID)) {
                         clearBookData();
                     }
+
+                    showAlert(AlertType.INFORMATION, "Success", "Delete book successfully!");
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -715,6 +721,21 @@ public class ManagerDashboardController implements Initializable {
         editMemberRole.getSelectionModel().clearSelection();
         editMemberImage.setImage(new Image("/resources/image/avatar.png"));
         editingUser = null;
+    }
+
+    private void clearEditBookInput() {
+        editBookID.clear();
+        editBookISBN.clear();
+        editBookAuthor.clear();
+        editBookTitle.clear();
+        editBookGenre.clear();
+        editBookPublisher.clear();
+        editBookDescription.clear();
+        editBookPublicationYear.clear();
+        editBookCopiesAvailable.clear();
+        editBookImage = null;
+        editBookImageView.setImage(null);
+        editingBook = null;
     }
 
     @FXML
@@ -841,6 +862,7 @@ public class ManagerDashboardController implements Initializable {
                 editBookPublicationYear.setText(String.valueOf(editingBook.getPublicationYear()));
                 editBookCopiesAvailable.setText(String.valueOf(editingBook.getCopiesAvailable()));
                 if (editingBook.getCoverImage() != null) {
+                    editBookImage = convertBytesToImage(editingBook.getCoverImage());
                     editBookImageView.setImage(convertBytesToImage(editingBook.getCoverImage()));
                 } else {
                     editBookImageView.setImage(null);
@@ -855,6 +877,11 @@ public class ManagerDashboardController implements Initializable {
 
     public void editBook() throws IllegalArgumentException {
         try {
+            if (editingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a book id first!");
+                return;
+            }
+            
             if (editBookISBN.getText().isEmpty() || 
                 editBookAuthor.getText().isEmpty() || 
                 editBookTitle.getText().isEmpty() || 
@@ -886,6 +913,7 @@ public class ManagerDashboardController implements Initializable {
             librarySystem.editBookById(editingBook, title, authors, publisher, publicationYear, genres, copiesAvailable, description, convertImageToBytes(editBookImage), isbn);
             bookListTable.refresh();
             showAlert(AlertType.INFORMATION, "Information Message", "You updated a book successfully!");
+            clearEditBookInput();
         } catch (IllegalArgumentException exception) {
             showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
         }
