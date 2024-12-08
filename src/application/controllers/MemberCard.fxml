@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="483.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.MemberCardController">
+   <children>
+      <FontAwesomeIcon glyphName="USER" layoutX="151.0" layoutY="96.0" size="6em" />
+      <Label layoutX="226.0" layoutY="43.0" text="Member Info">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="34.0" layoutY="131.0" prefHeight="328.0" prefWidth="531.0" stylesheets="@mainFormDesign.css">
+         <styleClass>
+            <String fx:value="shadow" />
+            <String fx:value="white-bg" />
+            <String fx:value="radius" />
+         </styleClass>
+         <children>
+            <ImageView fx:id="image" fitHeight="266.0" fitWidth="200.0" layoutX="28.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="username" layoutX="241.0" layoutY="30.0" text="Username:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="email" layoutX="241.0" layoutY="60.0" text="Email:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="role" layoutX="241.0" layoutY="90.0" text="Role:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

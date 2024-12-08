@@ -4,6 +4,7 @@
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
@@ -95,6 +96,16 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font></Button>
+                              <Button layoutX="21.0" layoutY="619.0" mnemonicParsing="false" onAction="#switchToIssueBook" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Issue Book" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="bookListBtn2" layoutX="149.0" layoutY="619.0" mnemonicParsing="false" onAction="#switchToBookList" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Return Book" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
                            </children>
                         </AnchorPane>
                      </children>
@@ -670,6 +681,66 @@
                                           <Font size="13.0" />
                                        </font>
                                     </Label>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="issueBook" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="338.0" layoutY="126.0" size="10em" />
+                              <Label layoutX="490.0" layoutY="57.0" text="Issue Book">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="27.0" layoutY="159.0" prefHeight="546.0" prefWidth="955.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="62.0" layoutY="62.0" text="Enter Book ID:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="issueBookBookID" layoutX="279.0" layoutY="62.0" prefHeight="34.0" prefWidth="234.0" />
+                                    <Button layoutX="544.0" layoutY="64.0" mnemonicParsing="false" onAction="#issueSearchBook" prefHeight="30.0" prefWidth="124.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search Book" />
+                                    <Label fx:id="issueBookBookName" layoutX="279.0" layoutY="99.0" onMouseClicked="#showBookCard" text="Book Name" textFill="#1203e4">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="62.0" layoutY="147.0" text="Enter Member ID:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="issueBookMemberID" layoutX="279.0" layoutY="147.0" prefHeight="34.0" prefWidth="234.0" />
+                                    <Button layoutX="544.0" layoutY="149.0" mnemonicParsing="false" onAction="#issueSearchMember" prefHeight="30.0" prefWidth="123.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search Member" />
+                                    <Label fx:id="issueBookMemberUsername" layoutX="279.0" layoutY="184.0" onMouseClicked="#showMemberCard" text="Member Username" textFill="#1203e4">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="62.0" layoutY="231.0" text="Is This Book Available:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="issueBookAvailable" layoutX="307.0" layoutY="231.0" text="Yes-or-No" textFill="#1203e4">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="62.0" layoutY="309.0" text="Return Date:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker fx:id="issueBookReturnDate" layoutX="279.0" layoutY="314.0" />
+                                    <Button layoutX="402.0" layoutY="416.0" mnemonicParsing="false" onAction="#issueBook" prefHeight="66.0" prefWidth="150.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Issue Book" />
                                  </children>
                               </AnchorPane>
                            </children>

@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -30,6 +31,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -44,10 +46,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 
 public class ManagerDashboardController implements Initializable {
     private Stage stage;
@@ -66,6 +71,9 @@ public class ManagerDashboardController implements Initializable {
     
     private User editingUser;
     private Book editingBook;
+
+    private User issuingUser;
+    private Book issuingBook;
     
     @FXML
     private AnchorPane addBook;
@@ -319,6 +327,27 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private TextField deleteBookID;
 
+    @FXML
+    private AnchorPane issueBook;
+
+    @FXML
+    private TextField issueBookBookID;
+
+    @FXML
+    private TextField issueBookMemberID;
+
+    @FXML
+    private DatePicker issueBookReturnDate;
+
+    @FXML
+    private Label issueBookBookName;
+
+    @FXML
+    private Label issueBookMemberUsername;
+
+    @FXML
+    private Label issueBookAvailable;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -455,6 +484,7 @@ public class ManagerDashboardController implements Initializable {
         if (current.equals("editBook")) editBook.setVisible(false);
         if (current.equals("deleteBook")) deleteBook.setVisible(false);
         if (current.equals("bookList")) bookList.setVisible(false);
+        if (current.equals("issueBook")) issueBook.setVisible(false);
     }
 
     @FXML
@@ -518,6 +548,13 @@ public class ManagerDashboardController implements Initializable {
         disableNode();
         current = "bookList";
         bookList.setVisible(true);
+    }
+
+    @FXML
+    private void switchToIssueBook(ActionEvent event) {
+        disableNode();
+        current = "issueBook";
+        issueBook.setVisible(true);
     }
 
     @FXML
@@ -690,6 +727,7 @@ public class ManagerDashboardController implements Initializable {
                 editMemberRole.getSelectionModel().select(role);
             } else {
                 showAlert(AlertType.ERROR, "Error Message", "That user doesn't exist!");
+                clearEditMemberInput();
             }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error Message", "Invalid Member ID!");
@@ -875,6 +913,7 @@ public class ManagerDashboardController implements Initializable {
                 }
             } else {
                 showAlert(AlertType.ERROR, "Error Message", "That book doesn't exist!");
+                clearEditBookInput();
             }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error Message", "Invalid Book ID!");
@@ -939,6 +978,115 @@ public class ManagerDashboardController implements Initializable {
         }
     }
 
+    public void issueSearchBook() {
+        try {
+            String bookID = issueBookBookID.getText();
+            if (bookID.isEmpty()) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill in book ID!");
+                return;
+            }
+
+            issuingBook = librarySystem.getBookById(Long.parseLong(bookID));
+            if (issuingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "That book ID is not exist!");
+                return;
+            }
+
+            issueBookBookName.setText(issuingBook.getTitle());
+            if (issuingBook.getCopiesAvailable() == 0) {
+                issueBookAvailable.setText("No");
+            } else {
+                issueBookAvailable.setText("Yes");
+            }
+        } catch(NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid book ID!");
+        }
+    }
+
+    public void issueSearchMember() {
+        try {
+            String memberID = issueBookMemberID.getText();
+            if (memberID.isEmpty()) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill in member ID!");
+                return;
+            }
+
+            issuingUser = librarySystem.getUserById(Long.parseLong(memberID));
+            if (issuingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "That user ID is not exist!");
+                return;
+            }
+
+            issueBookMemberUsername.setText(issuingUser.getUsername());
+        } catch(NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid member ID!");
+        }
+    }
+
+    public void showBookCard() throws IOException {
+        if (issuingBook == null) {
+            showAlert(AlertType.ERROR, "Error Message", "You must search a book first!");
+            return;
+        }
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("BookCard.fxml"));
+        Parent root = loader.load();
+
+        BookCardController controller = loader.getController();
+        controller.setData(issuingBook);
+
+        Stage newStage = new Stage();
+        newStage.setTitle("Book Info");
+        newStage.setScene(new Scene(root));
+
+        newStage.show();
+    }
+
+    public void showMemberCard() throws IOException {
+        if (issuingUser == null) {
+            showAlert(AlertType.ERROR, "Error Message", "You must search a member first!");
+            return;
+        }
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MemberCard.fxml"));
+        Parent root = loader.load();
+
+        MemberCardController controller = loader.getController();
+        controller.setData(issuingUser);
+
+        Stage newStage = new Stage();
+        newStage.setTitle("Member Info");
+        newStage.setScene(new Scene(root));
+
+        newStage.show();
+    }
+
+    public void issueBook() {
+        try {
+            issueBookReturnDate.getValue();
+            if (issuingBook == null || issuingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must search member and book first!");
+            }
+            
+            librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId());
+            showAlert(AlertType.INFORMATION, "Success", "Issue Book successfully!");
+            clearIssueBookInput();
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    private void clearIssueBookInput() {
+        issuingBook = null;
+        issuingUser = null;
+        issueBookBookID.clear();
+        issueBookMemberID.clear();
+        issueBookReturnDate.setValue(LocalDate.now());
+        issueBookBookName.setText("Book Name");
+        issueBookMemberUsername.setText("Member Username");
+        issueBookAvailable.setText("Yes-or-No");
+    }
+
     private void displayUsername() {
         welcomeUser.setText("Welcome " + LoginController.currentUser.getUsername());
     }
@@ -1000,5 +1148,6 @@ public class ManagerDashboardController implements Initializable {
         handleMemberSearch();
         handleBookSearch();
         initializeSpinner();
+        issueBookReturnDate.setValue(LocalDate.now());
     }
 }
