@@ -31,7 +31,7 @@ public class TransactionSystem {
 
     /** User borrow a book. */
     public void borrowBook(User user, Book book) {
-        if (!isBorrowBook(user.getUserId(), book.getBookId()) && !book.borrow()) {
+        if (!isBorrowBook(user.getUserId(), book.getBookId())) {
             throw new IllegalArgumentException("The user has already borrowed this book.");
         }
         if (book == null || !book.isAvailable()) {
