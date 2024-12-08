@@ -113,6 +113,7 @@ public class User {
     private boolean checkBorrow() {
         return limitBook > 0;
     }
+
     /** Setter limitbook when borrowing book. */
     public void borrowBook() {
         if(!checkBorrow()) {

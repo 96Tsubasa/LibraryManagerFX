@@ -28,7 +28,7 @@ public class TransactionSystem {
     }
 
     /** User borrow a book. */
-    public void borrowBook(User user, Book book) {
+    public void borrowBook(User user, Book book, int days) {
         if (user == null || book == null) {
             throw new IllegalArgumentException("User or Book cannot be null.");
         }
@@ -50,7 +50,7 @@ public class TransactionSystem {
                 user.getUserId(),
                 book.getBookId(),
                 LocalDate.now(),
-                LocalDate.now().plusMonths(6),
+                LocalDate.now().plusDays(days),
                 null,
                 false
         );
