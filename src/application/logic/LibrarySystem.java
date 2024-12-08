@@ -1,13 +1,7 @@
 package application.logic;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import application.database.Database;
 
 public class LibrarySystem {
     private static LibrarySystem instance;
@@ -199,9 +193,9 @@ public class LibrarySystem {
     }
 
     /** Delete rating.*/
-    public void deleteRating(long ratingId) {
+    public void deleteRatingById(long ratingId) {
         User currentUser = userSystem.getCurrentUser();
-        Rating rating = ratingSystem.getRatingbyRatingId(ratingId);
+        Rating rating = ratingSystem.getRatingByRatingId(ratingId);
 
         // If the current user is not an admin, ensure they can only edit their own rating
         if (!currentUser.getRole().equals(User.ADMIN)) {
@@ -210,7 +204,7 @@ public class LibrarySystem {
                 throw new IllegalArgumentException("You can only delete your own rating.");
             }
         }
-        ratingSystem.deleteRating(ratingId);
+        ratingSystem.deleteRatingById(ratingId);
     }
 
     /** Return ratings. */
@@ -219,13 +213,13 @@ public class LibrarySystem {
     }
 
     /** Return Rating for User. */
-    public List<Rating> getRatingforUserId(long userId) {
-        return ratingSystem.getRatingforUserId(userId);
+    public List<Rating> getRatingForUserId(long userId) {
+        return ratingSystem.getRatingForUserId(userId);
     }
 
     /** Return Rating for Book. */
-    public List<Rating> getRatingforBookId(long bookId) {
-        return ratingSystem.getRatingforBookId(bookId);
+    public List<Rating> getRatingForBookId(long bookId) {
+        return ratingSystem.getRatingForBookId(bookId);
     }
 
     /** Return Rating for news. */
@@ -234,8 +228,8 @@ public class LibrarySystem {
     }
 
     /** Get rating for search. */
-    public Rating getRatingbyRatingId(long ratingId) {
-        return ratingSystem.getRatingbyRatingId(ratingId);
+    public Rating getRatingByRatingId(long ratingId) {
+        return ratingSystem.getRatingByRatingId(ratingId);
     }
 
     /** Return list book user borrow. */

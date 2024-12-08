@@ -3,7 +3,6 @@ package application.logic;
 import application.database.Database;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class RatingSystem {
 
     /** Constructor for RatingSystem. */
     public RatingSystem() {
-        // implement this later.
+        ratings = Database.loadRatings();
     }
 
     public List<Rating> getRatings() {
@@ -35,7 +34,7 @@ public class RatingSystem {
     }
 
     /** Return Rating for User. */
-    public List<Rating> getRatingforUserId(long userId) {
+    public List<Rating> getRatingForUserId(long userId) {
         List<Rating> returnRateForUser = new ArrayList<>();
         for (Rating rating : ratings) {
             if (rating.getUserId() == userId) {
@@ -47,7 +46,7 @@ public class RatingSystem {
     }
 
     /** Return Rating for Book. */
-    public List<Rating> getRatingforBookId(long bookId) {
+    public List<Rating> getRatingForBookId(long bookId) {
         List<Rating> returnRateForBook = new ArrayList<>();
         for (Rating rating : ratings) {
             if (rating.getBookId() == bookId) {
@@ -69,7 +68,7 @@ public class RatingSystem {
     }
 
     /** Get rating for search. */
-    public Rating getRatingbyRatingId(long ratingId) {
+    public Rating getRatingByRatingId(long ratingId) {
         for (Rating rating : ratings) {
             if (rating.getRatingId() == ratingId) {
                 return rating;
@@ -94,7 +93,7 @@ public class RatingSystem {
    }
 
    /** Delete rating. */
-   public void deleteRating(long ratingId) {
+   public void deleteRatingById(long ratingId) {
        ratings.removeIf(rating -> rating.getRatingId() == ratingId);
        Database.deleteRatingById(ratingId);
    }
