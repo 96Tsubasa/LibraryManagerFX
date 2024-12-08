@@ -1,5 +1,7 @@
 package application.logic;
 
+import application.database.Database;
+
 public class User {
     // User attributes
     public static final String NORMAL_USER = "USER";
@@ -107,14 +109,23 @@ public class User {
         this.limitBook = limitBook;
     }
 
+    /** check limitbook. */
+    private boolean checkBorrow() {
+        return limitBook > 0;
+    }
     /** Setter limitbook when borrowing book. */
     public void borrowBook() {
-        setLimitBook(limitBook--);
+        if(!checkBorrow()) {
+            throw new IllegalArgumentException("Borrowing is not available.");
+        }
+        limitBook--;
+        Database.editUserById(this);
     }
 
     /** Setter limitbook when returning book. */
     public void returnBook() {
-        setLimitBook(limitBook++);
+        limitBook ++;
+        Database.editUserById(this);
     }
 
     /** Validates password complexity. */

@@ -5,6 +5,7 @@ import application.database.Database;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TransactionSystem {
     private List<Transaction> transactions;
@@ -19,50 +20,75 @@ public class TransactionSystem {
     }
 
     /** User borrow a book, return true if successful. */
-    private boolean isBorrowBook(long userId, long bookId) {
-        for (Transaction transaction : transactions) {
-            if (transaction.getUserId() == userId && transaction.getBookId() == bookId
-                    && !transaction.isReturned()) {
-                return false;
-            }
-        }
-        return true;
+    private boolean hasUserBorrowedBook(long userId, long bookId) {
+        return transactions.stream()
+                .anyMatch(transaction -> transaction.getUserId() == userId &&
+                        transaction.getBookId() == bookId &&
+                        !transaction.isReturned());
     }
 
     /** User borrow a book. */
     public void borrowBook(User user, Book book) {
-        if (!isBorrowBook(user.getUserId(), book.getBookId())) {
-            throw new IllegalArgumentException("The user has already borrowed this book.");
+        if (user == null || book == null) {
+            throw new IllegalArgumentException("User or Book cannot be null.");
         }
-        if (book == null || !book.isAvailable()) {
+
+        if (!book.isAvailable()) {
             throw new IllegalArgumentException("The book is not available.");
         }
+
+        if (hasUserBorrowedBook(user.getUserId(), book.getBookId())) {
+            throw new IllegalArgumentException("The user has already borrowed this book.");
+        }
+
         user.borrowBook();
         book.borrow();
+
         long transactionId = Database.createNewTransactionId();
-        Transaction transaction = new Transaction(transactionId, user.getUserId(),
-                book.getBookId(), LocalDate.now(), LocalDate.now().plusMonths(6),
-                null, false);
+        Transaction transaction = new Transaction(
+                transactionId,
+                user.getUserId(),
+                book.getBookId(),
+                LocalDate.now(),
+                LocalDate.now().plusMonths(6),
+                null,
+                false
+        );
+
         transactions.add(transaction);
         Database.addTransaction(transaction);
     }
 
+    /** Check if there is a pending transaction for a specific user and book. */
+    private boolean hasPendingTransaction(long userId, long bookId) {
+        return transactions.stream()
+                .anyMatch(transaction -> transaction.getUserId() == userId &&
+                        transaction.getBookId() == bookId &&
+                        !transaction.isReturned());
+    }
+
     /** User return a book. */
     public void returnBook(User user, Book book) {
+        if (user == null || book == null) {
+            throw new IllegalArgumentException("User or Book cannot be null.");
+        }
+
+        if (!hasPendingTransaction(user.getUserId(), book.getBookId())) {
+            throw new IllegalArgumentException("No valid return transaction found.");
+        }
+
         for (Transaction transaction : transactions) {
-            if (transaction.getUserId() == user.getUserId()
-                    && transaction.getBookId() == book.getBookId()
-                    && !transaction.isReturned()) {
+            if (transaction.getUserId() == user.getUserId() &&
+                    transaction.getBookId() == book.getBookId() &&
+                    !transaction.isReturned()) {
                 transaction.setReturned(true);
                 transaction.setReturnDate(LocalDate.now());
-                if (book != null) {
-                    book.returnBook();
-                    user.returnBook();
-                }
+                book.returnBook();
+                user.returnBook();
+                Database.editTransactionById(transaction);
                 return;
             }
         }
-        throw new IllegalArgumentException("No valid return transaction found.");
     }
 
     /** Return a reference to a transaction in the system with bookId. */
