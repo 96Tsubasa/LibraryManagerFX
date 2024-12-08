@@ -7,6 +7,8 @@ import application.logic.LibrarySystem;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,6 +48,9 @@ public class BookDetailsController {
     @FXML
     private Label title;
 
+    @FXML
+    private Spinner<Integer> day;
+
     public void setMemberDashboardController(MemberDashboardController controller) {
         this.memberDashboardController = controller;
     }
@@ -67,7 +72,9 @@ public class BookDetailsController {
     public void borrowBook() {
         try {
             LibrarySystem librarySystem = LibrarySystem.getInstance();
-            librarySystem.borrowBook(LoginController.currentUser.getUserId(), this.book.getBookId());
+            day.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1460, 0));
+            //1460 is max day
+            librarySystem.borrowBook(LoginController.currentUser.getUserId(), this.book.getBookId(), day.getValue());
             memberDashboardController.loadInventory();
             showAlert(AlertType.INFORMATION, "Success", "Borrow book successfully!");
         } catch (IllegalArgumentException e) {

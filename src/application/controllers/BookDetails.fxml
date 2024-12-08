@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
@@ -33,9 +34,9 @@
                   <Insets top="-270.0" />
                </StackPane.margin>
             </Label>
-            <Button mnemonicParsing="false" onAction="#borrowBook" prefHeight="48.0" prefWidth="118.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Borrow" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#borrowBook" prefHeight="22.0" prefWidth="116.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Borrow" textFill="WHITE">
                <StackPane.margin>
-                  <Insets top="-150.0" />
+                  <Insets right="500.0" top="-80.0" />
                </StackPane.margin>
                <font>
                   <Font name="System Bold" size="17.0" />
@@ -95,6 +96,19 @@
                </StackPane.margin>
                <font>
                   <Font size="14.0" />
+               </font>
+            </Label>
+            <Spinner fx:id="day" editable="true">
+               <StackPane.margin>
+                  <Insets right="500.0" top="-150.0" />
+               </StackPane.margin>
+            </Spinner>
+            <Label text="Day">
+               <StackPane.margin>
+                  <Insets right="500.0" top="-200.0" />
+               </StackPane.margin>
+               <font>
+                  <Font size="20.0" />
                </font>
             </Label>
          </children>

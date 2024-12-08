@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 
 import application.logic.Book;
 import application.logic.LibrarySystem;
+import application.logic.Transaction;
 import application.logic.User;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -348,6 +350,48 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private Label issueBookAvailable;
 
+    @FXML
+    private TableView<Transaction> returnBookTable;
+
+    @FXML
+    private TableColumn<Transaction, Long> returnBookTableBookID;
+
+    @FXML
+    private TableColumn<Transaction, Long> returnBookTableMemberID;
+
+    @FXML
+    private TableColumn<Transaction, String> returnBookTableStatus;
+
+    @FXML
+    private TableColumn<Transaction, LocalDate> returnBookTableIssueDate;
+
+    @FXML
+    private TableColumn<Transaction, LocalDate> returnBookTableReturnDate;
+
+    @FXML
+    private TableColumn<Transaction, LocalDate> returnBookTableDueDate;
+
+    @FXML
+    private AnchorPane returnBook;
+
+    @FXML
+    private TextField returnBookBookID;
+
+    @FXML
+    private TextField returnBookMemberID;
+
+    @FXML
+    private DatePicker returnBookIssueDate;
+
+    @FXML
+    private DatePicker returnBookDueDate;
+
+    @FXML
+    private Label returnBookBookName;
+
+    @FXML
+    private Label returnBookMemberUsername;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -485,6 +529,7 @@ public class ManagerDashboardController implements Initializable {
         if (current.equals("deleteBook")) deleteBook.setVisible(false);
         if (current.equals("bookList")) bookList.setVisible(false);
         if (current.equals("issueBook")) issueBook.setVisible(false);
+        if (current.equals("returnBook")) returnBook.setVisible(false);
     }
 
     @FXML
@@ -553,8 +598,21 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private void switchToIssueBook(ActionEvent event) {
         disableNode();
+        if (current != "issueBook") clearIssueBookInput();
         current = "issueBook";
         issueBook.setVisible(true);
+        issuingBook = null;
+        issuingUser = null;
+    }
+
+    @FXML
+    private void switchToReturnBook(ActionEvent event) {
+        disableNode();
+        if (current != "returnBook") clearReturnBookInput();
+        current = "returnBook";
+        returnBook.setVisible(true);
+        issuingBook = null;
+        issuingUser = null;
     }
 
     @FXML
@@ -1024,8 +1082,12 @@ public class ManagerDashboardController implements Initializable {
     }
 
     public void showBookCard() throws IOException {
-        if (issuingBook == null) {
-            showAlert(AlertType.ERROR, "Error Message", "You must search a book first!");
+        if (issuingBook == null && (current == "issueBook" || current == "returnBook")) {
+            if (current == "issueBook") {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a book first!");
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "You must select a transaction first!");
+            }
             return;
         }
         
@@ -1043,8 +1105,12 @@ public class ManagerDashboardController implements Initializable {
     }
 
     public void showMemberCard() throws IOException {
-        if (issuingUser == null) {
-            showAlert(AlertType.ERROR, "Error Message", "You must search a member first!");
+        if (issuingUser == null && (current == "issueBook" || current == "returnBook")) {
+            if (current == "issueBook") {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a book first!");
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "You must select a transaction first!");
+            }
             return;
         }
         
@@ -1063,12 +1129,13 @@ public class ManagerDashboardController implements Initializable {
 
     public void issueBook() {
         try {
-            issueBookReturnDate.getValue();
+            LocalDate dueDate = issueBookReturnDate.getValue();
             if (issuingBook == null || issuingUser == null) {
                 showAlert(AlertType.ERROR, "Error Message", "You must search member and book first!");
             }
             
-            librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId());
+            int day = (int)ChronoUnit.DAYS.between(dueDate, LocalDate.now());
+            librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId(), day);
             showAlert(AlertType.INFORMATION, "Success", "Issue Book successfully!");
             clearIssueBookInput();
         } catch (IllegalArgumentException e) {
@@ -1085,6 +1152,71 @@ public class ManagerDashboardController implements Initializable {
         issueBookBookName.setText("Book Name");
         issueBookMemberUsername.setText("Member Username");
         issueBookAvailable.setText("Yes-or-No");
+    }
+
+    private ObservableList<Transaction> transactionListData;
+    public void transactionListShowData() {
+        transactionListData = FXCollections.observableArrayList(librarySystem.getTransactions());
+        
+        returnBookTableBookID.setCellValueFactory(new PropertyValueFactory<>("bookId"));
+        returnBookTableMemberID.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        returnBookTableStatus.setCellValueFactory(cellData -> {
+            boolean isReturned = cellData.getValue().isReturned();
+            String status = isReturned ? "Returned" : "Issued";
+            return new SimpleStringProperty(status);
+        });
+        returnBookTableIssueDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
+        returnBookTableReturnDate.setCellValueFactory(new PropertyValueFactory<>("returnDate"));
+        returnBookTableDueDate.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        returnBookTable.setItems(transactionListData);
+    }
+
+    public void returnBookListSelectData() {
+        Transaction transaction = returnBookTable.getSelectionModel().getSelectedItem();
+        int num = returnBookTable.getSelectionModel().getSelectedIndex();
+        if (num < 0) return;
+
+        issuingBook = librarySystem.getBookById(transaction.getBookId());
+        issuingUser = librarySystem.getUserById(transaction.getUserId());
+        
+        returnBookBookID.setText(String.valueOf(transaction.getBookId()));
+        returnBookMemberID.setText(String.valueOf(transaction.getUserId()));
+        returnBookIssueDate.setValue(transaction.getBorrowDate());
+        returnBookDueDate.setValue(transaction.getDueDate());
+        returnBookBookName.setText(issuingBook.getTitle());
+        returnBookMemberUsername.setText(issuingUser.getUsername());
+    }
+
+    public void returnBook() {
+        try {
+            if (issuingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must select a transaction first!");
+                return;
+            }
+    
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to return the book?");
+            Optional<ButtonType> option = alert.showAndWait();
+            if (option.get().equals(ButtonType.OK)) {
+                librarySystem.returnBook(issuingUser.getUserId(), issuingBook.getBookId());
+                showAlert(AlertType.INFORMATION, "Information", "Return book successfully!");
+                returnBookTable.refresh();
+            }
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    private void clearReturnBookInput() {
+        returnBookTable.getSelectionModel().clearSelection();
+        returnBookBookID.clear();
+        returnBookMemberID.clear();
+        returnBookIssueDate.setValue(null);
+        returnBookDueDate.setValue(null);
+        returnBookBookName.setText("Book Name");
+        returnBookMemberUsername.setText("Member Username");
     }
 
     private void displayUsername() {
@@ -1149,5 +1281,6 @@ public class ManagerDashboardController implements Initializable {
         handleBookSearch();
         initializeSpinner();
         issueBookReturnDate.setValue(LocalDate.now());
+        transactionListShowData();
     }
 }

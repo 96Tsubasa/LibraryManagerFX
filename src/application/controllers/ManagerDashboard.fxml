@@ -101,7 +101,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="bookListBtn2" layoutX="149.0" layoutY="619.0" mnemonicParsing="false" onAction="#switchToBookList" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Return Book" textFill="WHITE">
+                              <Button layoutX="149.0" layoutY="619.0" mnemonicParsing="false" onAction="#switchToReturnBook" prefHeight="26.0" prefWidth="99.0" styleClass="small-btn" stylesheets="@mainFormDesign.css" text="Return Book" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -734,13 +734,92 @@
                                           <Font size="24.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="62.0" layoutY="309.0" text="Return Date:">
+                                    <Label layoutX="62.0" layoutY="309.0" text="Due Date:">
                                        <font>
                                           <Font size="24.0" />
                                        </font>
                                     </Label>
                                     <DatePicker fx:id="issueBookReturnDate" layoutX="279.0" layoutY="314.0" />
                                     <Button layoutX="402.0" layoutY="416.0" mnemonicParsing="false" onAction="#issueBook" prefHeight="66.0" prefWidth="150.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Issue Book" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="returnBook" layoutX="10.0" layoutY="10.0" prefHeight="720.0" prefWidth="1009.6" visible="false">
+                           <children>
+                              <FontAwesomeIcon glyphName="BOOK" layoutX="323.0" layoutY="127.0" size="10em" />
+                              <Label layoutX="473.0" layoutY="59.0" text="Return Book">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="26.0" layoutY="152.0" prefHeight="546.0" prefWidth="398.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="44.0" text="Book ID:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="returnBookBookID" editable="false" layoutX="157.0" layoutY="44.0" prefHeight="34.0" prefWidth="208.0" />
+                                    <Label fx:id="returnBookBookName" layoutX="157.0" layoutY="79.0" onMouseClicked="#showBookCard" text="Book Name" textFill="#1203e4">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="14.0" layoutY="133.0" text="Member ID:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="returnBookMemberUsername" layoutX="157.0" layoutY="167.0" onMouseClicked="#showMemberCard" text="Member Username" textFill="#1203e4">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="returnBookMemberID" editable="false" layoutX="157.0" layoutY="133.0" prefHeight="34.0" prefWidth="208.0" />
+                                    <Label layoutX="14.0" layoutY="217.0" text="Issue Date:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker fx:id="returnBookIssueDate" editable="false" layoutX="156.0" layoutY="217.0" prefHeight="35.0" prefWidth="210.0" />
+                                    <Label layoutX="14.0" layoutY="302.0" text="Due Date:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker fx:id="returnBookDueDate" editable="false" layoutX="156.0" layoutY="302.0" prefHeight="35.0" prefWidth="210.0" />
+                                    <Button layoutX="123.0" layoutY="387.0" mnemonicParsing="false" onAction="#returnBook" prefHeight="58.0" prefWidth="150.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Return" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutX="435.0" layoutY="150.0" prefHeight="547.0" prefWidth="554.0" stylesheets="@mainFormDesign.css">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="radius" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TableView fx:id="returnBookTable" layoutX="16.0" layoutY="46.0" onMouseClicked="#returnBookListSelectData" prefHeight="486.0" prefWidth="522.0">
+                                      <columns>
+                                        <TableColumn fx:id="returnBookTableBookID" prefWidth="59.199981689453125" text="Book ID" />
+                                          <TableColumn fx:id="returnBookTableMemberID" prefWidth="76.79998779296875" text="Member ID" />
+                                          <TableColumn fx:id="returnBookTableStatus" prefWidth="95.20001220703125" text="Status" />
+                                          <TableColumn fx:id="returnBookTableIssueDate" prefWidth="98.39984130859375" text="Issue Date" />
+                                          <TableColumn fx:id="returnBookTableReturnDate" prefWidth="104.0001220703125" text="Return Date" />
+                                          <TableColumn fx:id="returnBookTableDueDate" prefWidth="89.60009765625" text="Due Date" />
+                                      </columns>
+                                    </TableView>
+                                    <Label layoutX="16.0" layoutY="9.0" text="Select Book Status:">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox layoutX="194.0" layoutY="12.0" prefWidth="150.0" />
                                  </children>
                               </AnchorPane>
                            </children>

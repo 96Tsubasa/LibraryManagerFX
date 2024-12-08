@@ -23,17 +23,17 @@
          </styleClass>
          <children>
             <ImageView fx:id="image" fitHeight="266.0" fitWidth="200.0" layoutX="28.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="title" layoutX="241.0" layoutY="30.0" text="Title:">
+            <Label fx:id="title" layoutX="241.0" layoutY="30.0" prefHeight="30.0" prefWidth="279.0" text="Title:">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label fx:id="author" layoutX="241.0" layoutY="60.0" text="Author:">
+            <Label fx:id="author" layoutX="241.0" layoutY="60.0" prefHeight="30.0" prefWidth="273.0" text="Author:">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label fx:id="genre" layoutX="241.0" layoutY="90.0" text="Genre:">
+            <Label fx:id="genre" layoutX="241.0" layoutY="90.0" prefHeight="30.0" prefWidth="274.0" text="Genre:">
                <font>
                   <Font size="20.0" />
                </font>
