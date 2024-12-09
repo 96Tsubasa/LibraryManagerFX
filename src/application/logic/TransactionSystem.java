@@ -144,7 +144,7 @@ public class TransactionSystem {
     public List<Transaction> isReturnedIsFalse() {
         List<Transaction> listFalse = new ArrayList<>();
         for(Transaction transaction : transactions) {
-            if(transaction.isReturned()) {
+            if(!transaction.isReturned()) {
                 listFalse.add(transaction);
             }
         }
