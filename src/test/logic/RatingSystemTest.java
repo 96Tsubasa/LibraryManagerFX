@@ -34,10 +34,11 @@ public class RatingSystemTest {
         }
     }
 
-    private void addRatingForTest(long userId, long bookId, int star,
+    private Rating addRatingForTest(long userId, long bookId, int star,
                                   LocalDate ratingDay, String comment) {
-        ratingSystem.addRating(userId, bookId, star, ratingDay, comment);
-        ratingIdAdded.add(ratingSystem.getRatings().getLast().getRatingId());
+        Rating rating = ratingSystem.addRating(userId, bookId, star, ratingDay, comment);
+        ratingIdAdded.add(rating.getRatingId());
+        return rating;
     }
 
     @Test
@@ -197,20 +198,22 @@ public class RatingSystemTest {
 
     @Test
     public void testGetRatingByRatingId() {
-        addRatingForTest(900000012, 900000006, 5, LocalDate.now().minusDays(14),
+        Rating rating = addRatingForTest(900000012, 900000006, 5, LocalDate.now().minusDays(14),
                 "This book is very amazing, recommend for romance lovers.");
-
-        Rating rating = ratingSystem.getRatings().getLast();
 
         assertEquals(rating, ratingSystem.getRatingByRatingId(rating.getRatingId()));
     }
 
-    /**
-     * TODO tomorrow: Implement the tests below:
-     */
     @Test
     public void testEditRatingByUserId() {
+        Rating rating = addRatingForTest(900000013, 900000007, 5, LocalDate.now().minusDays(14),
+                "This book is very amazing, recommend for romance lovers.");
 
+        ratingSystem.editRatingByUserId(rating, 4, "New comment");
+
+        Rating newRating = ratingSystem.getRatingByRatingId(rating.getRatingId());
+        assertEquals(4, newRating.getStar());
+        assertEquals("New comment", newRating.getComment());
     }
 
     @Test
