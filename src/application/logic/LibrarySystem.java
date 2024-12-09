@@ -41,13 +41,31 @@ public class LibrarySystem {
         return userSystem.handleLogin(username, password);
     }
 
-    /** Create a new book, add to books list and database. */
-    public Book addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
+    /** Create a new physical book, add to books list and database. */
+    public Book addBook(String newTitle, String[] newAuthors, String newPublisher,
+                        int newPublicationYear, String[] newGenres, String newDescription,
+                        byte[] newCoverImage, String newIsbn, String newStatus,
+                        int newShelfNumber, int newCopiesAvailable) {
         if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
             throw new RuntimeException("Only admins can add books.");
         }
 
-        return bookSystem.addBook(title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
+        return bookSystem.addBook(newTitle, newAuthors, newPublisher,
+                newPublicationYear, newGenres, newDescription, newCoverImage,
+                newIsbn, newStatus, newShelfNumber, newCopiesAvailable);
+    }
+
+    /** Create a new digital book, add to books list and database. */
+    public Book addBook(String newTitle, String[] newAuthors, String newPublisher,
+                        int newPublicationYear, String[] newGenres, String newDescription,
+                        byte[] newCoverImage, String newIsbn, String newBookUrl) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new RuntimeException("Only admins can add books.");
+        }
+
+        return bookSystem.addBook(newTitle, newAuthors, newPublisher,
+                newPublicationYear, newGenres, newDescription, newCoverImage,
+                newIsbn, newBookUrl);
     }
 
     /** Search book by ISBN. */
@@ -141,16 +159,29 @@ public class LibrarySystem {
         return bookSystem.getBookById(bookId);
     }
 
-    /** Edit a book by bookId. */
-    public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher,
-                             int newPublicationYear, String[] newGenres, int newCopiesAvailable,
-                             String newDescription, byte[] newCoverImage, String newIsbn) {
+    /** Edit a physical book by bookId. */
+    public void editBookById(PhysicalBook book, String newTitle, String[] newAuthors, String newPublisher,
+                             int newPublicationYear, String[] newGenres, String newDescription,
+                             byte[] newCoverImage, String newIsbn, String newStatus,
+                             int newShelfNumber, int newCopiesAvailable) {
         if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
             throw new IllegalArgumentException("Only admins can edit books.");
         }
 
         bookSystem.editBookById(book, newTitle, newAuthors, newPublisher, newPublicationYear,
-                newGenres, newCopiesAvailable, newDescription, newCoverImage, newIsbn);
+                newGenres, newDescription, newCoverImage, newIsbn, newStatus, newShelfNumber, newCopiesAvailable);
+    }
+
+    /** Edit a digital book by bookId. */
+    public void editBookById(DigitalBook book, String newTitle, String[] newAuthors, String newPublisher,
+                             int newPublicationYear, String[] newGenres, String newDescription,
+                             byte[] newCoverImage, String newIsbn, String newBookUrl) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can edit books.");
+        }
+
+        bookSystem.editBookById(book, newTitle, newAuthors, newPublisher, newPublicationYear,
+                newGenres, newDescription, newCoverImage, newIsbn, newBookUrl);
     }
 
     /** Delete a book in the system with bookId. */
