@@ -6,10 +6,10 @@ import java.util.List;
 public class LibrarySystem {
     private static LibrarySystem instance;
 
-    private UserSystem userSystem;
-    private BookSystem bookSystem;
-    private TransactionSystem transactionSystem;
-    private RatingSystem ratingSystem;
+    private final UserSystem userSystem;
+    private final BookSystem bookSystem;
+    private final TransactionSystem transactionSystem;
+    private final RatingSystem ratingSystem;
 
     /** Constructor. */
     private LibrarySystem() {
@@ -44,7 +44,7 @@ public class LibrarySystem {
     /** Create a new book, add to books list and database. */
     public Book addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
         if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
-            throw new IllegalArgumentException("Only admins can add books.");
+            throw new RuntimeException("Only admins can add books.");
         }
 
         return bookSystem.addBook(title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
@@ -179,7 +179,7 @@ public class LibrarySystem {
 
         // If the current user is not an admin, ensure they can only edit their own rating
         if (!currentUser.getRole().equals(User.ADMIN)) {
-            if (!currentUser.equals(rating.getUserId())) {
+            if (currentUser.getUserId() != rating.getUserId()) {
                 // If the user being edited is not the same as the current user, throw an exception
                 throw new IllegalArgumentException("You can only edit your own rating.");
             }
@@ -199,7 +199,7 @@ public class LibrarySystem {
 
         // If the current user is not an admin, ensure they can only edit their own rating
         if (!currentUser.getRole().equals(User.ADMIN)) {
-            if (!currentUser.equals(rating.getUserId())) {
+            if (currentUser.getUserId() != rating.getUserId()) {
                 // If the user being edited is not the same as the current user, throw an exception
                 throw new IllegalArgumentException("You can only delete your own rating.");
             }

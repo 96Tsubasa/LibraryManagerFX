@@ -5,10 +5,9 @@ import application.database.Database;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TransactionSystem {
-    private List<Transaction> transactions;
+    private final List<Transaction> transactions;
 
     /** Constructor for TransactionSystem. */
     public TransactionSystem() {
@@ -34,11 +33,15 @@ public class TransactionSystem {
         }
 
         if (!book.isAvailable()) {
-            throw new IllegalArgumentException("The book is not available.");
+            throw new RuntimeException("The book is not available.");
         }
 
         if (hasUserBorrowedBook(user.getUserId(), book.getBookId())) {
-            throw new IllegalArgumentException("The user has already borrowed this book.");
+            throw new RuntimeException("The user has already borrowed this book.");
+        }
+
+        if (days <= 0 || days >= 90) {
+            throw new IllegalArgumentException("Invalid borrow in time.");
         }
 
         user.borrowBook();
@@ -75,7 +78,7 @@ public class TransactionSystem {
         }
 
         if (!hasPendingTransaction(user.getUserId(), book.getBookId())) {
-            throw new IllegalArgumentException("No valid return transaction found.");
+            throw new RuntimeException("No valid return transaction found.");
         }
 
         for (Transaction transaction : transactions) {
@@ -118,7 +121,7 @@ public class TransactionSystem {
     public List<Book> getBookListUserBorrowing(long userId, BookSystem bookSystem) {
         List<Book> borrowing = new ArrayList<>();
         for(Transaction transaction : transactions) {
-            if(transaction.getUserId() == userId && transaction.isReturned() == false) {
+            if(transaction.getUserId() == userId && !transaction.isReturned()) {
                 Book book = bookSystem.getBookById(transaction.getBookId());
                 borrowing.add((book));
             }
@@ -130,7 +133,7 @@ public class TransactionSystem {
     public List<Transaction> isReturnedIsTrue() {
         List<Transaction> listTrue = new ArrayList<>();
         for(Transaction transaction : transactions) {
-            if(transaction.isReturned() == true) {
+            if(transaction.isReturned()) {
                 listTrue.add(transaction);
             }
         }
@@ -141,7 +144,7 @@ public class TransactionSystem {
     public List<Transaction> isReturnedIsFalse() {
         List<Transaction> listFalse = new ArrayList<>();
         for(Transaction transaction : transactions) {
-            if(transaction.isReturned() == false) {
+            if(transaction.isReturned()) {
                 listFalse.add(transaction);
             }
         }
