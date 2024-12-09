@@ -18,10 +18,28 @@ public class BookSystem {
         return books;
     }
 
-    /** Create a new book, add to books list and database. */
-    public Book addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
+    /** Create a new physical book, add to books list and database. */
+    public Book addBook(String title, String[] authors, String publisher,
+                        int publicationYear, String[] genres, String description,
+                        byte[] coverImage, String isbn, String status,
+                        int shelfNumber, int copiesAvailable) {
         long bookId = Database.createNewBookId();
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
+        Book book = new PhysicalBook(bookId, title, authors, publisher,
+                publicationYear, genres, description, coverImage,
+                isbn, status, shelfNumber, copiesAvailable);
+        books.add(book);
+        Database.addBook(book);
+        return book;
+    }
+
+    /** Create a new digital book, add to books list and database. */
+    public Book addBook(String title, String[] authors, String publisher,
+                        int publicationYear, String[] genres, String description,
+                        byte[] coverImage, String isbn, String bookUrl) {
+        long bookId = Database.createNewBookId();
+        Book book = new DigitalBook(bookId, title, authors, publisher,
+                publicationYear, genres, description, coverImage,
+                isbn, bookUrl);
         books.add(book);
         Database.addBook(book);
         return book;
@@ -62,10 +80,11 @@ public class BookSystem {
         return null;
     }
 
-    /** Edit a book by bookId. */
-    public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher,
-                             int newPublicationYear, String[] newGenres, int newCopiesAvailable,
-                             String newDescription, byte[] newCoverImage, String newIsbn) {
+    /** Edit a physical book by bookId. */
+    public void editBookById(PhysicalBook book, String newTitle, String[] newAuthors, String newPublisher,
+                             int newPublicationYear, String[] newGenres, String newDescription,
+                             byte[] newCoverImage, String newIsbn, String newStatus,
+                             int newShelfNumber, int newCopiesAvailable) {
         book.setTitle(newTitle);
         book.setAuthors(newAuthors);
         book.setPublisher(newPublisher);
@@ -75,6 +94,24 @@ public class BookSystem {
         book.setDescription(newDescription);
         book.setCoverImage(newCoverImage);
         book.setIsbn(newIsbn);
+        book.setStatus(newStatus);
+        book.setShelfNumber(newShelfNumber);
+        Database.editBookById(book);
+    }
+
+    /** Edit a physical book by bookId. */
+    public void editBookById(DigitalBook book, String newTitle, String[] newAuthors, String newPublisher,
+                             int newPublicationYear, String[] newGenres, String newDescription,
+                             byte[] newCoverImage, String newIsbn, String newBookUrl) {
+        book.setTitle(newTitle);
+        book.setAuthors(newAuthors);
+        book.setPublisher(newPublisher);
+        book.setPublicationYear(newPublicationYear);
+        book.setGenres(newGenres);
+        book.setDescription(newDescription);
+        book.setCoverImage(newCoverImage);
+        book.setIsbn(newIsbn);
+        book.setBookUrl(newBookUrl);
         Database.editBookById(book);
     }
 

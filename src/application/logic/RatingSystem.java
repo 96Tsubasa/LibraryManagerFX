@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RatingSystem {
-    private List<Rating> ratings;
+    private final List<Rating> ratings;
 
     /** Constructor for RatingSystem. */
     public RatingSystem() {
@@ -29,8 +29,7 @@ public class RatingSystem {
             }
         }
         double avg = (sum * 1.0) / count;
-        double rounded = Math.round(avg * 10.0) / 10.0;
-        return rounded;
+        return Math.round(avg * 10.0) / 10.0;
     }
 
     /** Return Rating for User. */
@@ -63,8 +62,7 @@ public class RatingSystem {
             return new ArrayList<>(); // return
         }
         int startIndex = Math.max(ratings.size() - 5, 0);
-        List<Rating> recent = ratings.subList(startIndex, ratings.size());
-        return recent;
+        return ratings.subList(startIndex, ratings.size());
     }
 
     /** Get rating for search. */
