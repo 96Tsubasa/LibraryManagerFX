@@ -270,27 +270,47 @@ public class Database {
         for (int i = 0; i < genresId.length; i++) {
             genres[i] = getGenreNameById(Long.parseLong(genresId[i]));
         }
-        int copiesAvailable = rs.getInt("copiesAvailable");
         String description = rs.getString("description");
         byte[] coverImage = rs.getBytes("coverImage");
 
-        return new Book(bookId,
-                title,
-                authors,
-                publisher,
-                publicationYear,
-                genres,
-                copiesAvailable,
-                description,
-                coverImage,
-                isbn);
+        String bookType = rs.getString("bookType");
+
+        if (bookType.equals("PHYSICAL")) {
+            int copiesAvailable = rs.getInt("copiesAvailable");
+            int shelfNumber = rs.getInt("shelfNumber");
+            String status = rs.getString("status");
+            return new PhysicalBook(bookId,
+                    title,
+                    authors,
+                    publisher,
+                    publicationYear,
+                    genres,
+                    description,
+                    coverImage,
+                    isbn,
+                    status,
+                    shelfNumber,
+                    copiesAvailable);
+        } else {
+            String bookUrl = rs.getString("bookUrl");
+            return new DigitalBook(bookId,
+                    title,
+                    authors,
+                    publisher,
+                    publicationYear,
+                    genres,
+                    description,
+                    coverImage,
+                    isbn,
+                    bookUrl);
+        }
     }
 
     /** Add a new book to the database. */
     public static void addBook(Book book) {
-        String query = "INSERT INTO books (bookId, isbn, authorsId, title," +
-                " genresId, publisher, publicationYear, copiesAvailable, description, coverImage) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO books (bookId, isbn, authorsId, title, genresId, publisher," +
+                "publicationYear, description, coverImage, bookType, copiesAvailable, shelfNumber," +
+                "status, bookUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setLong(1, book.getBookId());
@@ -308,9 +328,23 @@ public class Database {
             pstmt.setString(5, genresId.toString());
             pstmt.setString(6, book.getPublisher());
             pstmt.setInt(7, book.getPublicationYear());
-            pstmt.setInt(8, book.getCopiesAvailable());
-            pstmt.setString(9, book.getDescription());
-            pstmt.setBytes(10, book.getCoverImage());
+            pstmt.setString(8, book.getDescription());
+            pstmt.setBytes(9, book.getCoverImage());
+
+            if (book instanceof PhysicalBook phyBook) {
+                pstmt.setString(10, "PHYSICAL");
+                pstmt.setInt(11, phyBook.getCopiesAvailable());
+                pstmt.setInt(12, phyBook.getShelfNumber());
+                pstmt.setString(13, phyBook.getStatus());
+                pstmt.setNull(14, Types.VARCHAR);
+            } else if (book instanceof DigitalBook diBook) {
+                pstmt.setString(10, "DIGITAL");
+                pstmt.setNull(11, Types.INTEGER);
+                pstmt.setNull(12, Types.INTEGER);
+                pstmt.setNull(13, Types.VARCHAR);
+                pstmt.setString(14, diBook.getBookUrl());
+            }
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -339,8 +373,9 @@ public class Database {
     /** Edit a book's info by bookId. */
     public static void editBookById(Book book) {
         String query = "UPDATE books SET isbn = ?, authorsId = ?, title = ?, genresId = ?, " +
-                "publisher = ?, publicationYear = ?, copiesAvailable = ?, description = ?, " +
-                "coverImage = ? WHERE bookId = ?";
+                "publisher = ?, publicationYear = ?, description = ?, coverImage = ?, " +
+                "bookType = ?, copiesAvailable = ?, shelfNumber = ?, status = ?, bookUrl = ? " +
+                "WHERE bookId = ?";
         try (Connection conn = DriverManager.getConnection(databaseUrl);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, book.getIsbn());
@@ -357,10 +392,25 @@ public class Database {
             pstmt.setString(4, genresId.toString());
             pstmt.setString(5, book.getPublisher());
             pstmt.setInt(6, book.getPublicationYear());
-            pstmt.setInt(7, book.getCopiesAvailable());
-            pstmt.setString(8, book.getDescription());
-            pstmt.setBytes(9, book.getCoverImage());
-            pstmt.setLong(10, book.getBookId());
+            pstmt.setString(7, book.getDescription());
+            pstmt.setBytes(8, book.getCoverImage());
+
+            if (book instanceof PhysicalBook phyBook) {
+                pstmt.setString(9, "PHYSICAL");
+                pstmt.setInt(10, phyBook.getCopiesAvailable());
+                pstmt.setInt(11, phyBook.getShelfNumber());
+                pstmt.setString(12, phyBook.getStatus());
+                pstmt.setNull(13, Types.VARCHAR);
+            } else if (book instanceof DigitalBook diBook) {
+                pstmt.setString(9, "DIGITAL");
+                pstmt.setNull(10, Types.INTEGER);
+                pstmt.setNull(11, Types.INTEGER);
+                pstmt.setNull(12, Types.VARCHAR);
+                pstmt.setString(13, diBook.getBookUrl());
+            }
+
+            pstmt.setLong(14, book.getBookId());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -708,10 +758,5 @@ public class Database {
             System.out.println(e.getMessage());
         }
         return results;
-    }
-
-    /** Testing. */
-    public static void main(String[] args) {
-
     }
 }
