@@ -19,12 +19,12 @@ public class BookSystem {
     }
 
     /** Create a new physical book, add to books list and database. */
-    public Book addBook(String title, String[] authors, String publisher,
+    public PhysicalBook addBook(String title, String[] authors, String publisher,
                         int publicationYear, String[] genres, String description,
                         byte[] coverImage, String isbn, String status,
                         int shelfNumber, int copiesAvailable) {
         long bookId = Database.createNewBookId();
-        Book book = new PhysicalBook(bookId, title, authors, publisher,
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher,
                 publicationYear, genres, description, coverImage,
                 isbn, status, shelfNumber, copiesAvailable);
         books.add(book);
@@ -33,11 +33,11 @@ public class BookSystem {
     }
 
     /** Create a new digital book, add to books list and database. */
-    public Book addBook(String title, String[] authors, String publisher,
+    public DigitalBook addBook(String title, String[] authors, String publisher,
                         int publicationYear, String[] genres, String description,
                         byte[] coverImage, String isbn, String bookUrl) {
         long bookId = Database.createNewBookId();
-        Book book = new DigitalBook(bookId, title, authors, publisher,
+        DigitalBook book = new DigitalBook(bookId, title, authors, publisher,
                 publicationYear, genres, description, coverImage,
                 isbn, bookUrl);
         books.add(book);
