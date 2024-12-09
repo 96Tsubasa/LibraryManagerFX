@@ -766,7 +766,7 @@
                                        </font>
                                     </Label>
                                     <TextField fx:id="returnBookBookID" editable="false" layoutX="157.0" layoutY="44.0" prefHeight="34.0" prefWidth="208.0" />
-                                    <Label fx:id="returnBookBookName" layoutX="157.0" layoutY="79.0" onMouseClicked="#showBookCard" text="Book Name" textFill="#1203e4">
+                                    <Label fx:id="returnBookBookName" layoutX="157.0" layoutY="79.0" onMouseClicked="#showBookCard" prefHeight="26.0" prefWidth="235.0" text="Book Name" textFill="#1203e4">
                                        <font>
                                           <Font size="16.0" />
                                        </font>

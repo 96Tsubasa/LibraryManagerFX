@@ -1134,7 +1134,7 @@ public class ManagerDashboardController implements Initializable {
                 showAlert(AlertType.ERROR, "Error Message", "You must search member and book first!");
             }
             
-            int day = (int)ChronoUnit.DAYS.between(dueDate, LocalDate.now());
+            int day = (int)ChronoUnit.DAYS.between(LocalDate.now(), dueDate);
             librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId(), day);
             showAlert(AlertType.INFORMATION, "Success", "Issue Book successfully!");
             clearIssueBookInput();
