@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 
 import application.database.Database;
 import application.logic.Book;
+import application.logic.DigitalBook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -59,17 +60,16 @@ public class GoogleBooksAPIClient {
                     }
                 }
 
-                return new Book(Database.createNewBookId(),
+                return new DigitalBook(Database.createNewBookId(),
                         title,
                         authors,
                         publisher,
                         publicationYear,
                         genres,
-                        0,
                         description,
                         coverImage,
-                        isbn
-                );
+                        isbn,
+                        null);
             }
         } else {
             throw new IOException("Failed to fetch data from Google Books API. HTTP status code: " + response.statusCode());
