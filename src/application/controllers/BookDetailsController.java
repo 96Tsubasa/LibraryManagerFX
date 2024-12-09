@@ -101,6 +101,7 @@ public class BookDetailsController implements Initializable {
             LocalDate.now(),
             comment.getText());
             showAlert(AlertType.INFORMATION, "Success", "Rate book successfully!");
+            displayRatings();
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }

@@ -36,7 +36,7 @@ public class RatingController implements Initializable {
 
     private void showRating() {
         Image image = new Image(getClass().getResource("/resources/image/rating.png").toExternalForm());
-        double percentage = rating.getStar() / 5;
+        double percentage = rating.getStar() / 5.0;
         double width = image.getWidth() * percentage;
         double height = image.getHeight();
         Rectangle2D viewport = new Rectangle2D(0, 0, width, height);

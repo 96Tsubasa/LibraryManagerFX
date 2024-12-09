@@ -209,13 +209,25 @@ public class MemberDashboardController implements Initializable {
 
     public void editProfile() {
         try {
-            librarySystem.editUserById(LoginController.currentUser
-            , profileUsername.getText()
-            , profileEmail.getText()
-            , profilePassword.getText()
-            , "USER"
-            , convertImageToBytes(profileImage));
-            showAlert(AlertType.INFORMATION, "Success", "Edit profile successfully!");
+            if (profileImage == null) {
+                librarySystem.editUserById(LoginController.currentUser
+                , profileUsername.getText()
+                , profileEmail.getText()
+                , profilePassword.getText()
+                , "USER"
+                , null);
+                showAlert(AlertType.INFORMATION, "Success", "Edit profile successfully!");
+            } else {
+                librarySystem.editUserById(LoginController.currentUser
+                , profileUsername.getText()
+                , profileEmail.getText()
+                , profilePassword.getText()
+                , "USER"
+                , convertImageToBytes(profileImage));
+                showAlert(AlertType.INFORMATION, "Success", "Edit profile successfully!");
+            }
+            
+            
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
