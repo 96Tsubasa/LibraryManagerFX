@@ -73,15 +73,21 @@ public class LibrarySystem {
     /** User borrow a book. */
     public Transaction borrowBook(long userId, long bookId, int days) {
         Book book = getBookById(bookId);
+        if (book instanceof DigitalBook) {
+            throw new RuntimeException("Invalid.");
+        }
         User user = getUserById(userId);
-        return transactionSystem.borrowBook(user, book, days);
+        return transactionSystem.borrowBook(user, (PhysicalBook) book, days);
     }
 
     /** User return a book. */
     public void returnBook(long userId, long bookId) {
         Book book = getBookById(bookId);
+        if (book instanceof DigitalBook) {
+            throw new RuntimeException("Invalid.");
+        }
         User user = getUserById(userId);
-        transactionSystem.returnBook(user, book);
+        transactionSystem.returnBook(user, (PhysicalBook) book);
     }
 
     /** Get users list. */
