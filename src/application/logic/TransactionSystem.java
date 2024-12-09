@@ -27,7 +27,7 @@ public class TransactionSystem {
     }
 
     /** User borrow a book. */
-    public Transaction borrowBook(User user, Book book, int days) {
+    public Transaction borrowBook(User user, PhysicalBook book, int days) {
         if (user == null || book == null) {
             throw new IllegalArgumentException("User or Book cannot be null.");
         }
@@ -72,7 +72,7 @@ public class TransactionSystem {
     }
 
     /** User return a book. */
-    public void returnBook(User user, Book book) {
+    public void returnBook(User user, PhysicalBook book) {
         if (user == null || book == null) {
             throw new IllegalArgumentException("User or Book cannot be null.");
         }
