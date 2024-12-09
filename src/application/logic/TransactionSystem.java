@@ -125,4 +125,26 @@ public class TransactionSystem {
         }
         return borrowing;
     }
+
+    /** List transaction if isReturned is true. */
+    public List<Transaction> isReturnedIsTrue() {
+        List<Transaction> listTrue = new ArrayList<>();
+        for(Transaction transaction : transactions) {
+            if(transaction.isReturned() == true) {
+                listTrue.add(transaction);
+            }
+        }
+        return listTrue;
+    }
+
+    /** List transaction if isReturned is false. */
+    public List<Transaction> isReturnedIsFalse() {
+        List<Transaction> listFalse = new ArrayList<>();
+        for(Transaction transaction : transactions) {
+            if(transaction.isReturned() == false) {
+                listFalse.add(transaction);
+            }
+        }
+        return listFalse;
+    }
 }
