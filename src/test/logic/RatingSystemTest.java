@@ -218,11 +218,29 @@ public class RatingSystemTest {
 
     @Test
     public void testAddRating() {
+        int ratingCount = ratingSystem.getRatings().size();
 
+        Rating rating = addRatingForTest(900000014, 900000008, 4, LocalDate.now().minusDays(2),
+                "This book is very good, recommend for romance lovers.");
+
+        assertEquals(ratingCount + 1, ratingSystem.getRatings().size());
+        assertEquals(900000014, rating.getUserId());
+        assertEquals(900000008, rating.getBookId());
+        assertEquals(4, rating.getStar());
+        assertEquals(LocalDate.now().minusDays(2), rating.getRatingDate());
+        assertEquals("This book is very good, recommend for romance lovers.", rating.getComment());
     }
 
     @Test
     public void testDeleteRatingById() {
+        Rating rating = addRatingForTest(900000015, 900000009, 5, LocalDate.now().minusDays(2),
+                "This book is very great, recommend for romance lovers.");
 
+        int ratingCount = ratingSystem.getRatings().size();
+
+        ratingSystem.deleteRatingById(rating.getRatingId());
+
+        assertEquals(ratingCount - 1, ratingSystem.getRatings().size());
+        assertNull(ratingSystem.getRatingByRatingId(rating.getRatingId()));
     }
 }
