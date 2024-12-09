@@ -1,14 +1,19 @@
 package application.controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
+
 import application.logic.Book;
 import application.logic.LibrarySystem;
 import application.logic.User;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,11 +27,14 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class MemberDashboardController implements Initializable {
@@ -37,6 +45,8 @@ public class MemberDashboardController implements Initializable {
     String currentPane = "browseBook";
     
     LibrarySystem librarySystem;
+
+    Image profileImage;
 
     @FXML
     private GridPane bookContainer;
@@ -57,19 +67,19 @@ public class MemberDashboardController implements Initializable {
     private AnchorPane profile;
 
     @FXML
-    private Label profileEmail;
+    private TextField profileEmail;
 
     @FXML
-    private Label profileID;
+    private TextField profileID;
 
     @FXML
-    private Label profileRole;
+    private TextField profilePassword;
 
     @FXML
-    private Label profileUsername;
+    private TextField profileUsername;
 
     @FXML
-    private ImageView profileImage;
+    private ImageView profileImageView;
 
     @FXML
     private void logout(ActionEvent event) throws IOException {
@@ -146,14 +156,52 @@ public class MemberDashboardController implements Initializable {
 
     private void loadProfileData() {
         User currentUser = LoginController.currentUser;
-        profileID.setText("User ID: " + String.valueOf(currentUser.getUserId()));
-        profileUsername.setText("Username: " + currentUser.getUsername());
-        profileEmail.setText("Email: " + currentUser.getEmail());
-        profileRole.setText("Role: " + currentUser.getRole());
+        profileID.setText(String.valueOf(currentUser.getUserId()));
+        profileUsername.setText(currentUser.getUsername());
+        profileEmail.setText(currentUser.getEmail());
+        profilePassword.setText(currentUser.getPassword());
         if (currentUser.getImageUser() != null) {
-            profileImage.setImage(convertBytesToImage(currentUser.getImageUser()));
+            profileImageView.setImage(convertBytesToImage(currentUser.getImageUser()));
         } else {
-            profileImage.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
+            profileImageView.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
+        }
+    }
+
+    public void profileImportBtn() {
+        FileChooser openFile = new FileChooser();
+        openFile.getExtensionFilters().add(new ExtensionFilter("Open Image File", "*png", "*jpg"));
+
+        File file = openFile.showOpenDialog(profile.getScene().getWindow());
+
+        if (file != null) {
+            profileImage = new Image(file.toURI().toString(), 200, 237, false, true);
+            profileImageView.setImage(profileImage);
+        }
+    }
+
+    public void profileClearBtn() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to clear avatar?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get().equals(ButtonType.OK)) {
+            profileImage = null;
+        profileImageView.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
+        }
+    }
+
+    public void editProfile() {
+        try {
+            librarySystem.editUserById(LoginController.currentUser
+            , profileUsername.getText()
+            , profileEmail.getText()
+            , profilePassword.getText()
+            , "USER"
+            , convertImageToBytes(profileImage));
+            showAlert(AlertType.INFORMATION, "Success", "Edit profile successfully!");
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
     }
 
@@ -181,9 +229,31 @@ public class MemberDashboardController implements Initializable {
         }
     }
 
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     private Image convertBytesToImage(byte[] bytes) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
         return new Image(byteArrayInputStream);
+    }
+
+    private byte[] convertImageToBytes(Image image) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            java.awt.image.BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+            
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

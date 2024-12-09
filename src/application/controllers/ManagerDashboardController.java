@@ -392,6 +392,8 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private Label returnBookMemberUsername;
 
+    
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
