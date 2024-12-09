@@ -3,12 +3,12 @@ package application.logic;
 import application.database.Database;
 
 public class PhysicalBook extends Book {
-    public static final String STATUS_NEW = "NEW";
-    public static final String STATUS_GOOD = "GOOD";
-    public static final String STATUS_OLD = "OLD";
-    private int copiesAvailable;
-    private int shelfNumber;
+    public static final String STATUS_NEW = "New";
+    public static final String STATUS_GOOD = "Good";
+    public static final String STATUS_OLD = "Old";
     private String status;
+    private int shelfNumber;
+    private int copiesAvailable;
 
     /**
      * Constructor for PhysicalBook.
@@ -89,5 +89,15 @@ public class PhysicalBook extends Book {
         copiesAvailable++;
         Database.editBookById(this);
         System.out.println("Returned the book.");
+    }
+
+    /** Get info of the book. */
+    public String getInfo() {
+        return String.format("%s\n" +
+                "Status: %s\n" +
+                "Shelf number: %d\n" +
+                "Copies Available: %d\n" +
+                "Description: %s",
+                super.getInfo(), status, shelfNumber, copiesAvailable, super.getDescription());
     }
 }

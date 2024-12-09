@@ -120,4 +120,17 @@ public abstract class Book {
     public String getGenresAsString() {
         return String.join(", ", genres);
     }
+
+    /** Get info of the book. */
+    public String getInfo() {
+        return String.format("ID: %d\n" +
+                "Title: %s\n" +
+                "Authors: %s\n" +
+                "Publisher: %s\n" +
+                "Publication Year: %d\n" +
+                "Genres: %s\n" +
+                "ISBN: %s",
+                bookId, title, getAuthorsAsString(), publisher, publicationYear,
+                getGenresAsString(), isbn);
+    }
 }

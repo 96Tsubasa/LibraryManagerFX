@@ -17,4 +17,12 @@ public class DigitalBook extends Book {
     public void setBookUrl(String bookUrl) {
         this.bookUrl = bookUrl;
     }
+
+    /** Get info of the book. */
+    public String getInfo() {
+        return String.format("%s\n" +
+                        "Book URL: %s\n" +
+                        "Description: %s",
+                super.getInfo(), bookUrl, super.getDescription());
+    }
 }
