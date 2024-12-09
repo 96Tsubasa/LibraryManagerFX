@@ -51,12 +51,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 2, 3, 4, 1};
         String isbn = "9780000000001";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         int days = 7;
         transactionSystem.borrowBook(user, book, days);
@@ -85,12 +87,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 2, 3, 4, 1};
         String isbn = "9780000000002";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.borrowBook(null, book, 5);
@@ -140,12 +144,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 0;
         String description = "TEST_Description";
         byte[] coverImage = {5, 2, 3, 4, 1};
         String isbn = "9780000000003";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 0;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.borrowBook(user, book, 7);
@@ -174,12 +180,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 2, 3, 4, 1};
         String isbn = "9780000000004";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.borrowBook(user, book, 7);
@@ -219,12 +227,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 21, 3, 4, 1};
         String isbn = "9780000000005";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.borrowBook(user, book, 7);
@@ -254,12 +264,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 21, 34, 4, 1};
         String isbn = "9780000000006";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.returnBook(null, book);
@@ -303,12 +315,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 21, 3, 4, 13};
         String isbn = "9780000000007";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.returnBook(user, book);
@@ -334,12 +348,14 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {5, 21, 37, 4, 13};
         String isbn = "9780000000008";
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.borrowBook(user, book, 7);
@@ -391,14 +407,16 @@ public class TransactionSystemTest {
         String publisher = "TEST_Publisher";
         int publicationYear = 2000;
         String[] genres = new String[] {"Genre A", "Genre B", "Genre C"};
-        int copiesAvailable = 35;
         String description = "TEST_Description";
         byte[] coverImage = {51, 21, 37, 4, 13};
         String isbn = "9780000000010";
-        Book book1 = bookSystem.addBook(title, authors, publisher, publicationYear,
-                genres, copiesAvailable, description, coverImage, isbn);
-        Book book2 = bookSystem.addBook(title + "0", authors, publisher, publicationYear,
-                genres, copiesAvailable, description, coverImage, isbn + "0");
+        String status = PhysicalBook.STATUS_GOOD;
+        int shelfNumber = 1;
+        int copiesAvailable = 35;
+        PhysicalBook book1 = bookSystem.addBook(title, authors, publisher, publicationYear,
+                genres, description, coverImage, isbn, status, shelfNumber, copiesAvailable);
+        PhysicalBook book2 = bookSystem.addBook(title + "0", authors, publisher, publicationYear,
+                genres, description, coverImage, isbn + "0", status, shelfNumber, copiesAvailable);
 
         try {
             transactionSystem.borrowBook(user, book1, 7);

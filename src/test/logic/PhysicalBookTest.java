@@ -1,12 +1,12 @@
 package test.logic;
 
-import application.logic.Book;
+import application.logic.PhysicalBook;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class BookTest {
+public class PhysicalBookTest {
     private long bookId;
     private String isbn;
     private String title;
@@ -14,10 +14,12 @@ public class BookTest {
     private String publisher;
     private int publicationYear;
     private String[] genres;
-    private int copiesAvailable;
     private String description;
     private byte[] coverImage;
-    private Book validBook;
+    private String status;
+    private int shelfNumber;
+    private int copiesAvailable;
+    private PhysicalBook validBook;
 
     @Before
     public void setUp() {
@@ -28,17 +30,19 @@ public class BookTest {
         publisher = "Publisher Future";
         publicationYear = 2000;
         genres = new String[] {"Genre A"};
-        copiesAvailable = 100;
         description = "Awesome description.";
         coverImage = new byte[] {1, 2, 3, 4};
-        validBook = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        status = PhysicalBook.STATUS_NEW;
+        shelfNumber = 1;
+        copiesAvailable = 100;
+        validBook = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
     }
 
     @Test
     public void testConstructor_ValidArguments() {
-        Book book = new Book(bookId, title, authors, publisher, publicationYear, genres,
-                copiesAvailable, description, coverImage, isbn);
+        PhysicalBook book = new PhysicalBook(bookId, title, authors, publisher, publicationYear, genres,
+                description, coverImage, isbn, status, shelfNumber, copiesAvailable);
 
         assertEquals(bookId, book.getBookId());
         assertEquals(title, book.getTitle());
@@ -46,10 +50,12 @@ public class BookTest {
         assertEquals(publisher, book.getPublisher());
         assertEquals(publicationYear, book.getPublicationYear());
         assertArrayEquals(genres, book.getGenres());
-        assertEquals(copiesAvailable, book.getCopiesAvailable());
         assertEquals(description, book.getDescription());
         assertArrayEquals(coverImage, book.getCoverImage());
         assertEquals(isbn, book.getIsbn());
+        assertEquals(status, book.getStatus());
+        assertEquals(shelfNumber, book.getShelfNumber());
+        assertEquals(copiesAvailable, book.getCopiesAvailable());
     }
 
     @Test
