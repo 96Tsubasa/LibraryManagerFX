@@ -393,7 +393,8 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private Label returnBookMemberUsername;
 
-    
+    @FXML
+    private ComboBox<String> returnBookStatus;
 
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
@@ -1160,7 +1161,13 @@ public class ManagerDashboardController implements Initializable {
 
     private ObservableList<Transaction> transactionListData;
     public void transactionListShowData() {
-        transactionListData = FXCollections.observableArrayList(librarySystem.getTransactions());
+        if (returnBookStatus.getValue().equals("All")) {
+            transactionListData = FXCollections.observableArrayList(librarySystem.getTransactions());
+        } else if (returnBookStatus.getValue().equals("Issued")) {
+            transactionListData = FXCollections.observableArrayList(librarySystem.getTransactionsIfFalse());
+        } else {
+            transactionListData = FXCollections.observableArrayList(librarySystem.getTransactionsIfTrue());
+        }
         
         returnBookTableBookID.setCellValueFactory(new PropertyValueFactory<>("bookId"));
         returnBookTableMemberID.setCellValueFactory(new PropertyValueFactory<>("userId"));
@@ -1256,6 +1263,11 @@ public class ManagerDashboardController implements Initializable {
         }
     }
 
+    public void chooseStatus() {
+        returnBookStatus.getItems().addAll("All", "Issued", "Returned");
+        returnBookStatus.setValue("All");
+    }
+
     private void displayUsername() {
         welcomeUser.setText("Welcome " + LoginController.currentUser.getUsername());
     }
@@ -1318,6 +1330,7 @@ public class ManagerDashboardController implements Initializable {
         handleBookSearch();
         initializeSpinner();
         issueBookReturnDate.setValue(LocalDate.now());
+        chooseStatus();
         transactionListShowData();
     }
 }
