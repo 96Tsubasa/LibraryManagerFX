@@ -1135,9 +1135,10 @@ public class ManagerDashboardController implements Initializable {
             }
             
             int day = (int)ChronoUnit.DAYS.between(LocalDate.now(), dueDate);
-            librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId(), day);
+            Transaction newTransaction = librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId(), day);
             showAlert(AlertType.INFORMATION, "Success", "Issue Book successfully!");
             clearIssueBookInput();
+            transactionListData.add(newTransaction);
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
