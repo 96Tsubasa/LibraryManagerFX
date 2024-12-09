@@ -236,4 +236,14 @@ public class LibrarySystem {
     public List<Book> getBookListUserBorrowing(long userId) {
         return transactionSystem.getBookListUserBorrowing(userId, bookSystem);
     }
+
+    /** Return list transaction if isReturned is true. */
+    public List<Transaction> getTransactionsIfTrue() {
+        return transactionSystem.isReturnedIsTrue();
+    }
+
+    /** Return list transaction if isReturned is false. */
+    public List<Transaction> getTransactionsIfFalse() {
+        return transactionSystem.isReturnedIsFalse();
+    }
 }
