@@ -8,7 +8,6 @@ public class PhysicalBook extends Book {
     public static final String STATUS_OLD = "OLD";
     private int copiesAvailable;
     private int shelfNumber;
-    private double weight;
     private String status;
 
     /**
@@ -23,21 +22,17 @@ public class PhysicalBook extends Book {
      * @param coverImage The cover image of the book.
      * @param isbn The ISBN for the book.
      * @param status The current status of the book (New/Good/Old).
-     * @param weight The weight of the book.
      * @param shelfNumber The shelf number that contains this book in the library.
      * @param copiesAvailable The amount of this book copies available in the library.
      */
     public PhysicalBook(long bookId, String title, String[] authors, String publisher,
                         int publicationYear, String[] genres, String description,
                         byte[] coverImage, String isbn, String status,
-                        double weight, int shelfNumber, int copiesAvailable) {
+                        int shelfNumber, int copiesAvailable) {
         super(bookId, title, authors, publisher, publicationYear, genres, description, coverImage, isbn);
 
         if (copiesAvailable < 0) {
             throw new IllegalArgumentException("Number of book copies cannot be a negative number.");
-        }
-        if (weight <= 0) {
-            throw new IllegalArgumentException("The weight of the book must be a positive value.");
         }
         if (!status.equals(STATUS_NEW)
                 && !status.equals(STATUS_GOOD)
@@ -46,7 +41,6 @@ public class PhysicalBook extends Book {
         }
 
         this.status = status;
-        this.weight = weight;
         this.shelfNumber = shelfNumber;
         this.copiesAvailable = copiesAvailable;
     }
@@ -65,14 +59,6 @@ public class PhysicalBook extends Book {
 
     public void setShelfNumber(int shelfNumber) {
         this.shelfNumber = shelfNumber;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
     }
 
     public String getStatus() {
