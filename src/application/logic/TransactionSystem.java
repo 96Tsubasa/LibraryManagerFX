@@ -28,7 +28,7 @@ public class TransactionSystem {
     }
 
     /** User borrow a book. */
-    public void borrowBook(User user, Book book, int days) {
+    public Transaction borrowBook(User user, Book book, int days) {
         if (user == null || book == null) {
             throw new IllegalArgumentException("User or Book cannot be null.");
         }
@@ -57,6 +57,7 @@ public class TransactionSystem {
 
         transactions.add(transaction);
         Database.addTransaction(transaction);
+        return transaction;
     }
 
     /** Check if there is a pending transaction for a specific user and book. */

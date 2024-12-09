@@ -88,8 +88,9 @@ public class RatingSystem {
     /** Add rating. */
    public void addRating(long userId, long bookId, int star, LocalDate ratingDate, String comment) {
        long ratingId = Database.createNewRatingId();
-       Rating newrating = new Rating(ratingId, userId, bookId, star, ratingDate, comment);
-       Database.addRating(newrating);
+       Rating newRating = new Rating(ratingId, userId, bookId, star, ratingDate, comment);
+       ratings.add(newRating);
+       Database.addRating(newRating);
    }
 
    /** Delete rating. */
