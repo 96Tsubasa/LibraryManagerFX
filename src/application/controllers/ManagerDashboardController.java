@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
+import application.api.GoogleBooksAPIClient;
 import application.logic.Book;
 import application.logic.LibrarySystem;
 import application.logic.Transaction;
@@ -1220,6 +1221,39 @@ public class ManagerDashboardController implements Initializable {
         returnBookDueDate.setValue(null);
         returnBookBookName.setText("Book Name");
         returnBookMemberUsername.setText("Member Username");
+    }
+
+    public void searchBookInfo() throws IOException, InterruptedException {
+        try {
+            String isbn = addBookISBN.getText();
+            if (isbn.equals("")) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill in ISBN first!");
+                return;
+            }
+        
+            Book book = GoogleBooksAPIClient.getBookInfoByISBN(isbn);
+            if (book == null) {
+                showAlert(AlertType.ERROR, "Error Message", "No book found with the entered ISBN. Please check the ISBN and try again.!");
+                return;
+            }
+            addBookAuthor.setText(book.getAuthorsAsString());
+            addBookGenre.setText(book.getGenresAsString());
+            addBookDescription.setText(book.getDescription());
+            addBookImage = convertBytesToImage(book.getCoverImage());
+            addBookImageView.setImage(addBookImage);
+            addBookTitle.setText(book.getTitle());
+            addBookPublisher.setText(book.getPublisher());
+            addBookPublicationYear.setText(String.valueOf(book.getPublicationYear()));
+        } catch (IOException e) {
+            showAlert(AlertType.ERROR, "Network Error", "An error occurred while fetching book information. Please check your network connection and try again.");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            showAlert(AlertType.ERROR, "Operation Interrupted", "The operation was interrupted. Please try again.");
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Unexpected Error", "An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void displayUsername() {

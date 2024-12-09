@@ -459,7 +459,7 @@
                                           <String fx:value="shadow" />
                                        </styleClass>
                                        <children>
-                                          <ImageView fx:id="addBookImageView" fitHeight="239.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                          <ImageView fx:id="addBookImageView" fitHeight="239.0" fitWidth="200.0" pickOnBounds="true" />
                                        </children>
                                     </AnchorPane>
                                     <Button layoutX="742.0" layoutY="297.0" mnemonicParsing="false" onAction="#addBookImportBtn" prefHeight="43.0" prefWidth="147.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
@@ -492,12 +492,12 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="473.0" layoutY="75.0" prefHeight="28.0" prefWidth="246.0" text="Publication Year:">
+                                    <Label layoutX="473.0" layoutY="136.0" prefHeight="28.0" prefWidth="246.0" text="Publication Year:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="486.0" layoutY="184.0" text="Copies available:">
+                                    <Label layoutX="486.0" layoutY="245.0" text="Copies available:">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
@@ -507,9 +507,14 @@
                                           <Font size="30.0" />
                                        </font>
                                     </Label>
-                                    <TextArea fx:id="addBookDescription" layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" />
-                                    <Spinner fx:id="addBookCopiesAvailable" editable="true" layoutX="514.0" layoutY="230.0" prefHeight="32.0" prefWidth="165.0" />
-                                    <TextField fx:id="addBookPublicationYear" layoutX="514.0" layoutY="121.0" prefHeight="30.0" prefWidth="164.0" />
+                                    <TextArea fx:id="addBookDescription" layoutX="66.0" layoutY="347.0" prefHeight="124.0" prefWidth="631.0" wrapText="true" />
+                                    <Spinner fx:id="addBookCopiesAvailable" editable="true" layoutX="514.0" layoutY="291.0" prefHeight="32.0" prefWidth="165.0" />
+                                    <TextField fx:id="addBookPublicationYear" layoutX="514.0" layoutY="182.0" prefHeight="30.0" prefWidth="164.0" />
+                                    <Button layoutX="486.0" layoutY="80.0" mnemonicParsing="false" onAction="#searchBookInfo" prefHeight="34.0" prefWidth="131.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search Book Info" textFill="WHITE">
+                                       <font>
+                                          <Font name="Cambria Italic" size="11.0" />
+                                       </font>
+                                    </Button>
                                  </children>
                               </AnchorPane>
                            </children>
