@@ -1,22 +1,36 @@
 package application.controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import application.logic.Book;
 import application.logic.LibrarySystem;
+import application.logic.Rating;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
-public class BookDetailsController {
+public class BookDetailsController implements Initializable {
     private Book book;
     
     private MemberDashboardController memberDashboardController;
+
+    LibrarySystem librarySystem;
 
     @FXML
     private Label author;
@@ -49,7 +63,16 @@ public class BookDetailsController {
     private Label title;
 
     @FXML
-    private Spinner<Integer> day;
+    private VBox ratingContainer;
+
+    @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    private Spinner<Integer> star;
+
+    @FXML
+    private TextArea comment;
 
     public void setMemberDashboardController(MemberDashboardController controller) {
         this.memberDashboardController = controller;
@@ -67,20 +90,37 @@ public class BookDetailsController {
         copiesAvailable.setText("Copies Available:\n" + book.getCopiesAvailable());
         genre.setText("Genre:\n" + book.getGenresAsString());
         image.setImage(convertBytesToImage(book.getCoverImage()));
+        displayRatings();
     }
 
-    public void borrowBook() {
+    public void rate() {
         try {
-            LibrarySystem librarySystem = LibrarySystem.getInstance();
-            day.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1460, 0));
-            //1460 is max day
-            librarySystem.borrowBook(LoginController.currentUser.getUserId(), this.book.getBookId(), day.getValue());
-            memberDashboardController.loadInventory();
-            showAlert(AlertType.INFORMATION, "Success", "Borrow book successfully!");
+            librarySystem.addRating(LoginController.currentUser.getUserId(), 
+            book.getBookId(), 
+            star.getValue(),
+            LocalDate.now(),
+            comment.getText());
+            showAlert(AlertType.INFORMATION, "Success", "Rate book successfully!");
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
         }
     }
+
+    public void displayRatings() {
+    try {
+        for (Rating rating : librarySystem.getRatingForBookId(book.getBookId())) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("rating.fxml"));
+            Parent ratingItem = loader.load();
+
+            RatingController controller = loader.getController();
+            controller.setData(rating);
+
+            ratingContainer.getChildren().add(ratingItem);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
 
     private Image convertBytesToImage(byte[] bytes) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
@@ -93,5 +133,12 @@ public class BookDetailsController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        librarySystem = LibrarySystem.getInstance();
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 5, 1); // min, max, initial
+        star.setValueFactory(valueFactory);
     }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="125.0" prefWidth="336.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.RatingController">
+   <children>
+      <Label fx:id="username" prefHeight="54.0" prefWidth="336.0" text="Username">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="star" fitHeight="27.0" fitWidth="190.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../resources/image/rating.png" />
+         </image>
+      </ImageView>
+      <TextArea fx:id="comment" prefHeight="60.0" prefWidth="336.0" />
+   </children>
+</VBox>

@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -82,6 +83,12 @@ public class MemberDashboardController implements Initializable {
     private ImageView profileImageView;
 
     @FXML
+    private TextField browseBookSearchBar;
+
+    @FXML
+    private TextField inventorySearchBar;
+
+    @FXML
     private void logout(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Error Message");
@@ -129,11 +136,20 @@ public class MemberDashboardController implements Initializable {
         inventory.setVisible(true);
     }
 
-    private void loadBookContainer() {
+    public void loadBookContainer() {
         int column = 0;
         int row = 1;
+
+        bookContainer.getChildren().clear();
+
         try {
-            for (Book book : librarySystem.getBooks()) {
+            List<Book> newList;
+            if (browseBookSearchBar.getText().equals("")) {
+                newList = librarySystem.getBooks();
+            } else {
+                newList = librarySystem.searchBooks(browseBookSearchBar.getText());
+            }
+            for (Book book : newList) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("book.fxml"));
                 VBox bookBox = fxmlLoader.load();
@@ -208,7 +224,14 @@ public class MemberDashboardController implements Initializable {
     public void loadInventory() {
         int column = 0;
         int row = 1;
+        
         try {
+            List<Book> newList;
+            if (browseBookSearchBar.getText().equals("")) {
+                newList = librarySystem.getBookListUserBorrowing(LoginController.currentUser.getUserId());
+            } else {
+                newList = librarySystem.searchBooks(browseBookSearchBar.getText());
+            }
             for (Book book : librarySystem.getBookListUserBorrowing(LoginController.currentUser.getUserId())) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("book.fxml"));

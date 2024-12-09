@@ -50,7 +50,7 @@ public class BookController {
     }
 
     private void showRating() {
-        if (librarySystem.getRatings() == null) {
+        if (librarySystem.getRatingForBookId(book.getBookId()).isEmpty()) {
             rating.setImage(new Image("/resources/image/norating.png"));
             return;
         }

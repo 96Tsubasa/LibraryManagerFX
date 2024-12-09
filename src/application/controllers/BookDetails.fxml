@@ -1,117 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="454.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.BookDetailsController">
-   <content>
-      <StackPane prefHeight="800.0" prefWidth="854.0">
-         <children>
-            <ImageView fx:id="image" fitHeight="188.0" fitWidth="131.0" pickOnBounds="true" preserveRatio="true">
-               <StackPane.margin>
-                  <Insets top="-550.0" />
-               </StackPane.margin>
-            </ImageView>
-            <Label fx:id="title" text="Title">
-               <StackPane.margin>
-                  <Insets top="-320.0" />
-               </StackPane.margin>
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-            <Label fx:id="author" text="by Author">
-               <font>
-                  <Font name="System Italic" size="16.0" />
-               </font>
-               <StackPane.margin>
-                  <Insets top="-270.0" />
-               </StackPane.margin>
-            </Label>
-            <Button mnemonicParsing="false" onAction="#borrowBook" prefHeight="22.0" prefWidth="116.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Borrow" textFill="WHITE">
-               <StackPane.margin>
-                  <Insets right="500.0" top="-80.0" />
-               </StackPane.margin>
-               <font>
-                  <Font name="System Bold" size="17.0" />
-               </font>
-            </Button>
-            <Label fx:id="publisher" text="Publisher" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets right="500.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="publicationYear" text="Publication Year" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets right="-500.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="genre" text="Genre" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="isbn" text="ISBN" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets right="500.0" top="200.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="id" text="ID" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets top="200.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="copiesAvailable" text="Copies Available" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets right="-500.0" top="200.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="description" text="Description" textAlignment="CENTER">
-               <StackPane.margin>
-                  <Insets top="400.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Spinner fx:id="day" editable="true">
-               <StackPane.margin>
-                  <Insets right="500.0" top="-150.0" />
-               </StackPane.margin>
-            </Spinner>
-            <Label text="Day">
-               <StackPane.margin>
-                  <Insets right="500.0" top="-200.0" />
-               </StackPane.margin>
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-         </children>
-      </StackPane>
-   </content>
-</ScrollPane>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="698.0" prefWidth="841.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.BookDetailsController">
+   <children>
+      <ImageView fx:id="image" fitHeight="188.0" fitWidth="131.0" layoutX="355.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="title" layoutX="395.0" layoutY="216.0" text="Title">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="author" layoutX="386.0" layoutY="251.0" text="by Author">
+         <font>
+            <Font name="System Italic" size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="publisher" layoutX="130.0" layoutY="349.0" text="Publisher" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="publicationYear" layoutX="612.0" layoutY="290.0" text="Publication Year" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="genre" layoutX="393.0" layoutY="349.0" text="Genre" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="isbn" layoutX="399.0" layoutY="290.0" text="ISBN" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="id" layoutX="161.0" layoutY="290.0" text="ID" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="copiesAvailable" layoutX="611.0" layoutY="349.0" text="Copies Available" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="description" layoutX="370.0" layoutY="417.0" text="Description" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="57.0" layoutY="495.0" text="Star:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Spinner fx:id="star" layoutX="98.0" layoutY="495.0" prefHeight="26.0" prefWidth="82.0" />
+      <TextArea fx:id="comment" layoutX="57.0" layoutY="532.0" prefHeight="105.0" prefWidth="189.0" />
+      <Button layoutX="117.0" layoutY="647.0" mnemonicParsing="false" onAction="#rate" prefHeight="35.0" prefWidth="69.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Rate" />
+      <ScrollPane fx:id="scrollPane" layoutX="423.0" layoutY="507.0" prefHeight="168.0" prefWidth="336.0">
+         <content>
+            <VBox fx:id="ratingContainer" prefHeight="100.0" prefWidth="336.0" />
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
