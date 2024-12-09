@@ -71,10 +71,10 @@ public class LibrarySystem {
     }
 
     /** User borrow a book. */
-    public void borrowBook(long userId, long bookId, int days) {
+    public Transaction borrowBook(long userId, long bookId, int days) {
         Book book = getBookById(bookId);
         User user = getUserById(userId);
-        transactionSystem.borrowBook(user, book, days);
+        return transactionSystem.borrowBook(user, book, days);
     }
 
     /** User return a book. */
