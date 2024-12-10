@@ -80,46 +80,6 @@ public class Database {
         }
     }
 
-    /** Get user by userId. */
-    private static User getUserById(long userId) {
-        String query = "SELECT * FROM users WHERE userId = ?";
-        try (Connection conn = DriverManager.getConnection(databaseUrl);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setLong(1, userId);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return createUserFromResultSet(rs);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-    /** Edit a user's info by email. */
-    public static void editUserByEmail(User user) {
-        String query = "UPDATE users SET " +
-                "userId = ?, username = ?, password = ?, " +
-                "role = ?, borrowLimit = ?, imageUser = ? " +
-                "WHERE email = ?";
-        try (Connection conn = DriverManager.getConnection(databaseUrl);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setLong(1, user.getUserId());
-            pstmt.setString(2, user.getUsername());
-            pstmt.setString(3, user.getPassword());
-            pstmt.setString(4, user.getRole());
-            pstmt.setInt(5, user.getLimitBook());
-            pstmt.setBytes(6, user.getImageUser());
-            pstmt.setString(7, user.getEmail());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     /** Load all users' data from database. */
     public static List<User> loadUsers() {
         List<User> userList = new ArrayList<>();
@@ -317,25 +277,6 @@ public class Database {
         }
     }
 
-    /** Get book by bookId. */
-    public static Book getBookById(long bookId) {
-        String query = "SELECT * FROM books WHERE bookId = ?";
-        try (Connection conn = DriverManager.getConnection(databaseUrl);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setLong(1, bookId);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return createBookFromResultSet(rs);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
     /** Edit a book's info by bookId. */
     public static void editBookById(Book book) {
         String query = "UPDATE books SET isbn = ?, authorsId = ?, title = ?, genresId = ?, " +
@@ -393,31 +334,6 @@ public class Database {
         }
         return 1;
     }
-
-    /** Get book by bookId. */
-//    private static Book getBookById(Object bookId) {
-//        List<Map<String, Object>> result = executeQuery("SELECT * FROM books WHERE bookId = '" +
-//                String.valueOf(bookId) + "';");
-//
-//        String title = (String) result.getFirst().get("title");
-//        String[] authorsId = ((String) result.getFirst().get("authorsId")).split(";");
-//        String[] authors = new String[authorsId.length];
-//        for (int i = 0; i < authorsId.length; i++) {
-//            authors[i] = getAuthorNameById(authorsId[i]);
-//        }
-//        String publisher = (String) result.getFirst().get("publisher");
-//        int publicationYear = Integer.parseInt((String) result.getFirst().get("publicationYear"));
-//        String[] genresId = ((String) result.getFirst().get("genresId")).split(";");
-//        String[] genres = new String[authorsId.length];
-//        for (int i = 0; i < authorsId.length; i++) {
-//            genres[i] = getAuthorNameById(genresId[i]);
-//        }
-//        int copiesAvailable = Integer.parseInt((String) result.getFirst().get("copiesAvailable"));
-//        String description = (String) result.getFirst().get("description");
-//
-//        return new Book(Long.parseLong((String) bookId), title, authors, publisher, publicationYear,
-//                genres, copiesAvailable, description);
-//    }
 
     /** Load all books from the database. */
     public static List<Book> loadBooks() {
@@ -685,33 +601,5 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    /** Run a query that return results from the database. */
-    private static List<Map<String, Object>> executeQuery(String query) {
-        List<Map<String, Object>> results = new ArrayList<>();
-
-        try (Connection conn = DriverManager.getConnection(databaseUrl);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            int columnCount = rs.getMetaData().getColumnCount();
-
-            while (rs.next()) {
-                Map<String, Object> row = new HashMap<>();
-                for (int i = 1; i <= columnCount; i++) {
-                    row.put(rs.getMetaData().getColumnName(i), rs.getObject(i));
-                }
-                results.add(row);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return results;
-    }
-
-    /** Testing. */
-    public static void main(String[] args) {
-
     }
 }
