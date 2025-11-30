@@ -3,12 +3,11 @@ package application.logic;
 import application.database.Database;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class BookSystem {
-    private List<Book> books;
+    private final List<Book> books;
 
     /** Constructor for BookSystem. */
     public BookSystem() {
@@ -49,12 +48,7 @@ public class BookSystem {
                 }
             }
         }
-        Collections.sort(printBook, new Comparator<Book>() {
-            @Override
-            public int compare(Book b1, Book b2) {
-                return Long.compare(b1.getBookId(), b2.getBookId());
-            }
-        });
+        printBook.sort(Comparator.comparingLong(Book::getBookId));
         return printBook;
     }
 
@@ -96,7 +90,6 @@ public class BookSystem {
             return new ArrayList<>(); // return
         }
         int startIndex = Math.max(books.size() - 4, 0);
-        List<Book> recent = books.subList(startIndex, books.size());
-        return recent;
+        return books.subList(startIndex, books.size());
     }
 }

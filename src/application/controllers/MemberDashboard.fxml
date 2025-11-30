@@ -57,7 +57,7 @@
             </AnchorPane>
             <AnchorPane fx:id="browseBook" layoutX="270.0" prefHeight="720.0" prefWidth="1010.0">
                <children>
-                  <TextField layoutX="66.0" layoutY="18.0" prefHeight="32.0" prefWidth="340.0" />
+                  <TextField fx:id="browseBookSearchBar" layoutX="66.0" layoutY="18.0" prefHeight="32.0" prefWidth="340.0" />
                   <FontAwesomeIcon glyphName="SEARCH" layoutX="32.0" layoutY="44.0" size="2.5em" />
                   <VBox layoutX="29.0" layoutY="59.0" prefHeight="634.0" prefWidth="950.0">
                      <children>
@@ -77,6 +77,7 @@
                         </ScrollPane>
                      </children>
                   </VBox>
+                  <Button layoutX="414.0" layoutY="18.0" mnemonicParsing="false" onAction="#loadBookContainer" styleClass="login-btn" stylesheets="@loginDesign.css" text="Search" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="profile" layoutX="270.0" prefHeight="720.0" prefWidth="1010.0" visible="false">
@@ -88,27 +89,43 @@
                   </Label>
                   <AnchorPane layoutX="48.0" layoutY="125.0" prefHeight="554.0" prefWidth="969.0" stylesheets="@mainFormDesign.css">
                      <children>
-                        <ImageView fx:id="profileImage" fitHeight="346.0" fitWidth="242.0" layoutX="680.0" layoutY="59.0" pickOnBounds="true" />
-                        <Label fx:id="profileUsername" layoutX="77.0" layoutY="161.0" text="Username:">
+                        <Label layoutX="77.0" layoutY="161.0" text="Username:">
                            <font>
                               <Font size="32.0" />
                            </font>
                         </Label>
-                        <Label fx:id="profileID" layoutX="77.0" layoutY="67.0" text="User ID:">
+                        <Label layoutX="77.0" layoutY="67.0" text="User ID:">
                            <font>
                               <Font size="32.0" />
                            </font>
                         </Label>
-                        <Label fx:id="profileEmail" layoutX="77.0" layoutY="255.0" text="Email:">
+                        <Label layoutX="77.0" layoutY="255.0" text="Email:">
                            <font>
                               <Font size="32.0" />
                            </font>
                         </Label>
-                        <Label fx:id="profileRole" layoutX="77.0" layoutY="349.0" text="Role:">
+                        <Label layoutX="77.0" layoutY="349.0" text="Password:">
                            <font>
                               <Font size="32.0" />
                            </font>
                         </Label>
+                        <TextField fx:id="profileID" editable="false" layoutX="263.0" layoutY="75.0" prefHeight="30.0" prefWidth="263.0" />
+                        <TextField fx:id="profileUsername" layoutX="263.0" layoutY="169.0" prefHeight="30.0" prefWidth="263.0" />
+                        <TextField fx:id="profileEmail" layoutX="263.0" layoutY="263.0" prefHeight="30.0" prefWidth="263.0" />
+                        <TextField fx:id="profilePassword" layoutX="263.0" layoutY="357.0" prefHeight="30.0" prefWidth="263.0" />
+                        <AnchorPane layoutX="685.0" layoutY="45.0" prefHeight="279.0" prefWidth="226.0" stylesheets="@mainFormDesign.css">
+                           <styleClass>
+                              <String fx:value="white-bg" />
+                              <String fx:value="radius" />
+                              <String fx:value="shadow" />
+                           </styleClass>
+                           <children>
+                              <ImageView fx:id="profileImageView" fitHeight="279.0" fitWidth="226.0" pickOnBounds="true" />
+                           </children>
+                        </AnchorPane>
+                        <Button layoutX="685.0" layoutY="342.0" mnemonicParsing="false" onAction="#profileImportBtn" prefHeight="40.0" prefWidth="88.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Import" />
+                        <Button layoutX="823.0" layoutY="342.0" mnemonicParsing="false" onAction="#profileClearBtn" prefHeight="40.0" prefWidth="88.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Clear" />
+                        <Button layoutX="435.0" layoutY="440.0" mnemonicParsing="false" onAction="#editProfile" prefHeight="72.0" prefWidth="182.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Edit" />
                      </children>
                      <styleClass>
                         <String fx:value="white-bg" />
@@ -120,8 +137,6 @@
             </AnchorPane>
             <AnchorPane fx:id="inventory" layoutX="268.0" prefHeight="720.0" prefWidth="1010.0" visible="false">
                <children>
-                  <TextField layoutX="66.0" layoutY="18.0" prefHeight="32.0" prefWidth="340.0" />
-                  <FontAwesomeIcon glyphName="SEARCH" layoutX="32.0" layoutY="44.0" size="2.5em" />
                   <VBox layoutX="29.0" layoutY="59.0" prefHeight="634.0" prefWidth="950.0">
                      <children>
                         <ScrollPane prefHeight="200.0" prefWidth="200.0" stylesheets="@mainFormDesign.css" VBox.vgrow="ALWAYS">

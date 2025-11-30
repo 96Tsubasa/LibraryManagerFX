@@ -1,5 +1,8 @@
 package application.logic;
 
+import application.database.Database;
+
+import javax.xml.crypto.Data;
 import java.util.Arrays;
 
 public class Book {
@@ -148,51 +151,20 @@ public class Book {
         return (copiesAvailable > 0);
     }
 
-    /** Update copiesAvailable after borrowing or print error message if no copies available. */
-    public boolean borrow() {
+    /** Update copiesAvailable after a user borrow this book. */
+    public void borrow() {
         if (isAvailable()) {
             copiesAvailable--;
-            System.out.println("Borrowed book successfully.");
-            return true;
+            Database.editBookById(this);
         } else {
-            System.out.println("This book is not available for borrowing at the moment.");
-            return false;
+            throw new RuntimeException("This book is not available for borrowing at the moment.");
         }
     }
 
     /** Update copiesAvailable after returning the book. */
     public void returnBook() {
         copiesAvailable++;
+        Database.editBookById(this);
         System.out.println("Returned the book.");
-    }
-
-    /** Print the book information. */
-    public String getBookInfo() {
-        return "Title: " + title + "\n" +
-               "Authors: " + Arrays.toString(authors) + "\n" +
-               "Publisher: " + publisher + "\n" +
-               "Publication Year: " + publicationYear + "\n" +
-               "Genres: " + Arrays.toString(genres) + "\n" +
-               "Copies Available: " + copiesAvailable + "\n" +
-               "Description: " + description + "\n" +
-               "ISBN: " + isbn;
-    }
-
-    public static void main(String[] args) {
-        Book book = new Book(1, "The Great Gatsby",
-                new String[] {"F. Scott Fitzgerald"},
-                "Scribner",
-                1925,
-                new String[] {"Fiction", "Classic Literature", "Historical"},
-                5,
-                "The Great Gatsby is a novel about the American Dream, wealth, and society in 1920s America. It tells the story of Jay Gatsby’s unrequited love for Daisy Buchanan, exploring themes of decadence, idealism, and the hollowness of the upper class.",
-                null,
-                "9780743273565");
-
-        System.out.println(book.getBookInfo());
-
-        book.borrow();
-
-        System.out.println("Copies available: " + book.getCopiesAvailable());
     }
 }

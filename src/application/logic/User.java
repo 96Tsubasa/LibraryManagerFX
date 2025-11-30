@@ -1,5 +1,7 @@
 package application.logic;
 
+import application.database.Database;
+
 public class User {
     // User attributes
     public static final String NORMAL_USER = "USER";
@@ -107,24 +109,28 @@ public class User {
         this.limitBook = limitBook;
     }
 
+    /** check limitbook. */
+    private boolean checkBorrow() {
+        return limitBook > 0;
+    }
+
     /** Setter limitbook when borrowing book. */
     public void borrowBook() {
-        setLimitBook(limitBook--);
+        if(!checkBorrow()) {
+            throw new IllegalArgumentException("Borrowing is not available.");
+        }
+        limitBook--;
+        Database.editUserById(this);
     }
 
     /** Setter limitbook when returning book. */
     public void returnBook() {
-        setLimitBook(limitBook++);
+        limitBook ++;
+        Database.editUserById(this);
     }
 
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
-        // The password must be at least 8 characters long.
-        // It must contain at least one uppercase letter.
-        // It must contain at least one lowercase letter.
-        // It must contain at least one numeric digit.
-        // It must contain at least one special character from the set !@#$%^&*().
-        // It must not contain any whitespace characters.
         return password.length() >= 8 && !password.matches(".*[!@#$%^&*()].*")
                 && !password.contains(" ");
     }

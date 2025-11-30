@@ -1,21 +1,15 @@
 package application.logic;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import application.database.Database;
 
 public class LibrarySystem {
     private static LibrarySystem instance;
 
-    private UserSystem userSystem;
-    private BookSystem bookSystem;
-    private TransactionSystem transactionSystem;
-    private RatingSystem ratingSystem;
+    private final UserSystem userSystem;
+    private final BookSystem bookSystem;
+    private final TransactionSystem transactionSystem;
+    private final RatingSystem ratingSystem;
 
     /** Constructor. */
     private LibrarySystem() {
@@ -36,6 +30,9 @@ public class LibrarySystem {
 
     /** Create a new user, add to users List and database. Return the user object if successful. */
     public User addUser(String name, String email, String password, String role, byte[] imageUser) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can add user.");
+        }
         return userSystem.addUser(name, email, password, role, imageUser);
     }
 
@@ -47,7 +44,7 @@ public class LibrarySystem {
     /** Create a new book, add to books list and database. */
     public Book addBook(String title, String[] authors, String publisher, int publicationYear, String[] genres, int copiesAvailable, String description, byte[] coverImage, String isbn) {
         if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
-            throw new IllegalArgumentException("Only admins can add books.");
+            throw new RuntimeException("Only admins can add books.");
         }
 
         return bookSystem.addBook(title, authors, publisher, publicationYear, genres, copiesAvailable, description, coverImage, isbn);
@@ -74,10 +71,10 @@ public class LibrarySystem {
     }
 
     /** User borrow a book. */
-    public void borrowBook(long userId, long bookId) {
+    public Transaction borrowBook(long userId, long bookId, int days) {
         Book book = getBookById(bookId);
         User user = getUserById(userId);
-        transactionSystem.borrowBook(user, book);
+        return transactionSystem.borrowBook(user, book, days);
     }
 
     /** User return a book. */
@@ -115,6 +112,16 @@ public class LibrarySystem {
     /** Edit a user by userId. */
     public void editUserById(User user, String newUsername, String newEmail, String newPassword,
                              String newRole, byte[] newImageUser) {
+        User currentUser = userSystem.getCurrentUser();
+
+        // If the current user is not an admin, ensure they can only edit their own account
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            if (!currentUser.equals(user)) {
+                // If the user being edited is not the same as the current user, throw an exception
+                throw new IllegalArgumentException("You can only edit your own account.");
+            }
+        }
+
         userSystem.editUserById(user, newUsername, newEmail, newPassword, newRole, newImageUser);
     }
 
@@ -132,6 +139,10 @@ public class LibrarySystem {
     public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher,
                              int newPublicationYear, String[] newGenres, int newCopiesAvailable,
                              String newDescription, byte[] newCoverImage, String newIsbn) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can edit books.");
+        }
+
         bookSystem.editBookById(book, newTitle, newAuthors, newPublisher, newPublicationYear,
                 newGenres, newCopiesAvailable, newDescription, newCoverImage, newIsbn);
     }
@@ -144,6 +155,10 @@ public class LibrarySystem {
     /** Edit a transaction by transactionId. */
     public void editTransactionById(Transaction transaction, long userId, long bookId,
                                     LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
+        if (!userSystem.getCurrentUser().getRole().equals(User.ADMIN)) {
+            throw new IllegalArgumentException("Only admins can edit transactions.");
+        }
+
         transactionSystem.editTransactionById(transaction, userId, bookId, borrowDate,
                 dueDate, returnDate, isReturned);
     }
@@ -160,7 +175,36 @@ public class LibrarySystem {
 
     /** User changes rating. */
     public void editRatingByUserId(Rating rating, int star, String comment) {
+        User currentUser = userSystem.getCurrentUser();
+
+        // If the current user is not an admin, ensure they can only edit their own rating
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            if (currentUser.getUserId() != rating.getUserId()) {
+                // If the user being edited is not the same as the current user, throw an exception
+                throw new IllegalArgumentException("You can only edit your own rating.");
+            }
+        }
         ratingSystem.editRatingByUserId(rating, star, comment);
+    }
+
+    /** Add rating. */
+    public void addRating(long userId, long bookId, int star, LocalDate ratingDate, String comment) {
+        ratingSystem.addRating(userId, bookId, star, ratingDate, comment);
+    }
+
+    /** Delete rating.*/
+    public void deleteRatingById(long ratingId) {
+        User currentUser = userSystem.getCurrentUser();
+        Rating rating = ratingSystem.getRatingByRatingId(ratingId);
+
+        // If the current user is not an admin, ensure they can only edit their own rating
+        if (!currentUser.getRole().equals(User.ADMIN)) {
+            if (currentUser.getUserId() != rating.getUserId()) {
+                // If the user being edited is not the same as the current user, throw an exception
+                throw new IllegalArgumentException("You can only delete your own rating.");
+            }
+        }
+        ratingSystem.deleteRatingById(ratingId);
     }
 
     /** Return ratings. */
@@ -169,13 +213,13 @@ public class LibrarySystem {
     }
 
     /** Return Rating for User. */
-    public List<Rating> getRatingforUserId(long userId) {
-        return ratingSystem.getRatingforUserId(userId);
+    public List<Rating> getRatingForUserId(long userId) {
+        return ratingSystem.getRatingForUserId(userId);
     }
 
     /** Return Rating for Book. */
-    public List<Rating> getRatingforBookId(long bookId) {
-        return ratingSystem.getRatingforBookId(bookId);
+    public List<Rating> getRatingForBookId(long bookId) {
+        return ratingSystem.getRatingForBookId(bookId);
     }
 
     /** Return Rating for news. */
@@ -183,15 +227,23 @@ public class LibrarySystem {
         return ratingSystem.getRecentRating();
     }
 
-
-
     /** Get rating for search. */
-    public Rating getRatingbyRatingId(long ratingId) {
-        return ratingSystem.getRatingbyRatingId(ratingId);
+    public Rating getRatingByRatingId(long ratingId) {
+        return ratingSystem.getRatingByRatingId(ratingId);
     }
 
     /** Return list book user borrow. */
     public List<Book> getBookListUserBorrowing(long userId) {
         return transactionSystem.getBookListUserBorrowing(userId, bookSystem);
+    }
+
+    /** Return list transaction if isReturned is true. */
+    public List<Transaction> getTransactionsIfTrue() {
+        return transactionSystem.isReturnedIsTrue();
+    }
+
+    /** Return list transaction if isReturned is false. */
+    public List<Transaction> getTransactionsIfFalse() {
+        return transactionSystem.isReturnedIsFalse();
     }
 }

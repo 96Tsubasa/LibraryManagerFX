@@ -1,7 +1,8 @@
 package application.logic;
 
+import application.database.Database;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class RatingSystem {
 
     /** Constructor for RatingSystem. */
     public RatingSystem() {
-        // implement this later.
+        ratings = Database.loadRatings();
     }
 
     public List<Rating> getRatings() {
@@ -33,7 +34,7 @@ public class RatingSystem {
     }
 
     /** Return Rating for User. */
-    public List<Rating> getRatingforUserId(long userId) {
+    public List<Rating> getRatingForUserId(long userId) {
         List<Rating> returnRateForUser = new ArrayList<>();
         for (Rating rating : ratings) {
             if (rating.getUserId() == userId) {
@@ -45,7 +46,7 @@ public class RatingSystem {
     }
 
     /** Return Rating for Book. */
-    public List<Rating> getRatingforBookId(long bookId) {
+    public List<Rating> getRatingForBookId(long bookId) {
         List<Rating> returnRateForBook = new ArrayList<>();
         for (Rating rating : ratings) {
             if (rating.getBookId() == bookId) {
@@ -67,7 +68,7 @@ public class RatingSystem {
     }
 
     /** Get rating for search. */
-    public Rating getRatingbyRatingId(long ratingId) {
+    public Rating getRatingByRatingId(long ratingId) {
         for (Rating rating : ratings) {
             if (rating.getRatingId() == ratingId) {
                 return rating;
@@ -81,12 +82,21 @@ public class RatingSystem {
         rating.setStar(star);
         rating.setRatingDate(LocalDate.now());
         rating.setComment(comment);
+        Database.editRatingById(rating);
     }
 
     /** Add rating. */
-//    public void addRating(long userId, long bookId, int star, LocalDate rateDate, String comment) {
-//        long ratingId = Database.createNewRatingId();
-//        Rating newrating = new Rating(ratingId, userId, bookId, rateDate, comment);
-//        Database.addRating(newrating);
-//    }
+   public Rating addRating(long userId, long bookId, int star, LocalDate ratingDate, String comment) {
+       long ratingId = Database.createNewRatingId();
+       Rating newRating = new Rating(ratingId, userId, bookId, star, ratingDate, comment);
+       ratings.add(newRating);
+       Database.addRating(newRating);
+       return newRating;
+   }
+
+   /** Delete rating. */
+   public void deleteRatingById(long ratingId) {
+       ratings.removeIf(rating -> rating.getRatingId() == ratingId);
+       Database.deleteRatingById(ratingId);
+   }
 }

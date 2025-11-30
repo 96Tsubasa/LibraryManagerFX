@@ -5,8 +5,10 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
+import application.api.GoogleBooksAPIClient;
 import application.logic.Book;
 import application.logic.LibrarySystem;
+import application.logic.Transaction;
 import application.logic.User;
 
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -30,6 +34,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -44,10 +49,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 
 public class ManagerDashboardController implements Initializable {
     private Stage stage;
@@ -66,6 +74,9 @@ public class ManagerDashboardController implements Initializable {
     
     private User editingUser;
     private Book editingBook;
+
+    private User issuingUser;
+    private Book issuingBook;
     
     @FXML
     private AnchorPane addBook;
@@ -319,6 +330,72 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private TextField deleteBookID;
 
+    @FXML
+    private AnchorPane issueBook;
+
+    @FXML
+    private TextField issueBookBookID;
+
+    @FXML
+    private TextField issueBookMemberID;
+
+    @FXML
+    private DatePicker issueBookReturnDate;
+
+    @FXML
+    private Label issueBookBookName;
+
+    @FXML
+    private Label issueBookMemberUsername;
+
+    @FXML
+    private Label issueBookAvailable;
+
+    @FXML
+    private TableView<Transaction> returnBookTable;
+
+    @FXML
+    private TableColumn<Transaction, Long> returnBookTableBookID;
+
+    @FXML
+    private TableColumn<Transaction, Long> returnBookTableMemberID;
+
+    @FXML
+    private TableColumn<Transaction, String> returnBookTableStatus;
+
+    @FXML
+    private TableColumn<Transaction, LocalDate> returnBookTableIssueDate;
+
+    @FXML
+    private TableColumn<Transaction, LocalDate> returnBookTableReturnDate;
+
+    @FXML
+    private TableColumn<Transaction, LocalDate> returnBookTableDueDate;
+
+    @FXML
+    private AnchorPane returnBook;
+
+    @FXML
+    private TextField returnBookBookID;
+
+    @FXML
+    private TextField returnBookMemberID;
+
+    @FXML
+    private DatePicker returnBookIssueDate;
+
+    @FXML
+    private DatePicker returnBookDueDate;
+
+    @FXML
+    private Label returnBookBookName;
+
+    @FXML
+    private Label returnBookMemberUsername;
+
+    @FXML
+    private ComboBox<String> returnBookStatus;
+
     private String[] roleList = {"USER", "ADMIN"};
     public void userRoleList() {
         List<String> roleL = new ArrayList<>();
@@ -431,6 +508,20 @@ public class ManagerDashboardController implements Initializable {
         bookListShowImage.setImage(bookListImage);
     }
 
+    private void clearMemberData() {
+        memberListIDShow.setText("ID:");
+        memberListUsernameShow.setText("Username:");
+        memberListPasswordShow.setText("Password:");
+        memberListEmailShow.setText("Email:");
+        memberListRoleShow.setText("Role:");
+        memberListImageShow.setImage(new Image(getClass().getResource("/resources/image/avatar.png").toExternalForm()));
+    }
+
+    private void clearBookData() {
+        bookListShow.setText("");
+        bookListShowImage.setImage(null);
+    }
+
     private void disableNode() {
         if (current.equals("dashboard")) dashboard.setVisible(false);
         if (current.equals("addMember")) addMember.setVisible(false);
@@ -441,6 +532,8 @@ public class ManagerDashboardController implements Initializable {
         if (current.equals("editBook")) editBook.setVisible(false);
         if (current.equals("deleteBook")) deleteBook.setVisible(false);
         if (current.equals("bookList")) bookList.setVisible(false);
+        if (current.equals("issueBook")) issueBook.setVisible(false);
+        if (current.equals("returnBook")) returnBook.setVisible(false);
     }
 
     @FXML
@@ -507,6 +600,26 @@ public class ManagerDashboardController implements Initializable {
     }
 
     @FXML
+    private void switchToIssueBook(ActionEvent event) {
+        disableNode();
+        if (current != "issueBook") clearIssueBookInput();
+        current = "issueBook";
+        issueBook.setVisible(true);
+        issuingBook = null;
+        issuingUser = null;
+    }
+
+    @FXML
+    private void switchToReturnBook(ActionEvent event) {
+        disableNode();
+        if (current != "returnBook") clearReturnBookInput();
+        current = "returnBook";
+        returnBook.setVisible(true);
+        issuingBook = null;
+        issuingUser = null;
+    }
+
+    @FXML
     private void logout(ActionEvent event) throws IOException {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Error Message");
@@ -545,6 +658,7 @@ public class ManagerDashboardController implements Initializable {
                 memberListData.add(newUser);
                 showAlert(AlertType.INFORMATION, "Add Member", "Add Member Successfully!");
                 clearAddMemberInput();
+                showDashboardInformation();
             }
         } catch (IllegalArgumentException e) {
             showAlert(AlertType.ERROR, "Error Message", e.getMessage());
@@ -579,6 +693,20 @@ public class ManagerDashboardController implements Initializable {
                 if (option.get().equals(ButtonType.OK)) {
                     librarySystem.deleteUserById(userID);
                     memberListData.removeIf(member -> member.getUserId() == userID);
+
+                    showAlert(AlertType.INFORMATION, "Success", "Delete member successfully!");
+
+                    //if selecting user is deleted, clear data on memberList
+                    String userIDText = memberListIDShow.getText();
+                    if (userIDText.length() < 5) {
+                        return;
+                    }
+
+                    if (String.valueOf(userID).equals(memberListIDShow.getText().substring(4))) {
+                        clearMemberData();
+                    }
+
+                    showDashboardInformation();
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -610,6 +738,19 @@ public class ManagerDashboardController implements Initializable {
                 if (option.get().equals(ButtonType.OK)) {
                     librarySystem.deleteBookById(bookID);
                     bookListData.removeIf(book -> book.getBookId() == bookID);
+
+                    showAlert(AlertType.INFORMATION, "Success", "Delete book successfully!");
+                    showDashboardInformation();
+
+                    //if showing book is deleted, clear data in book list
+                    if (bookListShow.getText().length() < 5) {
+                        return;
+                    }
+
+                    String showingBookID = bookListShow.getText().split("\n")[0].substring(4);
+                    if (String.valueOf(bookID).equals(showingBookID)) {
+                        clearBookData();
+                    }
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -648,6 +789,7 @@ public class ManagerDashboardController implements Initializable {
                 editMemberRole.getSelectionModel().select(role);
             } else {
                 showAlert(AlertType.ERROR, "Error Message", "That user doesn't exist!");
+                clearEditMemberInput();
             }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error Message", "Invalid Member ID!");
@@ -657,6 +799,10 @@ public class ManagerDashboardController implements Initializable {
     @FXML
     private void editMember(ActionEvent e) throws IllegalArgumentException {
         try {
+            if (editingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a user first!");
+            }
+            
             String username = editMemberUsername.getText();
             String email = editMemberEmail.getText();
             String password = editMemberPassword.getText();
@@ -665,9 +811,35 @@ public class ManagerDashboardController implements Initializable {
             librarySystem.editUserById(editingUser, username, email, password, role, bytes);
             memberListTable.refresh();
             showAlert(AlertType.INFORMATION, "Information Message", "You updated a member successfully!");
+            clearEditMemberInput();
         } catch (IllegalArgumentException exception) {
             showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
         }
+    }
+
+    private void clearEditMemberInput() {
+        editMemberID.clear();
+        editMemberUsername.clear();
+        editMemberPassword.clear();
+        editMemberEmail.clear();
+        editMemberRole.getSelectionModel().clearSelection();
+        editMemberImage.setImage(new Image("/resources/image/avatar.png"));
+        editingUser = null;
+    }
+
+    private void clearEditBookInput() {
+        editBookID.clear();
+        editBookISBN.clear();
+        editBookAuthor.clear();
+        editBookTitle.clear();
+        editBookGenre.clear();
+        editBookPublisher.clear();
+        editBookDescription.clear();
+        editBookPublicationYear.clear();
+        editBookCopiesAvailable.clear();
+        editBookImage = null;
+        editBookImageView.setImage(null);
+        editingBook = null;
     }
 
     @FXML
@@ -749,7 +921,7 @@ public class ManagerDashboardController implements Initializable {
             }
             
             int copiesAvailable = addBookCopiesAvailable.getValue();
-            librarySystem.addBook(
+            Book newBook = librarySystem.addBook(
                 title, 
                 authors, 
                 publisher, 
@@ -760,8 +932,11 @@ public class ManagerDashboardController implements Initializable {
                 convertImageToBytes(addBookImage), 
                 isbn
             );
+            bookListData.add(newBook);
             showAlert(AlertType.INFORMATION, "Success", "Book added successfully!");
             clearAddBookInput();
+
+            showDashboardInformation();
         } catch (Exception e) {
             showAlert(AlertType.ERROR, "Error", "An unexpected error occurred: " + e.getMessage());
         }
@@ -793,12 +968,14 @@ public class ManagerDashboardController implements Initializable {
                 editBookPublicationYear.setText(String.valueOf(editingBook.getPublicationYear()));
                 editBookCopiesAvailable.setText(String.valueOf(editingBook.getCopiesAvailable()));
                 if (editingBook.getCoverImage() != null) {
+                    editBookImage = convertBytesToImage(editingBook.getCoverImage());
                     editBookImageView.setImage(convertBytesToImage(editingBook.getCoverImage()));
                 } else {
                     editBookImageView.setImage(null);
                 }
             } else {
                 showAlert(AlertType.ERROR, "Error Message", "That book doesn't exist!");
+                clearEditBookInput();
             }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error Message", "Invalid Book ID!");
@@ -807,6 +984,11 @@ public class ManagerDashboardController implements Initializable {
 
     public void editBook() throws IllegalArgumentException {
         try {
+            if (editingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a book id first!");
+                return;
+            }
+            
             if (editBookISBN.getText().isEmpty() || 
                 editBookAuthor.getText().isEmpty() || 
                 editBookTitle.getText().isEmpty() || 
@@ -838,6 +1020,9 @@ public class ManagerDashboardController implements Initializable {
             librarySystem.editBookById(editingBook, title, authors, publisher, publicationYear, genres, copiesAvailable, description, convertImageToBytes(editBookImage), isbn);
             bookListTable.refresh();
             showAlert(AlertType.INFORMATION, "Information Message", "You updated a book successfully!");
+            clearEditBookInput();
+
+            showDashboardInformation();
         } catch (IllegalArgumentException exception) {
             showAlert(AlertType.ERROR, "Error Message", exception.getMessage());
         }
@@ -853,6 +1038,234 @@ public class ManagerDashboardController implements Initializable {
             editBookImage = new Image(file.toURI().toString(), 200, 237, false, true);
             editBookImageView.setImage(editBookImage);
         }
+    }
+
+    public void issueSearchBook() {
+        try {
+            String bookID = issueBookBookID.getText();
+            if (bookID.isEmpty()) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill in book ID!");
+                return;
+            }
+
+            issuingBook = librarySystem.getBookById(Long.parseLong(bookID));
+            if (issuingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "That book ID is not exist!");
+                return;
+            }
+
+            issueBookBookName.setText(issuingBook.getTitle());
+            if (issuingBook.getCopiesAvailable() == 0) {
+                issueBookAvailable.setText("No");
+            } else {
+                issueBookAvailable.setText("Yes");
+            }
+        } catch(NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid book ID!");
+        }
+    }
+
+    public void issueSearchMember() {
+        try {
+            String memberID = issueBookMemberID.getText();
+            if (memberID.isEmpty()) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill in member ID!");
+                return;
+            }
+
+            issuingUser = librarySystem.getUserById(Long.parseLong(memberID));
+            if (issuingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "That user ID is not exist!");
+                return;
+            }
+
+            issueBookMemberUsername.setText(issuingUser.getUsername());
+        } catch(NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Invalid member ID!");
+        }
+    }
+
+    public void showBookCard() throws IOException {
+        if (issuingBook == null && (current == "issueBook" || current == "returnBook")) {
+            if (current == "issueBook") {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a book first!");
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "You must select a transaction first!");
+            }
+            return;
+        }
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("BookCard.fxml"));
+        Parent root = loader.load();
+
+        BookCardController controller = loader.getController();
+        controller.setData(issuingBook);
+
+        Stage newStage = new Stage();
+        newStage.setTitle("Book Info");
+        newStage.setScene(new Scene(root));
+
+        newStage.show();
+    }
+
+    public void showMemberCard() throws IOException {
+        if (issuingUser == null && (current == "issueBook" || current == "returnBook")) {
+            if (current == "issueBook") {
+                showAlert(AlertType.ERROR, "Error Message", "You must search a book first!");
+            } else {
+                showAlert(AlertType.ERROR, "Error Message", "You must select a transaction first!");
+            }
+            return;
+        }
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MemberCard.fxml"));
+        Parent root = loader.load();
+
+        MemberCardController controller = loader.getController();
+        controller.setData(issuingUser);
+
+        Stage newStage = new Stage();
+        newStage.setTitle("Member Info");
+        newStage.setScene(new Scene(root));
+
+        newStage.show();
+    }
+
+    public void issueBook() {
+        try {
+            LocalDate dueDate = issueBookReturnDate.getValue();
+            if (issuingBook == null || issuingUser == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must search member and book first!");
+            }
+            
+            int day = (int)ChronoUnit.DAYS.between(LocalDate.now(), dueDate);
+            Transaction newTransaction = librarySystem.borrowBook(issuingUser.getUserId(), issuingBook.getBookId(), day);
+            showAlert(AlertType.INFORMATION, "Success", "Issue Book successfully!");
+            clearIssueBookInput();
+            transactionListData.add(newTransaction);
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    private void clearIssueBookInput() {
+        issuingBook = null;
+        issuingUser = null;
+        issueBookBookID.clear();
+        issueBookMemberID.clear();
+        issueBookReturnDate.setValue(LocalDate.now());
+        issueBookBookName.setText("Book Name");
+        issueBookMemberUsername.setText("Member Username");
+        issueBookAvailable.setText("Yes-or-No");
+    }
+
+    private ObservableList<Transaction> transactionListData;
+    public void transactionListShowData() {
+        if (returnBookStatus.getValue().equals("All")) {
+            transactionListData = FXCollections.observableArrayList(librarySystem.getTransactions());
+        } else if (returnBookStatus.getValue().equals("Issued")) {
+            transactionListData = FXCollections.observableArrayList(librarySystem.getTransactionsIfFalse());
+        } else {
+            transactionListData = FXCollections.observableArrayList(librarySystem.getTransactionsIfTrue());
+        }
+        
+        returnBookTableBookID.setCellValueFactory(new PropertyValueFactory<>("bookId"));
+        returnBookTableMemberID.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        returnBookTableStatus.setCellValueFactory(cellData -> {
+            boolean isReturned = cellData.getValue().isReturned();
+            String status = isReturned ? "Returned" : "Issued";
+            return new SimpleStringProperty(status);
+        });
+        returnBookTableIssueDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
+        returnBookTableReturnDate.setCellValueFactory(new PropertyValueFactory<>("returnDate"));
+        returnBookTableDueDate.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        returnBookTable.setItems(transactionListData);
+    }
+
+    public void returnBookListSelectData() {
+        Transaction transaction = returnBookTable.getSelectionModel().getSelectedItem();
+        int num = returnBookTable.getSelectionModel().getSelectedIndex();
+        if (num < 0) return;
+
+        issuingBook = librarySystem.getBookById(transaction.getBookId());
+        issuingUser = librarySystem.getUserById(transaction.getUserId());
+        
+        returnBookBookID.setText(String.valueOf(transaction.getBookId()));
+        returnBookMemberID.setText(String.valueOf(transaction.getUserId()));
+        returnBookIssueDate.setValue(transaction.getBorrowDate());
+        returnBookDueDate.setValue(transaction.getDueDate());
+        returnBookBookName.setText(issuingBook.getTitle());
+        returnBookMemberUsername.setText(issuingUser.getUsername());
+    }
+
+    public void returnBook() {
+        try {
+            if (issuingBook == null) {
+                showAlert(AlertType.ERROR, "Error Message", "You must select a transaction first!");
+                return;
+            }
+    
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to return the book?");
+            Optional<ButtonType> option = alert.showAndWait();
+            if (option.get().equals(ButtonType.OK)) {
+                librarySystem.returnBook(issuingUser.getUserId(), issuingBook.getBookId());
+                showAlert(AlertType.INFORMATION, "Information", "Return book successfully!");
+                returnBookTable.refresh();
+            }
+        } catch (IllegalArgumentException e) {
+            showAlert(AlertType.ERROR, "Error Message", e.getMessage());
+        }
+    }
+
+    private void clearReturnBookInput() {
+        returnBookTable.getSelectionModel().clearSelection();
+        returnBookBookID.clear();
+        returnBookMemberID.clear();
+        returnBookIssueDate.setValue(null);
+        returnBookDueDate.setValue(null);
+        returnBookBookName.setText("Book Name");
+        returnBookMemberUsername.setText("Member Username");
+    }
+
+    public void searchBookInfo() throws IOException, InterruptedException {
+        try {
+            String isbn = addBookISBN.getText();
+            if (isbn.equals("")) {
+                showAlert(AlertType.ERROR, "Error Message", "You must fill in ISBN first!");
+                return;
+            }
+        
+            Book book = GoogleBooksAPIClient.getBookInfoByISBN(isbn);
+            if (book == null) {
+                showAlert(AlertType.ERROR, "Error Message", "No book found with the entered ISBN. Please check the ISBN and try again.!");
+                return;
+            }
+            addBookAuthor.setText(book.getAuthorsAsString());
+            addBookGenre.setText(book.getGenresAsString());
+            addBookDescription.setText(book.getDescription());
+            addBookImage = convertBytesToImage(book.getCoverImage());
+            addBookImageView.setImage(addBookImage);
+            addBookTitle.setText(book.getTitle());
+            addBookPublisher.setText(book.getPublisher());
+            addBookPublicationYear.setText(String.valueOf(book.getPublicationYear()));
+        } catch (IOException e) {
+            showAlert(AlertType.ERROR, "Network Error", "An error occurred while fetching book information. Please check your network connection and try again.");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            showAlert(AlertType.ERROR, "Operation Interrupted", "The operation was interrupted. Please try again.");
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Unexpected Error", "An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void chooseStatus() {
+        returnBookStatus.getItems().addAll("All", "Issued", "Returned");
+        returnBookStatus.setValue("All");
     }
 
     private void displayUsername() {
@@ -916,5 +1329,8 @@ public class ManagerDashboardController implements Initializable {
         handleMemberSearch();
         handleBookSearch();
         initializeSpinner();
+        issueBookReturnDate.setValue(LocalDate.now());
+        chooseStatus();
+        transactionListShowData();
     }
 }

@@ -5,7 +5,7 @@ import application.database.Database;
 import java.util.List;
 
 public class UserSystem {
-    private List<User> users;
+    private final List<User> users;
     private User currentUser;
     private int countAdmin;
     private int countUser;
