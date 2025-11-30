@@ -1,7 +1,5 @@
 package application.logic;
 
-import application.database.Database;
-
 public class User {
     // User attributes
     public static final String NORMAL_USER = "USER";
@@ -16,11 +14,11 @@ public class User {
 
     /** Constructor to initialize user data. */
     public User(String name, long userId, String email, String password, String role, byte[] imageUser) {
-        setUsername(name);       // Validates and sets username
-        setUserId(userId);       // Directly sets userId (additional validation can be added here if needed)
-        setEmail(email);         // Validates and sets email
-        setPassword(password);   // Validates and sets password
-        setRole(role);           // Validates and sets role
+        setUsername(name); // Validates and sets username
+        setUserId(userId); // Directly sets userId (additional validation can be added here if needed)
+        setEmail(email); // Validates and sets email
+        setPassword(password); // Validates and sets password
+        setRole(role); // Validates and sets role
         this.imageUser = imageUser;
         this.limitBook = 10;
     }
@@ -116,23 +114,20 @@ public class User {
 
     /** Setter limitbook when borrowing book. */
     public void borrowBook() {
-        if(!checkBorrow()) {
+        if (!checkBorrow()) {
             throw new IllegalArgumentException("Borrowing is not available.");
         }
         limitBook--;
-        Database.editUserById(this);
     }
 
     /** Setter limitbook when returning book. */
     public void returnBook() {
-        limitBook ++;
-        Database.editUserById(this);
+        limitBook++;
     }
 
     /** Validates password complexity. */
     private boolean isValidPassword(String password) {
-        return password.length() >= 8 && !password.matches(".*[!@#$%^&*()].*")
-                && !password.contains(" ");
+        return password.length() >= 8 && !password.matches(".*[!@#$%^&*()].*") && !password.contains(" ");
     }
 
     /** Validates email format. */

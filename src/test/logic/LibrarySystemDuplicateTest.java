@@ -1,6 +1,7 @@
 package test.logic;
 
 import application.logic.User;
+import application.logic.UserSystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +11,17 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+import test.fakes.FakeUserRepository;
+
 public class LibrarySystemDuplicateTest {
-    private FakeLibrarySystem librarySystem;
+    private UserSystem librarySystem;
+    private FakeUserRepository userRepo;
     private List<Long> createdUserIds = new ArrayList<>();
 
     @Before
     public void setUp() {
-        librarySystem = new FakeLibrarySystem();
+        userRepo = new FakeUserRepository();
+        librarySystem = new UserSystem(userRepo);
         createdUserIds.clear();
     }
 
@@ -55,27 +60,5 @@ public class LibrarySystemDuplicateTest {
         } catch (IllegalArgumentException e) {
             // expected
         }
-    }
-}
-
-// Simple in-test fake to avoid DB access and make tests unit tests
-class FakeLibrarySystem {
-    private List<User> users = new ArrayList<>();
-    private long nextId = 1L;
-
-    public User addUser(String name, String email, String password, String role, byte[] imageUser) {
-        for (User u : users) {
-            if (u.getUsername().equals(name))
-                throw new IllegalArgumentException("Username is already registered.");
-            if (u.getEmail().equals(email))
-                throw new IllegalArgumentException("Email is already registered.");
-        }
-        User u = new User(name, nextId++, email, password, role, imageUser);
-        users.add(u);
-        return u;
-    }
-
-    public void deleteUserById(long id) {
-        users.removeIf(u -> u.getUserId() == id);
     }
 }

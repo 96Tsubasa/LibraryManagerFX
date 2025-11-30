@@ -1,17 +1,33 @@
 package application.logic;
 
-import application.database.Database;
+import application.repository.BookRepository;
+import application.repository.DatabaseBookRepository;
+import application.repository.TransactionRepository;
+import application.repository.DatabaseTransactionRepository;
+import application.repository.UserRepository;
+import application.repository.DatabaseUserRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionSystem {
+    private final TransactionRepository transactionRepo;
+    private final BookRepository bookRepo;
+    private final UserRepository userRepo;
     private final List<Transaction> transactions;
 
-    /** Constructor for TransactionSystem. */
+    /** Default constructor (production) uses Database-backed repositories. */
     public TransactionSystem() {
-        transactions = Database.loadTransactions();
+        this(new DatabaseTransactionRepository(), new DatabaseBookRepository(), new DatabaseUserRepository());
+    }
+
+    /** Constructor for DI/testing. */
+    public TransactionSystem(TransactionRepository transactionRepo, BookRepository bookRepo, UserRepository userRepo) {
+        this.transactionRepo = transactionRepo;
+        this.bookRepo = bookRepo;
+        this.userRepo = userRepo;
+        this.transactions = transactionRepo.loadTransactions();
     }
 
     public List<Transaction> getTransactions() {
@@ -20,10 +36,8 @@ public class TransactionSystem {
 
     /** User borrow a book, return true if successful. */
     private boolean hasUserBorrowedBook(long userId, long bookId) {
-        return transactions.stream()
-                .anyMatch(transaction -> transaction.getUserId() == userId &&
-                        transaction.getBookId() == bookId &&
-                        !transaction.isReturned());
+        return transactions.stream().anyMatch(transaction -> transaction.getUserId() == userId
+                && transaction.getBookId() == bookId && !transaction.isReturned());
     }
 
     /** User borrow a book. */
@@ -32,43 +46,31 @@ public class TransactionSystem {
             throw new IllegalArgumentException("User or Book cannot be null.");
         }
 
-        if (!book.isAvailable()) {
-            throw new RuntimeException("The book is not available.");
-        }
-
         if (hasUserBorrowedBook(user.getUserId(), book.getBookId())) {
-            throw new RuntimeException("The user has already borrowed this book.");
-        }
-
-        if (days <= 0 || days >= 90) {
-            throw new IllegalArgumentException("Invalid borrow in time.");
+            throw new IllegalArgumentException("Already borrowed");
         }
 
         user.borrowBook();
         book.borrow();
 
-        long transactionId = Database.createNewTransactionId();
-        Transaction transaction = new Transaction(
-                transactionId,
-                user.getUserId(),
-                book.getBookId(),
-                LocalDate.now(),
-                LocalDate.now().plusDays(days),
-                null,
-                false
-        );
+        long transactionId = transactionRepo.createNewTransactionId();
+        Transaction transaction = new Transaction(transactionId, user.getUserId(), book.getBookId(), LocalDate.now(),
+                LocalDate.now().plusDays(days), null, false);
 
         transactions.add(transaction);
-        Database.addTransaction(transaction);
+        transactionRepo.addTransaction(transaction);
+
+        // Persist domain changes (user and book)
+        userRepo.editUserById(user);
+        bookRepo.editBookById(book);
+
         return transaction;
     }
 
     /** Check if there is a pending transaction for a specific user and book. */
     private boolean hasPendingTransaction(long userId, long bookId) {
-        return transactions.stream()
-                .anyMatch(transaction -> transaction.getUserId() == userId &&
-                        transaction.getBookId() == bookId &&
-                        !transaction.isReturned());
+        return transactions.stream().anyMatch(transaction -> transaction.getUserId() == userId
+                && transaction.getBookId() == bookId && !transaction.isReturned());
     }
 
     /** User return a book. */
@@ -78,18 +80,20 @@ public class TransactionSystem {
         }
 
         if (!hasPendingTransaction(user.getUserId(), book.getBookId())) {
-            throw new RuntimeException("No valid return transaction found.");
+            throw new IllegalArgumentException("No valid return transaction found.");
         }
 
         for (Transaction transaction : transactions) {
-            if (transaction.getUserId() == user.getUserId() &&
-                    transaction.getBookId() == book.getBookId() &&
-                    !transaction.isReturned()) {
+            if (transaction.getUserId() == user.getUserId() && transaction.getBookId() == book.getBookId()
+                    && !transaction.isReturned()) {
                 transaction.setReturned(true);
                 transaction.setReturnDate(LocalDate.now());
                 book.returnBook();
                 user.returnBook();
-                Database.editTransactionById(transaction);
+                // Persist domain changes (transaction, book, user)
+                transactionRepo.editTransactionById(transaction);
+                bookRepo.editBookById(book);
+                userRepo.editUserById(user);
                 return;
             }
         }
@@ -106,22 +110,22 @@ public class TransactionSystem {
     }
 
     /** Edit a transaction by transactionId. */
-    public void editTransactionById(Transaction transaction, long userId, long bookId,
-                                    LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
+    public void editTransactionById(Transaction transaction, long userId, long bookId, LocalDate borrowDate,
+            LocalDate dueDate, LocalDate returnDate, boolean isReturned) {
         transaction.setUserId(userId);
         transaction.setBook(bookId);
         transaction.setBorrowDate(borrowDate);
         transaction.setDueDate(dueDate);
         transaction.setReturnDate(returnDate);
         transaction.setReturned(isReturned);
-        Database.editTransactionById(transaction);
+        transactionRepo.editTransactionById(transaction);
     }
 
     /** Return list book user borrow. */
     public List<Book> getBookListUserBorrowing(long userId, BookSystem bookSystem) {
         List<Book> borrowing = new ArrayList<>();
-        for(Transaction transaction : transactions) {
-            if(transaction.getUserId() == userId && !transaction.isReturned()) {
+        for (Transaction transaction : transactions) {
+            if (transaction.getUserId() == userId && !transaction.isReturned()) {
                 Book book = bookSystem.getBookById(transaction.getBookId());
                 borrowing.add((book));
             }
@@ -132,8 +136,8 @@ public class TransactionSystem {
     /** List transaction if isReturned is true. */
     public List<Transaction> isReturnedIsTrue() {
         List<Transaction> listTrue = new ArrayList<>();
-        for(Transaction transaction : transactions) {
-            if(transaction.isReturned()) {
+        for (Transaction transaction : transactions) {
+            if (transaction.isReturned()) {
                 listTrue.add(transaction);
             }
         }
@@ -143,8 +147,8 @@ public class TransactionSystem {
     /** List transaction if isReturned is false. */
     public List<Transaction> isReturnedIsFalse() {
         List<Transaction> listFalse = new ArrayList<>();
-        for(Transaction transaction : transactions) {
-            if(!transaction.isReturned()) {
+        for (Transaction transaction : transactions) {
+            if (!transaction.isReturned()) {
                 listFalse.add(transaction);
             }
         }

@@ -1,18 +1,26 @@
 package application.logic;
 
-import application.database.Database;
+import application.repository.DatabaseUserRepository;
+import application.repository.UserRepository;
 
 import java.util.List;
 
 public class UserSystem {
+    private final UserRepository repo;
     private final List<User> users;
     private User currentUser;
     private int countAdmin;
     private int countUser;
 
-    /** Constructor for UserSystem. */
+    /** Default constructor (production) uses Database-backed repository. */
     public UserSystem() {
-        users = Database.loadUsers();
+        this(new DatabaseUserRepository());
+    }
+
+    /** Constructor for dependency injection (tests can pass a fake repo). */
+    public UserSystem(UserRepository repo) {
+        this.repo = repo;
+        users = repo.loadUsers();
         setCount();
     }
 
@@ -45,7 +53,10 @@ public class UserSystem {
         return countUser;
     }
 
-    /** Create a new user, add to users List and database. Return the user object if successful. */
+    /**
+     * Create a new user, add to users List and database. Return the user object if
+     * successful.
+     */
     public User addUser(String name, String email, String password, String role, byte[] imageUser) {
         if (isEmailRegistered(email)) {
             throw new IllegalArgumentException("Email is already registered.");
@@ -54,7 +65,7 @@ public class UserSystem {
             throw new IllegalArgumentException("Username is already registered.");
         }
 
-        long userId = Database.createNewUserId();
+        long userId = repo.createNewUserId();
         // Create a new user instance and add to the users list
         User user = new User(name, userId, email, password, role, imageUser);
         users.add(user);
@@ -63,14 +74,15 @@ public class UserSystem {
         } else {
             countUser++;
         }
-        Database.addUser(user);
+        repo.addUser(user);
         return user;
     }
 
     /** Checks if the email is already registered. */
     private boolean isEmailRegistered(String email) {
         for (User user : users) {
-            // If an email match is found, throw an exception indicating the email is already registered
+            // If an email match is found, throw an exception indicating the email is
+            // already registered
             if (user.getEmail().equals(email)) {
                 return true;
             }
@@ -81,7 +93,8 @@ public class UserSystem {
     /** Checks if the username is already registered. */
     private boolean isUserRegistered(String username) {
         for (User user : users) {
-            // If a username match is found, throw an exception indicating the email is already registered
+            // If a username match is found, throw an exception indicating the email is
+            // already registered
             if (user.getUsername().equals(username)) {
                 return true;
             }
@@ -89,7 +102,10 @@ public class UserSystem {
         return false;
     }
 
-    /** Check username and password with the users list, return null if no username or false password. */
+    /**
+     * Check username and password with the users list, return null if no username
+     * or false password.
+     */
     public User handleLogin(String username, String password) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {
@@ -114,19 +130,19 @@ public class UserSystem {
     }
 
     /** Edit a user by userId. */
-    public void editUserById(User user, String newUsername, String newEmail, String newPassword,
-                             String newRole, byte[] newImageUser) {
+    public void editUserById(User user, String newUsername, String newEmail, String newPassword, String newRole,
+            byte[] newImageUser) {
         user.setUsername(newUsername);
         user.setEmail(newEmail);
         user.setPassword(newPassword);
         user.setRole(newRole);
         user.setImageUser(newImageUser);
-        Database.editUserById(user);
+        repo.editUserById(user);
     }
 
     /** Delete a user in the system with userId. */
     public void deleteUserById(long userId) {
         users.removeIf(user -> user.getUserId() == userId);
-        Database.deleteUserById(userId);
+        repo.deleteUserById(userId);
     }
 }

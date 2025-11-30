@@ -67,11 +67,17 @@ public class BookTest {
     public void testBorrowAndReturnBook() {
         Book book = new Book();
         book.setCopiesAvailable(2);
-        assertTrue(book.borrow());
+
+        book.borrow();
         assertEquals(1, book.getCopiesAvailable());
-        assertTrue(book.borrow());
+        book.borrow();
         assertEquals(0, book.getCopiesAvailable());
-        assertFalse(book.borrow());
+        try {
+            book.borrow();
+            fail("Expected RuntimeException when borrowing with no copies available");
+        } catch (RuntimeException ex) {
+            // expected
+        }
         book.returnBook();
         assertEquals(1, book.getCopiesAvailable());
     }
@@ -94,14 +100,17 @@ public class BookTest {
     public void testGetBookInfo() {
         Book book = new Book(1L, "Title", new String[] { "A" }, "Pub", 2022, new String[] { "G" }, 1, "Desc", null,
                 "ISBN");
-        String info = book.getBookInfo();
-        assertTrue(info.contains("Title: Title"));
-        assertTrue(info.contains("Authors: [A]"));
-        assertTrue(info.contains("Publisher: Pub"));
-        assertTrue(info.contains("Publication Year: 2022"));
-        assertTrue(info.contains("Genres: [G]"));
-        assertTrue(info.contains("Copies Available: 1"));
-        assertTrue(info.contains("Description: Desc"));
-        assertTrue(info.contains("ISBN: ISBN"));
+
+        assertEquals(1L, book.getBookId());
+        assertEquals("Title", book.getTitle());
+        assertArrayEquals(new String[] { "A" }, book.getAuthors());
+        assertEquals("Pub", book.getPublisher());
+        assertEquals(2022, book.getPublicationYear());
+        assertArrayEquals(new String[] { "G" }, book.getGenres());
+        assertEquals(1, book.getCopiesAvailable());
+        assertEquals("Desc", book.getDescription());
+        assertEquals("ISBN", book.getIsbn());
+        assertEquals("A", book.getAuthorsAsString());
+        assertEquals("G", book.getGenresAsString());
     }
 }
