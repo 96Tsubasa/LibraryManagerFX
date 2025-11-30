@@ -1,20 +1,25 @@
 package test.user;
 
 import application.logic.User;
+import application.logic.UserSystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import test.fakes.FakeUserRepository;
+
 import java.util.*;
 
 public class UserSystemTest {
-    // Use a lightweight in-memory fake to keep these tests pure unit tests
-    private FakeUserSystem userSystem;
+    // Use a lightweight in-memory fake repo and the real UserSystem
+    private UserSystem userSystem;
+    private FakeUserRepository fakeRepo;
     private List<Long> createdUserIds = new ArrayList<>();
 
     @Before
     public void setUp() {
-        userSystem = new FakeUserSystem();
+        fakeRepo = new FakeUserRepository();
+        userSystem = new UserSystem(fakeRepo);
         createdUserIds.clear();
     }
 
@@ -149,100 +154,5 @@ public class UserSystemTest {
 
         userSystem.handleLogin("CurrentUser", "Password123");
         assertEquals(user, userSystem.getCurrentUser());
-    }
-}
-
-/**
- * In-test fake replacement for `UserSystem` to avoid touching the real
- * database. This keeps the tests as pure unit tests that exercise logic only.
- */
-class FakeUserSystem {
-    private List<User> users = new ArrayList<>();
-    private User currentUser = null;
-    private int countAdmin = 0;
-    private int countUser = 0;
-    private long nextId = 1L;
-
-    public FakeUserSystem() {
-        // start with empty in-memory user list
-        setCount();
-    }
-
-    private void setCount() {
-        countAdmin = 0;
-        countUser = 0;
-        for (User u : users) {
-            if (User.ADMIN.equals(u.getRole()))
-                countAdmin++;
-            else
-                countUser++;
-        }
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
-
-    public int getCountAdmin() {
-        return countAdmin;
-    }
-
-    public int getCountUser() {
-        return countUser;
-    }
-
-    public User addUser(String name, String email, String password, String role, byte[] imageUser) {
-        for (User u : users) {
-            if (u.getEmail().equals(email))
-                throw new IllegalArgumentException("Email is already registered.");
-            if (u.getUsername().equals(name))
-                throw new IllegalArgumentException("Username is already registered.");
-        }
-        long userId = nextId++;
-        User user = new User(name, userId, email, password, role, imageUser);
-        users.add(user);
-        if (User.ADMIN.equals(role))
-            countAdmin++;
-        else
-            countUser++;
-        return user;
-    }
-
-    public User handleLogin(String username, String password) {
-        for (User u : users) {
-            if (u.getUsername().equals(username)) {
-                if (u.checkPassword(password)) {
-                    currentUser = u;
-                    return u;
-                }
-                throw new IllegalArgumentException("Incorrect password.");
-            }
-        }
-        throw new IllegalArgumentException("Username does not exist.");
-    }
-
-    public User getUserById(long userId) {
-        for (User u : users)
-            if (u.getUserId() == userId)
-                return u;
-        return null;
-    }
-
-    public void editUserById(User user, String newUsername, String newEmail, String newPassword, String newRole,
-            byte[] newImageUser) {
-        user.setUsername(newUsername);
-        user.setEmail(newEmail);
-        user.setPassword(newPassword);
-        user.setRole(newRole);
-        user.setImageUser(newImageUser);
-    }
-
-    public void deleteUserById(long userId) {
-        users.removeIf(u -> u.getUserId() == userId);
-        setCount();
     }
 }

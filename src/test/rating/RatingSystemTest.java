@@ -14,8 +14,6 @@ public class RatingSystemTest {
     @Before
     public void setUp() {
         ratingSystem = new RatingSystem();
-        // Initialize ratings list manually since constructor doesn't do it
-        // This is a workaround for the incomplete implementation
         ratingSystem = new RatingSystem() {
             {
                 // Initialize ratings as empty list for testing
@@ -87,7 +85,7 @@ public class RatingSystemTest {
             e.printStackTrace();
         }
 
-        List<Rating> userRatings = ratingSystem.getRatingforUserId(100L);
+        List<Rating> userRatings = ratingSystem.getRatingForUserId(100L);
         assertEquals(3, userRatings.size());
         // Should be sorted by date descending (most recent first)
         assertEquals(3, userRatings.get(0).getStar());
@@ -115,7 +113,7 @@ public class RatingSystemTest {
             e.printStackTrace();
         }
 
-        List<Rating> bookRatings = ratingSystem.getRatingforBookId(200L);
+        List<Rating> bookRatings = ratingSystem.getRatingForBookId(200L);
         assertEquals(3, bookRatings.size());
         // Should be sorted by date descending (most recent first)
         assertEquals(3, bookRatings.get(0).getStar());
@@ -175,12 +173,12 @@ public class RatingSystemTest {
             e.printStackTrace();
         }
 
-        Rating found = ratingSystem.getRatingbyRatingId(2L);
+        Rating found = ratingSystem.getRatingByRatingId(2L);
         assertNotNull(found);
         assertEquals(2L, found.getRatingId());
         assertEquals(4, found.getStar());
 
-        Rating notFound = ratingSystem.getRatingbyRatingId(999L);
+        Rating notFound = ratingSystem.getRatingByRatingId(999L);
         assertNull(notFound);
     }
 

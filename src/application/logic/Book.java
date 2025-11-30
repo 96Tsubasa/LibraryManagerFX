@@ -1,10 +1,5 @@
 package application.logic;
 
-import application.database.Database;
-
-import javax.xml.crypto.Data;
-import java.util.Arrays;
-
 public class Book {
     private long bookId;
     private String isbn;
@@ -22,7 +17,9 @@ public class Book {
     }
 
     /**
-     * Create a new Book with the given ISBN, using Google Books API to get more information.
+     * Create a new Book with the given ISBN, using Google Books API to get more
+     * information.
+     * 
      * @param isbn: The given ISBN for the book.
      */
     public Book(String isbn) {
@@ -32,20 +29,20 @@ public class Book {
 
     /**
      * Create a new Book with the given parameters:
-     * @param bookId: The ID of the book in this system.
-     * @param title: The title of the book.
-     * @param authors: The author(s) of the book.
-     * @param publisher: The publisher of the book.
+     * 
+     * @param bookId:          The ID of the book in this system.
+     * @param title:           The title of the book.
+     * @param authors:         The author(s) of the book.
+     * @param publisher:       The publisher of the book.
      * @param publicationYear: The publication year of the book.
-     * @param genres: The genre(s) this book belongs to.
+     * @param genres:          The genre(s) this book belongs to.
      * @param copiesAvailable: The amount of copies available in the Library.
-     * @param description: The description for the book.
-     * @param coverImage: The cover image of the book.
-     * @param isbn: The ISBN for the book.
+     * @param description:     The description for the book.
+     * @param coverImage:      The cover image of the book.
+     * @param isbn:            The ISBN for the book.
      */
-    public Book(long bookId, String title, String[] authors, String publisher, int publicationYear,
-                String[] genres, int copiesAvailable, String description,
-                byte[] coverImage, String isbn) {
+    public Book(long bookId, String title, String[] authors, String publisher, int publicationYear, String[] genres,
+            int copiesAvailable, String description, byte[] coverImage, String isbn) {
         this.bookId = bookId;
         this.title = title;
         this.authors = authors;
@@ -155,7 +152,6 @@ public class Book {
     public void borrow() {
         if (isAvailable()) {
             copiesAvailable--;
-            Database.editBookById(this);
         } else {
             throw new RuntimeException("This book is not available for borrowing at the moment.");
         }
@@ -164,7 +160,6 @@ public class Book {
     /** Update copiesAvailable after returning the book. */
     public void returnBook() {
         copiesAvailable++;
-        Database.editBookById(this);
         System.out.println("Returned the book.");
     }
 }

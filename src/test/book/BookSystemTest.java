@@ -1,26 +1,29 @@
 package test.book;
 
 import application.logic.Book;
+import application.logic.BookSystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.*;
 
+import test.fakes.FakeBookRepository;
+
 public class BookSystemTest {
-    private FakeBookSystem bookSystem;
+    private BookSystem bookSystem;
+    private FakeBookRepository bookRepo;
     private List<Long> createdBookIds = new ArrayList<>();
 
     @Before
     public void setUp() {
-        // Use in-memory fake BookSystem for unit tests
-        bookSystem = new FakeBookSystem();
+        bookRepo = new FakeBookRepository();
+        bookSystem = new BookSystem(bookRepo);
         createdBookIds.clear();
     }
 
     @After
     public void tearDown() {
-        // In-memory fake needs no DB cleanup
         createdBookIds.clear();
     }
 
@@ -136,57 +139,4 @@ public class BookSystemTest {
         assertTrue(results.size() >= 0);
     }
 
-    // --- Fake BookSystem for unit tests ---
-    static class FakeBookSystem {
-        private List<Book> books = new ArrayList<>();
-        private long nextId = 1L;
-
-        public List<Book> getBooks() {
-            return books;
-        }
-
-        public Book addBook(String title, String[] authors, String publisher, int year, String[] genres, int copies,
-                String desc, byte[] cover, String isbn) {
-            Book b = new Book(nextId++, title, authors, publisher, year, genres, copies, desc, cover, isbn);
-            books.add(b);
-            return b;
-        }
-
-        public void deleteBookById(long id) {
-            books.removeIf(b -> b.getBookId() == id);
-        }
-
-        public Book getBookById(long id) {
-            return books.stream().filter(b -> b.getBookId() == id).findFirst().orElse(null);
-        }
-
-        public Book searchBookByISBN(String isbn) {
-            return books.stream().filter(b -> isbn.equals(b.getIsbn())).findFirst().orElse(null);
-        }
-
-        public void editBookById(Book book, String newTitle, String[] newAuthors, String newPublisher, int newYear,
-                String[] newGenres, int newCopies, String newDesc, byte[] newCover, String newIsbn) {
-            book.setTitle(newTitle);
-            book.setAuthors(newAuthors);
-            book.setPublisher(newPublisher);
-            book.setPublicationYear(newYear);
-            book.setGenres(newGenres);
-            book.setCopiesAvailable(newCopies);
-            book.setDescription(newDesc);
-            book.setCoverImage(newCover);
-            book.setIsbn(newIsbn);
-        }
-
-        public List<Book> getRecentBooks() {
-            return books.size() <= 4 ? new ArrayList<>(books) : books.subList(books.size() - 4, books.size());
-        }
-
-        public List<Book> searchBooks(String keyword) {
-            List<Book> res = new ArrayList<>();
-            for (Book b : books)
-                if (b.getTitle().contains(keyword) || b.getAuthorsAsString().contains(keyword))
-                    res.add(b);
-            return res;
-        }
-    }
 }
