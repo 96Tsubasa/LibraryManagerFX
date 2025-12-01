@@ -92,6 +92,40 @@ public class TransactionSystemTest {
         transactionSystem.borrowBook(user, book, 65535);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testBorrowBook_ExceedBorrowLimit_ThrowsException() {
+        User user = userSystem.addUser("LimitUser", "limitUser@gmail.com", "Password123", User.NORMAL_USER, null);
+
+        for (int i = 0; i < 10; i++) {
+            Book book = bookSystem.addBook("Book " + i, new String[] { "A" }, "P", 2024, new String[] { "G" }, 1, "",
+                    null, "ISBN" + i);
+            transactionSystem.borrowBook(user, book, 14);
+        }
+
+        Book extraBook = bookSystem.addBook("Extra Book", new String[] { "A" }, "P", 2024, new String[] { "G" }, 1, "",
+                null, "EXTRA");
+        transactionSystem.borrowBook(user, extraBook, 14);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBorrowBook_NullUser_ThrowsException() {
+        Book book = bookSystem.addBook("Book", new String[] { "A" }, "P", 2024, new String[] { "G" }, 5, "", null,
+                "ISBN1");
+        transactionSystem.borrowBook(null, book, 14);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBorrowBook_NullBook_ThrowsException() {
+        User user = userSystem.addUser("userBorrowNullBook", "userBorrowNullBook@gmail.com", "Password987",
+                User.NORMAL_USER, null);
+        transactionSystem.borrowBook(user, null, 14);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBorrowBook_NullUserAndBook_ThrowsException() {
+        transactionSystem.borrowBook(null, null, 14);
+    }
+
     @Test
     public void testReturnBook() {
         User user = userSystem.addUser("ReturnUser", "return@example.com", "Password123", User.NORMAL_USER, null);
@@ -131,6 +165,19 @@ public class TransactionSystemTest {
         transactionSystem.returnBook(user, book);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testReturnBook_NullUser_ThrowsException() {
+        Book book = bookSystem.addBook("B", new String[] { "A" }, "P", 2024, new String[] { "G" }, 5, "", null, "1");
+        transactionSystem.returnBook(null, book);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testReturnBook_NullBook_ThrowsException() {
+        User user = userSystem.addUser("userReturnNullBook", "userReturnNullBook@gmail.com", "Password123",
+                User.NORMAL_USER, null);
+        transactionSystem.returnBook(user, null);
+    }
+
     @Test
     public void testGetTransactionById() {
         User user = userSystem.addUser("TxnUser", "txn@example.com", "Password123", User.NORMAL_USER, null);
@@ -146,6 +193,12 @@ public class TransactionSystemTest {
 
         Transaction notFound = transactionSystem.getTransactionById(999999L);
         assertNull(notFound);
+    }
+
+    @Test
+    public void testGetTransactionById_NonExistentId_ReturnsNull() {
+        assertNull(transactionSystem.getTransactionById(-1L));
+        assertNull(transactionSystem.getTransactionById(0L));
     }
 
     @Test
@@ -194,6 +247,19 @@ public class TransactionSystemTest {
         List<Book> stillBorrowing = transactionSystem.getBookListUserBorrowing(user.getUserId(), bookSystem);
         assertEquals(1, stillBorrowing.size());
         assertTrue(stillBorrowing.contains(book2));
+    }
+
+    @Test
+    public void testGetBookListUserBorrowing_NoBorrowing_ReturnsEmptyList() {
+        User user = userSystem.addUser("EmptyUser", "empty@gmail.com", "Password123", User.NORMAL_USER, null);
+        List<Book> result = transactionSystem.getBookListUserBorrowing(user.getUserId(), bookSystem);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetBookListUserBorrowing_UserNotExist_ReturnsEmpty() {
+        List<Book> result = transactionSystem.getBookListUserBorrowing(999999L, bookSystem);
+        assertTrue(result.isEmpty());
     }
 
     @Test

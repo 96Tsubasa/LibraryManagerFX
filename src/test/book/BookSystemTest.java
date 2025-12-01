@@ -38,6 +38,34 @@ public class BookSystemTest {
         createdBookIds.add(book.getBookId());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddBook_NullTitle_ThrowsException() {
+        bookSystem.addBook(null, new String[] { "Author" }, "Pub", 2024, new String[] { "Genre" }, 5, "Desc", null,
+                "ISBN123");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddBook_EmptyTitle_ThrowsException() {
+        bookSystem.addBook("", new String[] { "Author" }, "Pub", 2024, new String[] { "Genre" }, 5, "Desc", null,
+                "ISBN123");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddBook_NullAuthors_ThrowsException() {
+        bookSystem.addBook("Title", null, "Pub", 2024, new String[] { "Genre" }, 5, "Desc", null, "ISBN123");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddBook_EmptyAuthorsArray_ThrowsException() {
+        bookSystem.addBook("Title", new String[] {}, "Pub", 2024, new String[] { "Genre" }, 5, "Desc", null, "ISBN123");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddBook_NegativeCopiesAvailable_ThrowsException() {
+        bookSystem.addBook("Title", new String[] { "A" }, "Pub", 2024, new String[] { "G" }, -1, "Desc", null,
+                "ISBN123");
+    }
+
     @Test
     public void testSearchBookByISBN() {
         // Thêm sách test
@@ -54,6 +82,18 @@ public class BookSystemTest {
         // Tìm kiếm sách không tồn tại
         Book notFound = bookSystem.searchBookByISBN("NOT-EXIST-ISBN");
         assertNull(notFound);
+    }
+
+    @Test
+    public void testSearchBookByISBN_EmptyString_ReturnsNull() {
+        Book found = bookSystem.searchBookByISBN("");
+        assertNull(found);
+    }
+
+    @Test
+    public void testSearchBookByISBN_Null_ReturnsNull() {
+        Book found = bookSystem.searchBookByISBN(null);
+        assertNull(found);
     }
 
     @Test
@@ -114,17 +154,35 @@ public class BookSystemTest {
     }
 
     @Test
-    public void testGetRecentBooks() {
-        // Lấy danh sách sách gần đây (4 cuốn gần nhất)
+    public void testGetRecentBooks_EmptyList_ReturnsEmpty() {
         List<Book> recent = bookSystem.getRecentBooks();
+        assertTrue(recent.isEmpty());
+    }
 
-        // Nếu có sách trong hệ thống
-        if (bookSystem.getBooks().size() > 0) {
-            assertTrue(recent.size() <= 4);
-            assertTrue(recent.size() > 0);
-        } else {
-            assertTrue(recent.isEmpty());
+    @Test
+    public void testGetRecentBooks_LessThan4Books_ReturnsAll() {
+        bookSystem.addBook("Book1", new String[] { "A" }, "P", 2020, new String[] { "G" }, 1, "", null, "1");
+        bookSystem.addBook("Book2", new String[] { "B" }, "P", 2021, new String[] { "G" }, 1, "", null, "2");
+        createdBookIds.addAll(
+                Arrays.asList(bookSystem.getBooks().get(0).getBookId(), bookSystem.getBooks().get(1).getBookId()));
+
+        List<Book> recent = bookSystem.getRecentBooks();
+        assertEquals(2, recent.size());
+    }
+
+    @Test
+    public void testGetRecentBooks_MoreThan4Books_ReturnsLast4() {
+        for (int i = 1; i <= 6; i++) {
+            Book b = bookSystem.addBook("Book " + i, new String[] { "A" }, "P", 2020, new String[] { "G" }, 1, "", null,
+                    "ISBN" + i);
+            createdBookIds.add(b.getBookId());
         }
+
+        List<Book> recent = bookSystem.getRecentBooks();
+        assertEquals(4, recent.size());
+
+        assertEquals("Book 6", recent.get(3).getTitle());
+        assertEquals("Book 3", recent.get(0).getTitle());
     }
 
     @Test
@@ -136,7 +194,29 @@ public class BookSystemTest {
 
         // Tìm kiếm theo keywords
         List<Book> results = bookSystem.searchBooks("Fiction");
-        assertTrue(results.size() >= 0);
+        assertTrue(results.size() >= 1);
     }
 
+    @Test
+    public void testSearchBooks_NoMatch_ReturnsEmptyList() {
+        bookSystem.addBook("Harry Potter", new String[] { "JK" }, "Bloomsbury", 1997, new String[] { "Fantasy" }, 10,
+                "Wizard", null, "1234567890");
+        List<Book> results = bookSystem.searchBooks("NonExistentKeyword12345");
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void testSearchBooks_MultipleMatches_ReturnsSortedById() {
+        Book b1 = bookSystem.addBook("Java Book", new String[] { "A" }, "Pub", 2020, new String[] { "Tech" }, 5, "Java",
+                null, "JAVA001");
+        Book b2 = bookSystem.addBook("Advanced Java", new String[] { "B" }, "Pub", 2021, new String[] { "Tech" }, 3,
+                "More Java", null, "JAVA002");
+
+        createdBookIds.add(b1.getBookId());
+        createdBookIds.add(b2.getBookId());
+
+        List<Book> results = bookSystem.searchBooks("Java");
+        assertEquals(2, results.size());
+        assertTrue(results.get(0).getBookId() < results.get(1).getBookId());
+    }
 }
