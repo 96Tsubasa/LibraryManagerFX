@@ -44,6 +44,18 @@ public class RatingTest {
         assertEquals("Excellent!", rating.getComment());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetStar_LessThan1_ThrowsException() {
+        Rating rating = new Rating(1L, 100L, 200L, 5, LocalDate.now(), "Good");
+        rating.setStar(0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetStar_GreaterThan5_ThrowsException() {
+        Rating rating = new Rating(1L, 100L, 200L, 5, LocalDate.now(), "Good");
+        rating.setStar(6);
+    }
+
     @Test
     public void testRatingWithDifferentStars() {
         for (int star = 1; star <= 5; star++) {

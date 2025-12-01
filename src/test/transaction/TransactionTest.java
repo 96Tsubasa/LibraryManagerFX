@@ -69,12 +69,26 @@ public class TransactionTest {
     }
 
     @Test
+    public void testReturnBook_AlreadyReturned_DoesNotChangeReturnDate() {
+        LocalDate oldReturnDate = LocalDate.of(2025, 1, 1);
+        Transaction t = new Transaction(1L, 100L, 200L, oldReturnDate.minusDays(10), oldReturnDate.plusDays(1),
+                oldReturnDate, true);
+
+        LocalDate beforeCall = t.getReturnDate();
+        t.returnBook();
+
+        assertTrue(t.isReturned());
+        assertEquals(beforeCall, t.getReturnDate());
+    }
+
+    @Test
     public void testIsOverdueNotReturned() {
         LocalDate borrowDate = LocalDate.now().minusMonths(2);
         LocalDate dueDate = LocalDate.now().minusDays(1); // Due yesterday
 
         Transaction transaction = new Transaction(1L, 100L, 200L, borrowDate, dueDate, null, false);
         assertTrue(transaction.isOverdue());
+        assertFalse(transaction.isReturned());
     }
 
     @Test
@@ -84,6 +98,7 @@ public class TransactionTest {
 
         Transaction transaction = new Transaction(1L, 100L, 200L, borrowDate, dueDate, null, false);
         assertFalse(transaction.isOverdue());
+        assertFalse(transaction.isReturned());
     }
 
     @Test
@@ -94,5 +109,19 @@ public class TransactionTest {
 
         Transaction transaction = new Transaction(1L, 100L, 200L, borrowDate, dueDate, returnDate, true);
         assertFalse(transaction.isOverdue());
+        assertTrue(transaction.isReturned());
+    }
+
+    @Test
+    public void testIsOverdue_DueToday_NotOverdue() {
+        LocalDate today = LocalDate.now();
+        Transaction t = new Transaction(1L, 100L, 200L, today.minusDays(10), today, null, false);
+        assertFalse(t.isOverdue());
+    }
+
+    @Test
+    public void testIsOverdue_DueTomorrow_NotOverdue() {
+        Transaction t = new Transaction(1L, 100L, 200L, LocalDate.now(), LocalDate.now().plusDays(1), null, false);
+        assertFalse(t.isOverdue());
     }
 }
