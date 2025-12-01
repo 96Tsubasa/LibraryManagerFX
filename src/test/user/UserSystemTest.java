@@ -60,6 +60,16 @@ public class UserSystemTest {
         userSystem.addUser("DuplicateUser", "user2@example.com", "Password123", User.NORMAL_USER, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddUserEmptyUsername() {
+        userSystem.addUser("", "emptyname@example.com", "pass", User.NORMAL_USER, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddUserNullEmail() {
+        userSystem.addUser("userTestNullEmail", null, "passTestNullEmail", User.NORMAL_USER, null);
+    }
+
     @Test
     public void testGetUserById() {
         User user = userSystem.addUser("TestUser002", "testuser002@example.com", "Password123", User.NORMAL_USER, null);
@@ -97,6 +107,17 @@ public class UserSystemTest {
         userSystem.handleLogin("NonexistentUser", "Password123");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoginWithNullUsername() {
+        userSystem.handleLogin(null, "password");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoginWithEmptyPassword() {
+        userSystem.addUser("user", "email@test.com", "realpass", User.NORMAL_USER, null);
+        userSystem.handleLogin("user", "");
+    }
+
     @Test
     public void testEditUserById() {
         User user = userSystem.addUser("OriginalUser", "original@example.com", "Password123", User.NORMAL_USER, null);
@@ -113,6 +134,30 @@ public class UserSystemTest {
     }
 
     @Test
+    public void testEditUser_ChangeRoleToAdmin_IncreasesAdminCount() {
+        User user = userSystem.addUser("userChangeRoleToAdmin", "emailChangeRoleToAdmin@gmail.com", "Password",
+                User.NORMAL_USER, null);
+        int adminBefore = userSystem.getCountAdmin();
+
+        userSystem.editUserById(user, "userChangeRoleToAdmin", "emailChangeRoleToAdmin@gmail.com", "Password",
+                User.ADMIN, null);
+
+        assertEquals(adminBefore + 1, userSystem.getCountAdmin());
+    }
+
+    @Test
+    public void testEditUser_ChangeRoleFromAdminToUser_DecreasesAdminCount() {
+        User admin = userSystem.addUser("adminChangeRoleToUser", "adminChangeRoleToUser@gmail.com", "Password123",
+                User.ADMIN, null);
+        int adminBefore = userSystem.getCountAdmin();
+
+        userSystem.editUserById(admin, "adminChangeRoleToUser", "adminChangeRoleToUser@gmail.com", "Password123",
+                User.NORMAL_USER, null);
+
+        assertEquals(adminBefore - 1, userSystem.getCountAdmin());
+    }
+
+    @Test
     public void testDeleteUserById() {
         User user = userSystem.addUser("UserToDelete", "delete@example.com", "Password123", User.NORMAL_USER, null);
         long userIdToDelete = user.getUserId();
@@ -122,6 +167,17 @@ public class UserSystemTest {
 
         assertEquals(countBefore - 1, userSystem.getUsers().size());
         assertNull(userSystem.getUserById(userIdToDelete));
+    }
+
+    @Test
+    public void testDeleteAdmin_DecreasesAdminCount() {
+        User admin = userSystem.addUser("adminDeleteDecreaseCount", "adminDeleteDecreaseCount@gmail.com", "Password123",
+                User.ADMIN, null);
+        int adminCount = userSystem.getCountAdmin();
+
+        userSystem.deleteUserById(admin.getUserId());
+
+        assertEquals(adminCount - 1, userSystem.getCountAdmin());
     }
 
     @Test

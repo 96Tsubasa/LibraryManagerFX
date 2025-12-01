@@ -11,6 +11,16 @@ import java.util.*;
 public class RatingSystemTest {
     private RatingSystem ratingSystem;
 
+    private void setRatings(List<Rating> newRatings) {
+        try {
+            java.lang.reflect.Field field = RatingSystem.class.getDeclaredField("ratings");
+            field.setAccessible(true);
+            field.set(ratingSystem, newRatings != null ? newRatings : new ArrayList<>());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Before
     public void setUp() {
         ratingSystem = new RatingSystem();
@@ -30,6 +40,21 @@ public class RatingSystemTest {
     }
 
     @Test
+    public void testAddRating_SuccessfullyAddsAndPersists() {
+        int sizeBefore = ratingSystem.getRatings().size();
+        LocalDate date = LocalDate.of(2025, 4, 1);
+
+        Rating newRating = ratingSystem.addRating(100L, 200L, 5, date, "Great book!");
+
+        assertEquals(sizeBefore + 1, ratingSystem.getRatings().size());
+        assertEquals(100L, newRating.getUserId());
+        assertEquals(200L, newRating.getBookId());
+        assertEquals(5, newRating.getStar());
+        assertEquals(date, newRating.getRatingDate());
+        assertEquals("Great book!", newRating.getComment());
+    }
+
+    @Test
     public void testGetAvgBookRating() {
         List<Rating> ratings = new ArrayList<>();
         ratings.add(new Rating(1L, 100L, 200L, 5, LocalDate.now(), "Great"));
@@ -46,6 +71,12 @@ public class RatingSystemTest {
 
         double avg = ratingSystem.getAvgBookRating(200L);
         assertEquals(4.0, avg, 0.1);
+    }
+
+    @Test
+    public void testGetAvgBookRating_NoRatings_ReturnsZero() {
+        double avg = ratingSystem.getAvgBookRating(999999L);
+        assertEquals(0.0, avg, 0.1);
     }
 
     @Test
@@ -122,6 +153,22 @@ public class RatingSystemTest {
     }
 
     @Test
+    public void testGetRatingForUserId_NoRatings_ReturnsEmptyList() {
+        setRatings(new ArrayList<>());
+        List<Rating> result = ratingSystem.getRatingForUserId(999L);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetRatingForBookId_NoRatingsForBook_ReturnsEmptyList() {
+        Rating r = new Rating(1L, 100L, 999L, 5, LocalDate.now(), "Test");
+        setRatings(List.of(r));
+
+        List<Rating> result = ratingSystem.getRatingForBookId(888L);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     public void testGetRecentRating() {
         List<Rating> ratings = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
@@ -159,6 +206,20 @@ public class RatingSystemTest {
     }
 
     @Test
+    public void testGetRecentRating_EmptyList_ReturnsEmpty() {
+        setRatings(new ArrayList<>());
+        List<Rating> recent = ratingSystem.getRecentRating();
+        assertTrue(recent.isEmpty());
+    }
+
+    @Test
+    public void testGetRecentRating_NullList_ReturnsEmpty() {
+        setRatings(null);
+        List<Rating> recent = ratingSystem.getRecentRating();
+        assertTrue(recent.isEmpty());
+    }
+
+    @Test
     public void testGetRatingbyRatingId() {
         List<Rating> ratings = new ArrayList<>();
         ratings.add(new Rating(1L, 100L, 200L, 5, LocalDate.now(), "First"));
@@ -191,5 +252,38 @@ public class RatingSystemTest {
         assertEquals(5, rating.getStar());
         assertEquals("Updated comment", rating.getComment());
         assertEquals(LocalDate.now(), rating.getRatingDate());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEditRating_InvalidStar_TooLow() {
+        Rating r = new Rating(1L, 1L, 1L, 3, LocalDate.now(), "Old");
+        ratingSystem.editRatingByUserId(r, 0, "Invalid");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEditRating_InvalidStar_TooHigh() {
+        Rating r = new Rating(1L, 1L, 1L, 3, LocalDate.now(), "Old");
+        ratingSystem.editRatingByUserId(r, 6, "Invalid");
+    }
+
+    @Test
+    public void testDeleteRatingById_RemovesRating() {
+        Rating r = new Rating(999L, 1L, 1L, 5, LocalDate.now(), "Test");
+        setRatings(new ArrayList<>(List.of(r)));
+
+        ratingSystem.deleteRatingById(999L);
+
+        assertEquals(0, ratingSystem.getRatings().size());
+        assertNull(ratingSystem.getRatingByRatingId(999L));
+    }
+
+    @Test
+    public void testDeleteRatingById_NonExistent_DoesNothing() {
+        setRatings(new ArrayList<>());
+        int sizeBefore = ratingSystem.getRatings().size();
+
+        ratingSystem.deleteRatingById(888L);
+
+        assertEquals(sizeBefore, ratingSystem.getRatings().size());
     }
 }
