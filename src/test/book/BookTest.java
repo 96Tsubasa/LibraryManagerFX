@@ -97,6 +97,21 @@ public class BookTest {
     }
 
     @Test
+    public void testGetAuthorsAsString_NullAuthors_ReturnsEmptyOrSafeString() {
+        Book book = new Book();
+        book.setAuthors(null);
+
+        assertEquals("", book.getAuthorsAsString());
+    }
+
+    @Test
+    public void testGetGenresAsString_NullGenres_ReturnsEmpty() {
+        Book book = new Book();
+        book.setGenres(null);
+        assertEquals("", book.getGenresAsString());
+    }
+
+    @Test
     public void testGetBookInfo() {
         Book book = new Book(1L, "Title", new String[] { "A" }, "Pub", 2022, new String[] { "G" }, 1, "Desc", null,
                 "ISBN");
