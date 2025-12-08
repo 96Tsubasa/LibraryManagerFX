@@ -87,7 +87,7 @@ public class TransactionSystemTest {
     public void testBorrowBookInvalidDays() {
         User user = userSystem.addUser("BorrowUser4", "borrow4@example.com", "Password123", User.NORMAL_USER, null);
         Book book = bookSystem.addBook("Invalid Days Book", new String[] { "Author" }, "Pub", 2024,
-                new String[] { "Genre" }, 0, "Desc", null, "INVALIDDAYS-ISBN");
+                new String[] { "Genre" }, 5, "Desc", null, "INVALIDDAYS-ISBN");
 
         transactionSystem.borrowBook(user, book, 65535);
     }
